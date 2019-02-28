@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GeneralConfig>
+	<!-- 短信配置 -->
+    <systemSourceId>shoes</systemSourceId>	<!-- 系统来源 -->
+    <key>278e60fc68fd967b106e7fd9f081ba8f</key>	<!-- 加密key -->
+    <sendmessage_path>http://hzdispatch.p2phz.com:8080/app/dispatch/sendBill.do</sendmessage_path>	<!-- 接口路径 -->
+    <allowTimes>5</allowTimes>	<!-- 每天允许发送短信和登录输错密码的次数 -->
+    <beforeMessage> 尊敬的用户，您正在进行业务监控室的手机验证，动态验证码是：</beforeMessage><!-- 短信模板 -->
+    <afterMessage>，5分钟内有效。切勿泄露或转发他人。</afterMessage><!-- 短信模板 -->
+</GeneralConfig>

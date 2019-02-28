@@ -1,0 +1,509 @@
+/* 
+ * Copyright (C) 2006-2014 亿谱汇投资管理（北京）有限公司.
+ *
+ * 本系统是商用软件,未经授权擅自复制或传播本程序的部分或全部将是非法的.
+ *
+ * ============================================================
+ *
+ * FileName: EmployeeController.java 
+ *
+ * Created: [2014-12-1 下午01:08:01] by ydw 
+ *
+ * $Id$
+ * 
+ * $Revision$
+ *
+ * $Author$
+ *
+ * $Date$
+ *
+ * ============================================================ 
+ * 
+ * ProjectName: sping-mvc 
+ * 
+ * Description: 
+ * 
+ * ==========================================================*/
+
+package com.hzcf.shoes.web;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.hzcf.shoes.baseweb.BaseController;
+import com.hzcf.shoes.baseweb.DataMsg;
+import com.hzcf.shoes.constant.Constants;
+import com.hzcf.shoes.model.Employee;
+import com.hzcf.shoes.model.EmployeePermissionRelation;
+import com.hzcf.shoes.service.DepartmentService;
+import com.hzcf.shoes.service.EmployeeRoleRelationService;
+import com.hzcf.shoes.service.EmployeeService;
+import com.hzcf.shoes.service.WorkGroupService;
+import com.hzcf.shoes.util.MD5Util;
+import com.hzcf.shoes.util.PageModel;
+import com.hzcf.shoes.util.PropertyUtil;
+import com.hzcf.shoes.util.StringUtil;
+
+
+/** 
+ *
+ * Description: 
+ *
+ * @author ydw
+ * @version 1.0
+ * <pre>
+ * Modification History: 
+ * Date         Author      Version     Description 
+ * ------------------------------------------------------------------ 
+ * 2014-12-1    ydw       1.0        1.0 Version 
+ * </pre>
+ */
+@Controller
+@RequestMapping("/employee")
+public class EmployeeController extends BaseController{
+
+	@Autowired
+	private EmployeeService employeeService;
+	
+	@Autowired
+	private DepartmentService departmentService;
+	
+	@Autowired
+	private EmployeeRoleRelationService employeeRoleRelationService;
+	
+	@Autowired
+	private WorkGroupService workGroupService;
+	
+	/**
+	 * 
+	 * Description: 跳转到员工列表页面
+	 *
+	 * @param 
+	 * @return String
+	 * @throws 
+	 * @Author yaodawei
+	 * Create Date: 2014-1-23 下午03:19:43
+	 */
+	@RequestMapping("toEmpList")
+	public String toEmpList(String refreshTag,String messageCode,Model model) {
+		showMessageAlert(refreshTag,messageCode,model);
+		return "app/employee/employee_list";
+	}
+	
+	/**
+	 * 
+	 * Description: 员工分页查询列表
+	 * 
+	 * @param
+	 * @return String
+	 * @throws
+	 * @Author yaodawei Create Date: 2013-7-2 下午07:01:23
+	 */
+	@ResponseBody
+	@RequestMapping(value="/employeees")
+	public DataMsg pageList(HttpServletRequest request,DataMsg dataMsg) {
+		try {
+			Map<String, Object> paramsCondition = new HashMap<String, Object>();
+			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
+			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("rows")));
+			String name = StringUtil.trim(request.getParameter("name"));// 姓名
+			if (StringUtil.isNotBlank(name)) {
+				paramsCondition.put("name", name);
+			}
+			String employeeNo = StringUtil.trim(request.getParameter("employeeNo"));// 员工编号
+			if (StringUtil.isNotBlank(employeeNo)) {
+				paramsCondition.put("employeeNo", employeeNo);
+			}
+			String email = StringUtil.trim(request.getParameter("email"));// 邮箱
+			if (StringUtil.isNotBlank(email)) {
+				paramsCondition.put("email", email);
+			}
+			String firstDept = request.getParameter("firstDept");//一级部门
+			if (StringUtil.isNumeric(firstDept)) {
+				paramsCondition.put("deptId", Integer.parseInt(firstDept));
+			}
+			String areaId = request.getParameter("areaId");//员工所属地区
+			if (StringUtil.isNumeric(areaId)) {
+				paramsCondition.put("deptId", Integer.parseInt(areaId));
+			}
+			String salesDeptId = request.getParameter("salesDeptId");//员工所属营业部
+			if (StringUtil.isNumeric(salesDeptId)) {
+				paramsCondition.put("deptId", Integer.parseInt(salesDeptId));
+			}
+			String teamId = request.getParameter("teamId");//员工所属团队
+			if (StringUtil.isNumeric(teamId)) {
+				paramsCondition.put("deptId", Integer.parseInt(teamId));
+			}
+			PageModel pageModel = employeeService.findAllByPage(paramsCondition);
+			dataMsg.setTotal(pageModel.getTotalRecords());
+			dataMsg.setRows(pageModel.getList());
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+		return dataMsg;
+	}
+	
+	/**
+	 * 
+	 * Description: 修改密码时,验证原密码是否正确
+	 *
+	 * @param 
+	 * @return void
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-1 下午05:27:55
+	 */
+	@ResponseBody
+	@RequestMapping(value="/validateBasePwd")
+	public DataMsg validateBasePwd(HttpServletRequest request,HttpSession session,DataMsg dataMsg) {
+		try {
+			Employee sessionEmployee = getSystemCurrentUser(session);
+			
+			Employee employee =new Employee();
+			employee.setEmployeeNo(sessionEmployee.getEmployeeNo());
+			employee.setPassword(MD5Util.md5(request.getParameter("password")+PropertyUtil.getInfo("md5Key")));
+			//用户验证
+			Employee ckEmp = employeeService.selectUsers(employee);
+			if(ckEmp == null){
+				dataMsg.setRequestState("false");
+			}else{
+				dataMsg.setRequestState("true");
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setRequestState("error");
+		}
+		return dataMsg;
+	}
+	
+	/**
+	 * 
+	 * Description: 密码修改
+	 *
+	 * @param 
+	 * @return DataMsg
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-1 下午06:59:53
+	 */
+	@ResponseBody
+	@RequestMapping(value="/doUpdatePwd")
+	public DataMsg doUpdatePwd(HttpServletRequest request,HttpSession session,DataMsg dataMsg){
+		try {
+			Employee sessionEmployee = getSystemCurrentUser(session);
+			
+			Employee employee = new Employee();
+			employee.setEmployeeId(sessionEmployee.getEmployeeId());
+			employee.setPassword(MD5Util.md5(request.getParameter("empPwd")+PropertyUtil.getInfo("md5Key")));
+			//修改密码
+			employeeService.updateByPrimaryKeySelective(employee);
+			sessionEmployee.setPassword(MD5Util.md5(request.getParameter("empPwd")+PropertyUtil.getInfo("md5Key")));
+			//修改成功重新保存用户session
+			session.setAttribute(Constants.SYSTEM_USER, sessionEmployee);
+			dataMsg.setRequestState("true");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setRequestState("error");
+		}
+		return dataMsg;
+	}
+	
+	/**
+	 * 
+	 * Description: 跳转到添加员工页面
+	 *
+	 * @param 
+	 * @return String
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-2 上午10:36:19
+	 */
+	@RequestMapping(value="/toAddEmp")
+	public String toAddEmp(){
+		return "app/employee/employee_add";
+	}
+	
+	/**
+	 * 
+	 * Description: 添加员工
+	 *
+	 * @param 
+	 * @return DataMsg
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-2 上午11:47:02
+	 */
+	@ResponseBody
+	@RequestMapping(value="/doAddEmp")
+	public DataMsg doAddEmp(@ModelAttribute Employee employee,HttpSession session,DataMsg dataMsg,String oauth) {
+		try {
+			employee.setPassword(MD5Util.md5("123@abc"+PropertyUtil.getInfo("md5Key")));//初始密码
+			employee.setCreateTime(new Date());
+			employee.setCreator(getSystemCurrentUser(session).getEmployeeId());
+			String employeeNo = employee.getEmployeeNo();
+			employeeService.insertSelective(employee);
+			if(StringUtil.isNotBlank(oauth)){
+				employeeService.insertEmpPermission(oauth,employeeNo,getSystemCurrentUser(session).getEmployeeId());
+			} 
+			dataMsg.setMessageCode("0001");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setMessageCode("0002");
+		}
+		return dataMsg;
+	}
+	
+	/**
+	 * 
+	 * Description: 跳转到修改员工页面
+	 *
+	 * @param 
+	 * @return String
+	 * @throws 
+	 * @Author yaodawei
+	 * Create Date: 2014-2-11 下午04:33:32
+	 */
+	@RequestMapping(value="/toEditEmp/{employeeId}")
+	public String toEditEmp(@PathVariable Integer employeeId,Model model) {
+		try {
+			Employee employee = employeeService.selectByPrimaryKey(employeeId);
+			model.addAttribute("employee", employee);
+			model.addAttribute("deptInfo",departmentService.getLevelDeptInfo(employee.getDeptId()));
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			return "common/exception";
+		}
+		return "app/employee/employee_edit";
+	}
+	
+	/**
+	 * 
+	 * Description: 修改员工信息
+	 *
+	 * @param 
+	 * @return String
+	 * @throws 
+	 * @Author yaodawei
+	 * Create Date: 2014-2-11 下午05:21:52
+	 */
+	@ResponseBody
+	@RequestMapping("/doEditEmp")
+	public DataMsg doEditEmp(@ModelAttribute Employee employee,HttpSession session,DataMsg dataMsg){
+		try {
+			employee.setOperator(getSystemCurrentUser(session).getEmployeeId());
+			employee.setOperateTime(new Date());
+			employeeService.updateByPrimaryKeySelective(employee);
+			dataMsg.setMessageCode("0003");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setMessageCode("0004");
+		}
+		return dataMsg;
+	}
+	
+	/**
+	 * 
+	 * Description: 停用、启用
+	 *
+	 * @param 
+	 * @return DataMsg
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-2 下午02:32:54
+	 */
+	@ResponseBody
+	@RequestMapping(value="/disableOrEnabled")
+	public DataMsg disableOrEnabled(@ModelAttribute Employee employee,HttpSession session,DataMsg dataMsg) {
+		try {
+			employee.setOperator(getSystemCurrentUser(session).getEmployeeId());
+			employee.setOperateTime(new Date());
+			// 执行
+			employeeService.updateByPrimaryKeySelective(employee);
+			if(employee.getActivatedState().equals(Constants.ACTIVATED_STATE_ENABLED)){
+				dataMsg.setMessageCode("0008");
+			}else if(employee.getActivatedState().equals(Constants.ACTIVATED_STATE_DISABLE)){
+				dataMsg.setMessageCode("0010");
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			if(employee.getActivatedState().equals(Constants.ACTIVATED_STATE_ENABLED)){
+				dataMsg.setMessageCode("0009");
+			}else if(employee.getActivatedState().equals(Constants.ACTIVATED_STATE_DISABLE)){
+				dataMsg.setMessageCode("0011");
+			}
+		}
+		return dataMsg;
+	}
+	
+	/**
+	 * 
+	 * Description: 密码重置
+	 *
+	 * @param 
+	 * @return DataMsg
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-2 下午02:47:23
+	 */
+	@ResponseBody
+	@RequestMapping(value="/resetPassword")
+	public DataMsg resetPassword(@ModelAttribute Employee employee,HttpSession session,DataMsg dataMsg) {
+		try {
+			employee.setPassword(MD5Util.md5("123@abc"+PropertyUtil.getInfo("md5Key")));//初始密码
+			employee.setOperator(getSystemCurrentUser(session).getEmployeeId());
+			employee.setOperateTime(new Date());
+			// 执行
+			employeeService.updateByPrimaryKeySelective(employee);
+			dataMsg.setRequestState("true");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setRequestState("false");
+		}
+		return dataMsg;
+	}
+	
+	/**
+	 * 
+	 * Description: 跳转到设置员工工作组页面
+	 *
+	 * @param 
+	 * @return String
+	 * @throws 
+	 * @Author yaodawei
+	 * Create Date: 2014-2-14 上午10:29:43
+	 */
+	@RequestMapping(value="/toSetWorkGroup")
+	public String toSetWorkGroup(Employee employee,Model model) {
+		try {
+			employee.setName(URLDecoder.decode(employee.getName(), "UTF-8"));
+			model.addAttribute("levelDeptInfo", departmentService.getLevelDeptInfo(employee.getDeptId()));
+			List<Map<String, Object>> workGroupInfo = workGroupService.findWorkGroupInfoByEmpId(employee.getEmployeeId());
+			String deptIds = "";
+			String checkedStatus = "";
+			String halfStatus = "";
+			for (Map<String, Object> map : workGroupInfo) {
+				deptIds += map.get("dept_id") + ",";
+				checkedStatus += map.get("checked_status") + ",";
+				halfStatus += map.get("half_status") + ",";
+			}
+			if (workGroupInfo.size() > 1) {
+				model.addAttribute("deptIds", deptIds.substring(0, deptIds.length()-1));
+				model.addAttribute("checkedStatus", checkedStatus.substring(0, checkedStatus.length()-1));
+				model.addAttribute("halfStatus", halfStatus.substring(0, halfStatus.length()-1));
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			return "common/exception";
+		}
+		return "app/employee/employee_workgroup";
+	}
+	
+	/**
+	 * 
+	 * Description: 跳转到员工授权页面
+	 *
+	 * @param 
+	 * @return String
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-10 下午01:15:34
+	 */
+	@RequestMapping(value="/toAuthorization/{empIds}")
+	public String toAuthorization(@PathVariable String empIds) {
+		return "app/employee/employee_authorization";
+	}
+	
+	/**
+	 * 
+	 * Description: 添加员工角色关系
+	 *
+	 * @param 
+	 * @return DataMsg
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-10 下午02:25:02
+	 */
+	@ResponseBody
+	@RequestMapping(value="/doAddEmpAuthorization/{empIds}/{roleIds}")
+	public DataMsg doAddEmpAuthorization(@PathVariable String empIds,@PathVariable String roleIds,DataMsg dataMsg,HttpSession session){
+		try {
+			employeeRoleRelationService.addEmpRoleRelation(empIds, roleIds, getSystemCurrentUser(session).getEmployeeId());
+			dataMsg.setMessageCode("0014");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setMessageCode("0015");
+		}
+		return dataMsg;
+	}
+	
+	/**
+	 * 
+	 * Description: 跳转到员工修改授权页面
+	 *
+	 * @param 
+	 * @return String
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-10 下午02:52:51
+	 */
+	@RequestMapping(value="/toEditAuthorization")
+	public String toEditAuthorization(Employee employee,Model model){
+		try {
+			employee.setName(URLDecoder.decode(employee.getName(), "UTF-8"));
+			model.addAttribute("levelDeptInfo", departmentService.getLevelDeptInfo(employee.getDeptId()));
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e.getMessage(),e);
+			return "common/exception";
+		}
+		return "app/employee/employee_authorization_edit";
+	}
+	
+	/**
+	 * 
+	 * Description: 修改员工角色关系
+	 *
+	 * @param 
+	 * @return DataMsg
+	 * @throws 
+	 * @Author ydw
+	 * Create Date: 2014-12-10 下午02:25:02
+	 */
+	@ResponseBody
+	@RequestMapping(value="/doEditEmpAuthorization")
+	public DataMsg doEditEmpAuthorization(@RequestParam Integer employeeId,@RequestParam String roleIds,DataMsg dataMsg,HttpSession session){
+		try {
+			employeeRoleRelationService.editEmpRoleRelation(employeeId,roleIds,getSystemCurrentUser(session).getEmployeeId());
+			dataMsg.setMessageCode("0014");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setMessageCode("0015");
+		}
+		return dataMsg;
+	}
+	/**
+	 * Description: 跳转至权限选择页
+	 * @param model
+	 * @return
+	 * @author guodong
+	 */
+	@RequestMapping(value="/toSelectPermission")
+	public String toSelectPermission(Model model) {
+		return "app/employee/employee_permission_select";
+	}
+}
