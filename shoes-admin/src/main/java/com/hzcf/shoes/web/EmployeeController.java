@@ -23,7 +23,6 @@ import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
 import com.hzcf.shoes.constant.Constants;
 import com.hzcf.shoes.model.Employee;
-import com.hzcf.shoes.model.EmployeePermissionRelation;
 import com.hzcf.shoes.service.DepartmentService;
 import com.hzcf.shoes.service.EmployeeRoleRelationService;
 import com.hzcf.shoes.service.EmployeeService;
@@ -36,16 +35,7 @@ import com.hzcf.shoes.util.StringUtil;
 
 /** 
  *
- * Description: 
- *
- * @author ydw
- * @version 1.0
- * <pre>
- * Modification History: 
- * Date         Author      Version     Description 
- * ------------------------------------------------------------------ 
- * 2014-12-1    ydw       1.0        1.0 Version 
- * </pre>
+ * Description: 员工管理
  */
 @Controller
 @RequestMapping("/employee")

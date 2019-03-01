@@ -28,15 +28,6 @@ import com.hzcf.shoes.service.DepartmentService;
 /** 
  *
  * Description: 部门管理
- *
- * @author ydw
- * @version 1.0
- * <pre>
- * Modification History: 
- * Date         Author      Version     Description 
- * ------------------------------------------------------------------ 
- * 2014-11-28    ydw       1.0        1.0 Version 
- * </pre>
  */
 @Controller
 @RequestMapping("/department")

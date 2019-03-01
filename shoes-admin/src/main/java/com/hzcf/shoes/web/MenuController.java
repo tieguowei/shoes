@@ -28,14 +28,6 @@ import com.hzcf.shoes.util.StringUtil;
  *
  * Description: 菜单Controller
  *
- * @author ydw
- * @version 1.0
- * <pre>
- * Modification History: 
- * Date         Author      Version     Description 
- * ------------------------------------------------------------------ 
- * 2014-11-18    ydw       1.0        1.0 Version 
- * </pre>
  */
 @Controller
 @RequestMapping("/menu")

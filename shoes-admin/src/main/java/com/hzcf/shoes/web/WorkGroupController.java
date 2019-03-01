@@ -21,14 +21,6 @@ import com.hzcf.shoes.util.StringUtil;
  *
  * Description: 员工工作组Controller
  *
- * @author ydw
- * @version 1.0
- * <pre>
- * Modification History: 
- * Date         Author      Version     Description 
- * ------------------------------------------------------------------ 
- * 2014-12-2    ydw       1.0        1.0 Version 
- * </pre>
  */
 @Controller
 @RequestMapping("/workGroup")

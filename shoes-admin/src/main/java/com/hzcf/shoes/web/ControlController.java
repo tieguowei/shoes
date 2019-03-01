@@ -29,14 +29,6 @@ import com.hzcf.shoes.util.StringUtil;
  *
  * Description: 页面控件Controller
  *
- * @author ydw
- * @version 1.0
- * <pre>
- * Modification History: 
- * Date         Author      Version     Description 
- * ------------------------------------------------------------------ 
- * 2014-12-8    ydw       1.0        1.0 Version 
- * </pre>
  */
 @Controller
 @RequestMapping(value="/control")
