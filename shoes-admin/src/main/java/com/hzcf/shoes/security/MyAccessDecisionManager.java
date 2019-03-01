@@ -11,19 +11,6 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-/** 
- *
- * Description:
- *
- * @author lijie
- * @version 1.0
- * <pre>
- * Modification History: 
- * Date         Author      Version     Description 
- * ------------------------------------------------------------------ 
- * 2013-11-4      lijie       1.0         1.0 Version 
- * </pre>
- */
 
 public class MyAccessDecisionManager implements AccessDecisionManager {
 	

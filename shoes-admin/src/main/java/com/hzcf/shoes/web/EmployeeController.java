@@ -1,30 +1,3 @@
-/* 
- * Copyright (C) 2006-2014 亿谱汇投资管理（北京）有限公司.
- *
- * 本系统是商用软件,未经授权擅自复制或传播本程序的部分或全部将是非法的.
- *
- * ============================================================
- *
- * FileName: EmployeeController.java 
- *
- * Created: [2014-12-1 下午01:08:01] by ydw 
- *
- * $Id$
- * 
- * $Revision$
- *
- * $Author$
- *
- * $Date$
- *
- * ============================================================ 
- * 
- * ProjectName: sping-mvc 
- * 
- * Description: 
- * 
- * ==========================================================*/
-
 package com.hzcf.shoes.web;
 
 import java.io.UnsupportedEncodingException;

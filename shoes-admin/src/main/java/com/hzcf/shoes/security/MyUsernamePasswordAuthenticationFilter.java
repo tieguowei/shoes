@@ -22,19 +22,6 @@ import com.hzcf.shoes.util.MD5Util;
 import com.hzcf.shoes.util.PropertyUtil;
 import com.hzcf.shoes.util.StringUtil;
 
-/** 
- *
- * Description:
- *
- * @author lijie
- * @version 1.0
- * <pre>
- * Modification History: 
- * Date         Author      Version     Description 
- * ------------------------------------------------------------------ 
- * 2013-11-5      lijie       1.0         1.0 Version 
- * </pre>
- */
 
 public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 	

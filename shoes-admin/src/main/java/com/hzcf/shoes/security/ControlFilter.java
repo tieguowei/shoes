@@ -17,20 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.hzcf.shoes.constant.Constants;
 import com.hzcf.shoes.service.ControlService;
 
-
-/** 
- *
- * Description:
- *
- * @author lijie
- * @version 1.0
- * <pre>
- * Modification History: 
- * Date         Author      Version     Description 
- * ------------------------------------------------------------------ 
- * 2013-11-14      lijie       1.0         1.0 Version 
- * </pre>
- */
 public class ControlFilter implements Filter{
 
 	@Autowired

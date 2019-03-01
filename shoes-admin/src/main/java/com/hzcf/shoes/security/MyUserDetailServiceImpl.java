@@ -24,19 +24,6 @@ import com.hzcf.shoes.model.Menu;
 import com.hzcf.shoes.model.Role;
 import com.hzcf.shoes.util.log.LogDefault;
 
-/** 
- *
- * Description:
- *
- * @author lijie
- * @version 1.0
- * <pre>
- * Modification History: 
- * Date         Author      Version     Description 
- * ------------------------------------------------------------------ 
- * 2013-11-4      lijie       1.0         1.0 Version 
- * </pre>
- */
 
 public class MyUserDetailServiceImpl implements UserDetailsService {
 	
