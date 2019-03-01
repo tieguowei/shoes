@@ -1,5 +1,6 @@
 package com.hzcf.shoes.dao;
 
+import com.hzcf.shoes.model.ZlyShoeBrand;
 import com.hzcf.shoes.model.ZlyShoeFactory;
 import com.hzcf.shoes.model.ZlyShoeFactoryExample;
 import java.util.List;
@@ -37,4 +38,7 @@ public interface ZlyShoeFactoryMapper {
 	int checkName(Map<String, Object> params);
 
 	Map<String, Object> selectLastOne();
+
+	Map<String, Object> findFactoryById(Integer id);
+
 }

@@ -53,7 +53,7 @@
 					width : 300,
 					formatter : function(value,row,index){
 						  var retStr;
-						  retStr = "<a href='#' onclick='toUpdateGoldProduct(\"" + row.id + "\");'>修改 &nbsp;&nbsp;</a>";
+						  retStr = "<a href='#' onclick='toUpdateFactory(\"" + row.id + "\");'>修改 &nbsp;&nbsp;</a>";
                           return retStr;
 					}
 				}]],
@@ -62,50 +62,25 @@
 		});
         
         // 跳转到添加新页面页面
-   		function toAddGoldProduct(){
+   		function toAddFactory(){
    			parent.createTab('${app}/zly/shoeFactory/toAddFactory','添加鞋厂');
    		}
         
    		
         // 跳转到修改控件信息页面
-        function toUpdateGoldProduct(rowId) {
+        function toUpdateFactory(rowId) {
             var selectRow = datagrid.datagrid('getSelected');
             if (null == rowId) {
                 $.messager.show({
                     title: '信息提示',
-                    msg: '请选择一个要修改的控件!',
+                    msg: '请选择一条要修改的记录!',
                     timeout: 5000,
                     showType: 'slide'
                 });
             } else if (null != rowId) {
-                parent.createTab('${app}/goldProduct/toUpdateGoldProduct/' + rowId, '修改信息');
+                parent.createTab('${app}/zly/shoeFactory/toUpdateFactory/' + rowId, '修改鞋厂');
             }
         }
-        
-       
-        //搜索
-        function searchFun() {
-            datagrid.datagrid('load',serializeObject($("#searchForm")));
-            datagrid.datagrid('clearSelections');
-            datagrid.datagrid('clearChecked');
-        }
-
-        //清空搜索条件
-        function clearFromFun(datagrid){
-            window.location = "${app}/goldProduct/toGoldProductList"
-        }
-
-        //弹出加载层
-        function load() {
-            $("<div class=\"datagrid-mask\"></div>").css({ display: "block", width: "100%", height: $(window).height() }).appendTo("body");
-            $("<div class=\"datagrid-mask-msg\"></div>").html("正在处理，请稍候。。。").appendTo("body").css({ display: "block", left: ($(document.body).outerWidth(true) - 190) / 2, top: ($(window).height() - 45) / 2 });
-        }
-        //取消加载层
-        function disLoad() {
-            $(".datagrid-mask").remove();
-            $(".datagrid-mask-msg").remove();
-        }
-        
 	</script>
 </head>
 
@@ -117,9 +92,8 @@
 	<table border="0" class="searchForm datagrid-toolbar" width="100%">
 		<tr>
 			<td width="10%"  id="toolbars" class="tdL">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toAddGoldProduct();">添加</a>
+			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toAddFactory();">添加</a>
 		            <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
-				
 			</td>
 		</tr>
 	</table>

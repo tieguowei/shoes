@@ -27,4 +27,17 @@ public interface ZlyShoeBrandMapper {
     int updateByPrimaryKeySelective(ZlyShoeBrand record);
 
     int updateByPrimaryKey(ZlyShoeBrand record);
+    
+    /**
+	 * 查询鞋厂的所有货号
+	 * @param id
+	 * @return
+	 */
+	List<ZlyShoeBrand> getBrandListById(Integer id);
+	 /**
+		 * 删除鞋厂的所有货号
+		 * @param id
+		 * @return
+		 */
+	void delBrandByFactoryId(Integer id);
 }

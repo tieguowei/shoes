@@ -1,6 +1,7 @@
 
 package com.hzcf.shoes.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.hzcf.shoes.model.Employee;
@@ -48,5 +49,31 @@ public interface ZlyShoeFactoryService {
 	 * @param shoeBrand
 	 */
 	public void insertBrand(ZlyShoeBrand shoeBrand);
+
+	/**
+	 *根据id 查询鞋厂
+	 * @param id
+	 * @return
+	 */
+	public Map<String, Object> findFactoryById(Integer id);
+
+	/**
+	 * 查询该鞋厂下的所有货号
+	 * @param id
+	 * @return
+	 */
+	public List<ZlyShoeBrand> getBrandListById(Integer id);
+
+	/**
+	 * 修改鞋厂信息
+	 * @param zlyShoeFactory
+	 */
+	public void updateFactory(ZlyShoeFactory zlyShoeFactory);
+
+	/**
+	 * 删除鞋厂下所有货品
+	 * @param id
+	 */
+	public void delBrandByFactoryId(Integer id);
 	
 }

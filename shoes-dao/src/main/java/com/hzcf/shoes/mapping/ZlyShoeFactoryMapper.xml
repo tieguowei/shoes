@@ -278,4 +278,17 @@
 		zly_shoe_factory
 	order by create_time desc limit 1;
   </select>
+  
+  <!-- 根据id 查询鞋厂 -->
+  <select id="findFactoryById" parameterType="int" resultType="hashmap">
+  SELECT
+		  id,
+		  name,
+		  telephone,
+		  mobile
+	FROM
+		zly_shoe_factory
+   where id =  #{id}
+  </select>
+  
 </mapper>

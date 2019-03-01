@@ -4,7 +4,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>添加客户</title>
+    <title>添加员工</title>
     
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
@@ -91,7 +91,7 @@
 						
 						var employeeNo = $("#employeeNo").textbox("getValue")
 						if (employeeNo == "" || typeof (employeeNo) == "undefined") {
-							$.messager.alert('提示信息', '请输入客户编号', 'info');
+							$.messager.alert('提示信息', '请输入员工编号', 'info');
 							return false;
 						} 
 							
@@ -107,23 +107,23 @@
 				success:function(data){
 					closeMask();
 					var obj = eval("(" + data + ")");
-					parent.refreshTab("${app}/employee/toEmpList?messageCode=" + obj.messageCode,"客户管理");
-					parent.closeTab("添加客户");
+					parent.refreshTab("${app}/employee/toEmpList?messageCode=" + obj.messageCode,"员工管理");
+					parent.closeTab("添加员工");
 				}
 			});
 		}
 		
 		//取消
 		function resetForm(){
-			parent.closeTab("添加客户");
+			parent.closeTab("添加员工");
 			$('#searchPrincipal').dialog('close');
 		}
 		
-		//查找客户编号
+		//查找员工编号
 		function openSearch(){
 			document.getElementById("searchPrincipal").style.display = "block";
 			$('#searchPrincipal').dialog({
-				title:'查找客户编号',
+				title:'查找员工编号',
 				width: 540,    
 			    height: 250,    
 			    closed: false,    
@@ -224,7 +224,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="tdR">客户编号:</td>
+				<td class="tdR">员工编号:</td>
 				<td>
 				   <input type="text"  id="employeeNo" name="employeeNo" class="easyui-textbox"  style="width: 175px;height: 24px;"  />
 				</td>

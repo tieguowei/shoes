@@ -56,6 +56,27 @@ public class ZlyShoeFactoryServiceImpl implements ZlyShoeFactoryService{
 	public void insertBrand(ZlyShoeBrand shoeBrand) {
 		zlyShoeBrandMapper.insert(shoeBrand);	
 	}
+
+	@Override
+	public Map<String, Object> findFactoryById(Integer id) {
+		return zlyShoeFactoryMapper.findFactoryById(id);
+	}
+
+	@Override
+	public List<ZlyShoeBrand> getBrandListById(Integer id) {
+		return zlyShoeBrandMapper.getBrandListById(id);
+	}
+
+	@Override
+	public void updateFactory(ZlyShoeFactory zlyShoeFactory) {
+		zlyShoeFactoryMapper.updateByPrimaryKey(zlyShoeFactory);	
+	}
+
+	@Override
+	public void delBrandByFactoryId(Integer id) {
+		zlyShoeBrandMapper.delBrandByFactoryId(id);
+		
+	}
 	
 
 

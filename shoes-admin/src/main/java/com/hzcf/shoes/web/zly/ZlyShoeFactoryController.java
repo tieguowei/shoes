@@ -1,8 +1,8 @@
 package com.hzcf.shoes.web.zly;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,7 +33,7 @@ import com.hzcf.shoes.util.StringUtil;
 */
 @Controller
 @RequestMapping("/zly/shoeFactory")
-public class ZLYShoeFactoryController extends BaseController{
+public class ZlyShoeFactoryController extends BaseController{
 
 	@Autowired
 	private ZlyShoeFactoryService zlyShoeFactoryService;
@@ -133,4 +134,55 @@ public class ZLYShoeFactoryController extends BaseController{
  		}
  		return dataMsg;
  	}
+     
+     
+     /**
+      * 跳转到修改页面
+      * @param id
+      * @param model
+      * @return
+      */
+     @RequestMapping(value="/toUpdateFactory/{id}")
+ 	public String toUpdateFactory(@PathVariable Integer id,Model model){
+     	  	Map<String, Object> map = zlyShoeFactoryService.findFactoryById(id);
+     	   List <ZlyShoeBrand> list = zlyShoeFactoryService.getBrandListById(id);
+			model.addAttribute("factory", map);
+			model.addAttribute("list", list);
+			return "/app/zly/factory/factory_edit";
+ 	}
+     
+     
+     /**
+      * 修改保存
+      * @param goldProduct
+      * @param dataMsg
+      * @return
+      */
+   	@ResponseBody
+   	@RequestMapping(value="/doUpdateFactory")
+   	public DataMsg doUpdateFactory(@ModelAttribute ZlyShoeFactory zlyShoeFactory,DataMsg dataMsg,@RequestParam(value = "itemNo", required = true) String[]  itemNo,HttpSession session ){
+   		try {
+   			//去空格
+   			zlyShoeFactory.setUpdateTime(new Date());
+   			zlyShoeFactory.setOperator(getSystemCurrentUser(session).getEmployeeId());
+   			zlyShoeFactoryService.updateFactory(zlyShoeFactory);
+   			zlyShoeFactoryService.delBrandByFactoryId(zlyShoeFactory.getId());
+   			//添加货号表
+				for (int i=0;i<itemNo.length;i++){
+					ZlyShoeBrand shoeBrand = new ZlyShoeBrand();
+					shoeBrand.setFactoryId(zlyShoeFactory.getId());
+					shoeBrand.setCreateTime(new Date());
+					shoeBrand.setItemNo(itemNo[i]);
+					shoeBrand.setOperator(getSystemCurrentUser(session).getEmployeeId());
+					if(StringUtil.isNotBlank(itemNo[i])){
+						zlyShoeFactoryService.insertBrand(shoeBrand);
+					}
+				}
+   			dataMsg.setMessageCode("0003");
+   		} catch (Exception e) {
+   			logger.error(e.getMessage(),e);
+   			dataMsg.setMessageCode("0004");
+   		}
+   		return dataMsg;
+   	}
 }

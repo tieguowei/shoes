@@ -225,4 +225,20 @@
       operator = #{operator,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <!-- 查询鞋厂下的所有货号 -->
+  <select id="getBrandListById" parameterType="int" resultMap="BaseResultMap">
+	  SELECT
+		id,
+	  factory_id,
+	  item_no
+	FROM
+		zly_shoe_brand
+	where factory_id = #{id}
+  </select>
+  
+  <delete id="delBrandByFactoryId" parameterType="int">
+    delete from zly_shoe_brand where factory_id = #{id}
+  
+  </delete>
 </mapper>

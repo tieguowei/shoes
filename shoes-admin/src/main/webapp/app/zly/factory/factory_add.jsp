@@ -43,7 +43,7 @@
 		
 		//取消
 		function resetForm(){
-			parent.closeTab("添加信息");
+			parent.closeTab("添加鞋厂");
 		}
 		 //动态增加表格
 	   		var index = 2;//添加tr索引
