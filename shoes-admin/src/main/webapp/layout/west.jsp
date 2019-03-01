@@ -42,7 +42,7 @@
 			
 			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
 			treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-			treeObj.expandAll(false);//全部不展开
+			treeObj.expandAll(true);//全部展开
 
 			$("span").hover(function (){
             	$(this).addClass("l-link-over");

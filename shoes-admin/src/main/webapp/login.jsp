@@ -7,9 +7,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="renderer" content="webkit" />
-    <title>通汇宝运营管理平台</title>
+    <title>鞋业管理系统</title>
     <meta name="keywords" content="">
-    <meta name="description" content="通汇宝运营管理平台">
+    <meta name="description" content="鞋业管理系统">
     <link rel="icon" href="${app}/images/favicon.ico">
     <link rel="stylesheet" href="${app}/css/common/base.css">
     <link rel="stylesheet" href="${app}/css/login.css">
@@ -67,10 +67,10 @@
 <body>
 <div class="top">
     <div class="logoBox">
-        <img src="${app}/images/thb.png" alt="">
+        <img src="${app}/images/shoes.png" alt="">
         <div style="display: inline-block">
-            <h3>通汇宝运营管理平台</h3>
-            <p>一站式预约服务平台</p>
+            <h3>鞋业管理系统</h3>
+            <p>一站式管理平台</p>
         </div>
     </div>
 </div>
@@ -117,7 +117,7 @@
 </div>
 </div>
 <div class="bottom">
-    <p>版权所有：汇中集团 </p>
+    <p>版权所有：铁小二 </p>
 </div>
 </body>
 <script src="${app}/js/login.js"></script>

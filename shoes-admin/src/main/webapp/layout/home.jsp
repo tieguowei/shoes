@@ -20,8 +20,8 @@
 	</head>
 	<body style="background: white;">
 		<div class="main">
-		亲爱的管理员您好，欢迎使用业务监控室后台管理系统。<p>在使用中遇到任何问题，请联系信息中心业务监控室开发人员。</p>
-		<div class="sign">--业务监控室开发小组</div>
+		亲爱的管理员您好，欢迎使用鞋业管理系统。<p>在使用中遇到任何问题，请联系开发人员。</p>
+		<div class="sign">电话：18519716047</div>
 		</div>
 		
 	</body>

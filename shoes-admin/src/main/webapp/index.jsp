@@ -2,7 +2,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title>业务监控室管理系统</title>
+		<title>鞋业管理系统</title>
 		<%@ include file="/common/header.jsp"%>
 		<meta http-equiv="pragma" content="no-cache">
 		<meta http-equiv="cache-control" content="no-cache">
@@ -141,10 +141,10 @@
 
 	<body class="easyui-layout" style="width: 100%; height: 100%;">
 		<div id="head" region="north"  style="width: 100%;height: 12%;">
-			<img style="padding-left: 80px;padding-top: 4px" src="${app}/images/logo.png" />
+			<img style="padding-top: 4px" src="${app}/images/shoes.png" />
 			 <div style="display: inline-block">
-            <h2 style="margin-left: 10px;font-size:22px; font-weight: normal";>业务监控室</h2>
-            <p style="font-size: 12px;">一站式决策支持解决问题</p>
+            <h2 style="margin-left: 10px;font-size:22px; font-weight: normal";>鞋业管理系统</h2>
+            <p style="padding-left: 6px;font-size: 12px;">一站式管理平台</p>
         </div>
 			<ul id="contact">   
 		      <li class="dot1">欢迎您，<font  color="dodgerblue"><b>${SystemUser.name}</b></font></li>
@@ -174,7 +174,7 @@
 					本系统支持火狐、谷歌（Chrome）等浏览器，<font color="red">强烈推荐使用谷歌（Chrome）浏览器</font>，推荐分辨率为1366×768。
 				</li>
 				<li style="margin-top: 10px;">
-					<a style="text-decoration: none;" target="_blank" href="http://rj.baidu.com/soft/detail/14744.html">谷歌(Chrome)浏览器点击完成下载</a>
+					<a style="text-decoration: none;" target="_blank" href="https://www.google.cn/chrome/">谷歌(Chrome)浏览器点击完成下载</a>
 				</li> 
 			</ul>
   		</div>
