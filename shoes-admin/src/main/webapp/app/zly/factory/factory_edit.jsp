@@ -59,14 +59,13 @@
 				var $tr = $("<tr id='entourage"+index+"'>"
 						  + "<td class='tdR' width='10%'>货号:</td>"
 						  + "<td width='15%'><span>"
-						  +"<input  style='width: 175px; height: 18px;'  id='itemNo"+listIndex+"' name='itemNo' class='easyui-textbox'"
+						  +"<input  style='width: 150px; height: 18px;'  id='itemNo"+listIndex+"' name='itemNo' class='easyui-textbox'"
 						+"</span></td>"
 					   + +"</tr>");
 					var trIndex = index - 1;
 					var entourage = '#entourage' + trIndex;
 					$(entourage).after($tr);
 					index = index + 1;
-					$.parser.parse();
 	   }
 
 </script>
@@ -94,22 +93,20 @@
 					<input id="mobile" name="mobile" value="${factory.mobile}"   class="easyui-textbox" prompt="请输入手机号"  style="width: 175px;height: 24px;"/>&nbsp;&nbsp;
 				</td>
 				 </td>
-					<td width="5%"  width='15%'><a class="easyui-linkbutton" style="min-width: 35px;" data-options="iconCls:'l-btn-icon icon-add'" onclick="addRow();">新增</a>
+					<td><a class="easyui-linkbutton" style="min-width: 35px;" data-options="iconCls:'l-btn-icon icon-add'" onclick="addRow();">新增货号</a>
 			     </td>
 			</tr>
 			
 		<tbody>
-	        <c:forEach items="${list}" var="base"> 
-              <tr >
-       			 <td class='tdR'  width='15%'>货号:</td>
-					<td >
-				   <input type="text" value='${base.itemNo}' id='itemNo"+listIndex+"' name='itemNo'  class="easyui-numbox"   style="width: 150px;height: 20px;"   placeholder='请输入huoha'/>
-					</td>
-					<td >
-            		 	<input type="hidden" value='${base.id}' id='id' name='id' />
-            		</td>
+        <c:forEach items="${list}" var="base"> 
+             <tr >
+      			 <td class='tdR'  width='15%'>货号:</td>
+				<td >
+			   		<input  value='${base.itemNo}' id='itemNo"+listIndex+"' name='itemNo'  class="easyui-numbox"   style="width: 150px;height: 20px;"   placeholder='请输入货号'/>
+				</td>
+           		 	<input type="hidden" value='${base.id}' id='id' name='id' />
 			</tr> 
-            </c:forEach>
+           </c:forEach>
             
           <tr id="entourage1">
            </tr> 
