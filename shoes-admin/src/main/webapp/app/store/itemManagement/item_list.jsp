@@ -64,11 +64,11 @@
 					width : 100
 				},{
 					field : 'price_spread',
-					title : '差价件数',
+					title : '差价(元)',
 					width : 110
 				},{
-					field : 'price_spread',
-					title : '差价(元)',
+					field : 'difference_number',
+					title : '差价件数',
 					width : 110
 				},{
 					field : 'returns_number',
