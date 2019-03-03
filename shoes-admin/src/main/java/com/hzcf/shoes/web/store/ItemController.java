@@ -32,7 +32,7 @@ import com.hzcf.shoes.util.StringUtil;
 *
 */
 @Controller
-@RequestMapping("/zly/item")
+@RequestMapping("/item")
 public class ItemController extends BaseController{
 
 	@Autowired
@@ -42,12 +42,12 @@ public class ItemController extends BaseController{
 	
 	/**
 	 * 
-	 * Description: 跳转到列表页面
+	 * Description: 跳转到订单列表页面
 	 */
 	@RequestMapping("/toPageList")
 	public String toEmpList(String refreshTag,String messageCode,Model model) {
 		showMessageAlert(refreshTag,messageCode,model);
-		return "app/zly/item/item_list";
+		return "app/store/item/item_list";
 	}
 	
 	/**
