@@ -303,4 +303,100 @@
       operator = #{operator,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="getCustomerAccountList" parameterType="java.util.Map" resultType="hashMap">
+    <!--
+        客户账单管理列表
+        查询思路 :
+            根据客户姓名分组 , 查询 客户姓名 , 总货款( 订单查询的总金额 - 减次 - 退货 )
+    -->
+            SELECT
+              customer_name customerName,
+            SUM(
+              number_packages * shoe_dual * sale_price - (
+            CASE
+            WHEN price_spread IS NULL THEN
+              0
+            ELSE
+              price_spread
+            END
+              ) * (
+            CASE
+            WHEN difference_number IS NULL THEN
+              0
+            ELSE
+              difference_number
+            END
+              ) - (
+            CASE
+            WHEN sale_price IS NULL THEN
+              0
+            ELSE
+                sale_price
+            END
+              ) * (
+            CASE
+            WHEN returns_number IS NULL THEN
+              0
+            ELSE
+                returns_number
+            END
+              )
+                ) totalGoodsMoney
+            FROM
+              zly_order
+            WHERE 1 = 1
+              <if test=" customerName != null and customerName != ''" >
+                customer_name = #{customerName}
+              </if>
+            GROUP BY
+              customer_name
+            limit #{startIndex},#{endIndex}
+  </select>
+
+  <select id="getCustomerAccountListTotal" parameterType="java.util.Map" resultType="java.lang.Long">
+    select count(0) from (
+      SELECT
+          customer_name
+        FROM
+        zly_order
+        WHERE 1 = 1
+        <if test=" customerName != null and customerName != ''" >
+          and customer_name = #{customerName}
+        </if>
+        GROUP BY
+        customer_name
+    ) temp
+  </select>
+
+  <select id="selectWaitBackMoney" parameterType="java.util.Map" resultType="hashMap">
+      SELECT
+          NAME customerName,
+      SUM(
+      (
+        CASE
+          WHEN actual_payment IS NULL THEN
+            0
+          ELSE
+          actual_payment
+        END
+        ) + (
+        CASE
+          WHEN small_change IS NULL THEN
+            0
+        ELSE
+          small_change
+        END
+        )
+      ) realBackMoney
+      FROM
+          zly_customer_payment_record
+      WHERE 1 = 1
+      <if test=" customerName != null and customerName != ''" >
+        AND name = #{customerName}
+      </if>
+      GROUP BY
+          NAME
+  </select>
+
 </mapper>

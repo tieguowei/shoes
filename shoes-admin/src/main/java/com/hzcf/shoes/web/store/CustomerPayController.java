@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.hzcf.shoes.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,9 +37,10 @@ import com.hzcf.shoes.util.StringUtil;
 public class CustomerPayController extends BaseController{
 
 	@Autowired
-	private ZlyShoeFactoryService zlyShoeFactoryService;
-	
-	
+	private CustomerService customerService;
+
+	@Autowired
+	private ZlyShoeFactoryService zlyShoeFactoryService ;
 	
 	/**
 	 * 
@@ -47,21 +49,22 @@ public class CustomerPayController extends BaseController{
 	@RequestMapping("/toPageList")
 	public String toEmpList(String refreshTag,String messageCode,Model model) {
 		showMessageAlert(refreshTag,messageCode,model);
-		return "app/zly/customerPay/customer_pay_list";
+		return "/app/store/customerAccountsManagement/customer_pay_list";
 	}
 	
 	/**
 	 * 
-	 * Description: 鞋厂分页查询列表
+	 * Description: 查询客户账单列表
 	 */
 	@ResponseBody
-	@RequestMapping(value="/getFactoryList")
+	@RequestMapping(value="/getCustomerList")
 	public DataMsg getFactoryList(HttpServletRequest request,DataMsg dataMsg) {
 		try {
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
 			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("rows")));
-			PageModel pageModel = zlyShoeFactoryService.findAllByPage(paramsCondition);
+			paramsCondition.put("customerName", request.getParameter("customerName"));
+			PageModel pageModel = this.customerService.getCustomerAccountList(paramsCondition);
 			dataMsg.setTotal(pageModel.getTotalRecords());
 			dataMsg.setRows(pageModel.getList());
 		} catch (Exception e) {
@@ -99,7 +102,6 @@ public class CustomerPayController extends BaseController{
      
      /**
       * 添加
-      * @param goldProduct
       * @param dataMsg
       * @param session
       * @return
@@ -154,7 +156,6 @@ public class CustomerPayController extends BaseController{
      
      /**
       * 修改保存
-      * @param goldProduct
       * @param dataMsg
       * @return
       */

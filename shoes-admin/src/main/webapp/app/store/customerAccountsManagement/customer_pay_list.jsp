@@ -12,7 +12,7 @@
         var datagrid;
         $(function(){
             datagrid = $('#datagrid').datagrid({
-                url : '${app}/zly/shoeFactory/getFactoryList',
+                url : '${app}/customerPay/getCustomerList',
 				title : '',
 				pagination : true,
 				pageSize : <%=Constants.PAGE_SIZE%>,
@@ -22,52 +22,43 @@
 				border : false,
 				singleSelect : false,
 				idField : 'id',
-				columns : [[{
+				columns : [[
+				{
 					field:'id',
 					checkbox:true
 				},{
 					field:'rowNumbers',
 				    title: '序号',
 				    align: 'center',
-				    width: 50,
+				    width: 150,
 				    formatter: function(val,rec,index){
 						var op = $('#datagrid').datagrid('options');
 					    return op.pageSize * (op.pageNumber - 1) + (index + 1);
 					}
 				},{
-					field : 'name',
+					field : 'customerName',
 					title : '客户姓名',
-					width : 120
+					align: 'center',
+					width : 200
 				},{
-					field : 'name',
+					field : 'totalGoodsMoney',
 					title : '总货款',
-					width : 120
+					align: 'center',
+					width : 200
 				},{
-					field : 'telephone',
-					title : '已付款',
-					width : 120
-				},{
-					field : 'mobile',
+					field : 'waitBackMoney',
 					title : '欠款',
-					width : 120
-				},{
-					field : 'operate',
-                    align: 'center',
-					title : '操作',
-					width : 200,
-					formatter : function(value,row,index){
-						 var retStr;
-						 retStr = "<a href='#' onclick='toUpdateGoldProduct(\"" + row.id + "\");'>详情&nbsp;&nbsp;</a>";
-                         return retStr;
-					}
-				}]],
+					align: 'center',
+					width : 200
+				}
+				]],
 			});
             
 		});
         
         // 跳转到添加新页面页面
    		function toAddFactory(){
-   			parent.createTab('${app}/zly/shoeFactory/toAddFactory','添加鞋厂');
+   			parent.createTab('${app}/zly/shoeFactory/toAddFactory','123');
    		}
         
    		
