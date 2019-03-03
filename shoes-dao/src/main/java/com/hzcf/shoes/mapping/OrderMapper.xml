@@ -443,9 +443,14 @@
 		number_packages,
 		shoe_dual,
 		sale_price,
-		if(price_spread,0,'')price_spread,
-		if(difference_number,0,'')difference_number,
-	    if(returns_number,0,'')returns_number,
+		case when price_spread = 0 then ''
+		else price_spread end price_spread,
+
+		case when difference_number = 0 then ''
+		else difference_number end difference_number,
+
+		case when returns_number = 0 then ''
+		else returns_number end returns_number,
 		customer_is_defective_goods,
 		factory_is_defective_goods,
 		season,
