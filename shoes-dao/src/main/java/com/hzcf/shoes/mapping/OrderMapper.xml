@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzcf.shoes.dao.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.hzcf.shoes.model.Order" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="customer_name" property="customerName" jdbcType="VARCHAR" />
+    <result column="factory_name" property="factoryName" jdbcType="VARCHAR" />
+    <result column="item_no" property="itemNo" jdbcType="VARCHAR" />
+    <result column="number_packages" property="numberPackages" jdbcType="INTEGER" />
+    <result column="shoe_dual" property="shoeDual" jdbcType="INTEGER" />
+    <result column="sale_price" property="salePrice" jdbcType="DECIMAL" />
+    <result column="price_spread" property="priceSpread" jdbcType="DECIMAL" />
+    <result column="difference_number" property="differenceNumber" jdbcType="INTEGER" />
+    <result column="returns_number" property="returnsNumber" jdbcType="INTEGER" />
+    <result column="customer_is_defective_goods" property="customerIsDefectiveGoods" jdbcType="CHAR" />
+    <result column="factory_is_defective_goods" property="factoryIsDefectiveGoods" jdbcType="CHAR" />
+    <result column="season" property="season" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="operator" property="operator" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, pay_time, customer_name, factory_name, item_no, number_packages, shoe_dual, sale_price, 
+    price_spread, difference_number, returns_number, customer_is_defective_goods, factory_is_defective_goods, 
+    season, create_time, update_time, operator
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hzcf.shoes.model.OrderExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from zly_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from zly_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from zly_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hzcf.shoes.model.OrderExample" >
+    delete from zly_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hzcf.shoes.model.Order" >
+    insert into zly_order (id, pay_time, customer_name, 
+      factory_name, item_no, number_packages, 
+      shoe_dual, sale_price, price_spread, 
+      difference_number, returns_number, customer_is_defective_goods, 
+      factory_is_defective_goods, season, create_time, 
+      update_time, operator)
+    values (#{id,jdbcType=INTEGER}, #{payTime,jdbcType=TIMESTAMP}, #{customerName,jdbcType=VARCHAR}, 
+      #{factoryName,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, #{numberPackages,jdbcType=INTEGER}, 
+      #{shoeDual,jdbcType=INTEGER}, #{salePrice,jdbcType=DECIMAL}, #{priceSpread,jdbcType=DECIMAL}, 
+      #{differenceNumber,jdbcType=INTEGER}, #{returnsNumber,jdbcType=INTEGER}, #{customerIsDefectiveGoods,jdbcType=CHAR}, 
+      #{factoryIsDefectiveGoods,jdbcType=CHAR}, #{season,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hzcf.shoes.model.Order" >
+    insert into zly_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="customerName != null" >
+        customer_name,
+      </if>
+      <if test="factoryName != null" >
+        factory_name,
+      </if>
+      <if test="itemNo != null" >
+        item_no,
+      </if>
+      <if test="numberPackages != null" >
+        number_packages,
+      </if>
+      <if test="shoeDual != null" >
+        shoe_dual,
+      </if>
+      <if test="salePrice != null" >
+        sale_price,
+      </if>
+      <if test="priceSpread != null" >
+        price_spread,
+      </if>
+      <if test="differenceNumber != null" >
+        difference_number,
+      </if>
+      <if test="returnsNumber != null" >
+        returns_number,
+      </if>
+      <if test="customerIsDefectiveGoods != null" >
+        customer_is_defective_goods,
+      </if>
+      <if test="factoryIsDefectiveGoods != null" >
+        factory_is_defective_goods,
+      </if>
+      <if test="season != null" >
+        season,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="customerName != null" >
+        #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryName != null" >
+        #{factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="numberPackages != null" >
+        #{numberPackages,jdbcType=INTEGER},
+      </if>
+      <if test="shoeDual != null" >
+        #{shoeDual,jdbcType=INTEGER},
+      </if>
+      <if test="salePrice != null" >
+        #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="priceSpread != null" >
+        #{priceSpread,jdbcType=DECIMAL},
+      </if>
+      <if test="differenceNumber != null" >
+        #{differenceNumber,jdbcType=INTEGER},
+      </if>
+      <if test="returnsNumber != null" >
+        #{returnsNumber,jdbcType=INTEGER},
+      </if>
+      <if test="customerIsDefectiveGoods != null" >
+        #{customerIsDefectiveGoods,jdbcType=CHAR},
+      </if>
+      <if test="factoryIsDefectiveGoods != null" >
+        #{factoryIsDefectiveGoods,jdbcType=CHAR},
+      </if>
+      <if test="season != null" >
+        #{season,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hzcf.shoes.model.OrderExample" resultType="java.lang.Integer" >
+    select count(*) from zly_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update zly_order
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.payTime != null" >
+        pay_time = #{record.payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.customerName != null" >
+        customer_name = #{record.customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.factoryName != null" >
+        factory_name = #{record.factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.itemNo != null" >
+        item_no = #{record.itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.numberPackages != null" >
+        number_packages = #{record.numberPackages,jdbcType=INTEGER},
+      </if>
+      <if test="record.shoeDual != null" >
+        shoe_dual = #{record.shoeDual,jdbcType=INTEGER},
+      </if>
+      <if test="record.salePrice != null" >
+        sale_price = #{record.salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.priceSpread != null" >
+        price_spread = #{record.priceSpread,jdbcType=DECIMAL},
+      </if>
+      <if test="record.differenceNumber != null" >
+        difference_number = #{record.differenceNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.returnsNumber != null" >
+        returns_number = #{record.returnsNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.customerIsDefectiveGoods != null" >
+        customer_is_defective_goods = #{record.customerIsDefectiveGoods,jdbcType=CHAR},
+      </if>
+      <if test="record.factoryIsDefectiveGoods != null" >
+        factory_is_defective_goods = #{record.factoryIsDefectiveGoods,jdbcType=CHAR},
+      </if>
+      <if test="record.season != null" >
+        season = #{record.season,jdbcType=CHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.operator != null" >
+        operator = #{record.operator,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update zly_order
+    set id = #{record.id,jdbcType=INTEGER},
+      pay_time = #{record.payTime,jdbcType=TIMESTAMP},
+      customer_name = #{record.customerName,jdbcType=VARCHAR},
+      factory_name = #{record.factoryName,jdbcType=VARCHAR},
+      item_no = #{record.itemNo,jdbcType=VARCHAR},
+      number_packages = #{record.numberPackages,jdbcType=INTEGER},
+      shoe_dual = #{record.shoeDual,jdbcType=INTEGER},
+      sale_price = #{record.salePrice,jdbcType=DECIMAL},
+      price_spread = #{record.priceSpread,jdbcType=DECIMAL},
+      difference_number = #{record.differenceNumber,jdbcType=INTEGER},
+      returns_number = #{record.returnsNumber,jdbcType=INTEGER},
+      customer_is_defective_goods = #{record.customerIsDefectiveGoods,jdbcType=CHAR},
+      factory_is_defective_goods = #{record.factoryIsDefectiveGoods,jdbcType=CHAR},
+      season = #{record.season,jdbcType=CHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      operator = #{record.operator,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hzcf.shoes.model.Order" >
+    update zly_order
+    <set >
+      <if test="payTime != null" >
+        pay_time = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="customerName != null" >
+        customer_name = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryName != null" >
+        factory_name = #{factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        item_no = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="numberPackages != null" >
+        number_packages = #{numberPackages,jdbcType=INTEGER},
+      </if>
+      <if test="shoeDual != null" >
+        shoe_dual = #{shoeDual,jdbcType=INTEGER},
+      </if>
+      <if test="salePrice != null" >
+        sale_price = #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="priceSpread != null" >
+        price_spread = #{priceSpread,jdbcType=DECIMAL},
+      </if>
+      <if test="differenceNumber != null" >
+        difference_number = #{differenceNumber,jdbcType=INTEGER},
+      </if>
+      <if test="returnsNumber != null" >
+        returns_number = #{returnsNumber,jdbcType=INTEGER},
+      </if>
+      <if test="customerIsDefectiveGoods != null" >
+        customer_is_defective_goods = #{customerIsDefectiveGoods,jdbcType=CHAR},
+      </if>
+      <if test="factoryIsDefectiveGoods != null" >
+        factory_is_defective_goods = #{factoryIsDefectiveGoods,jdbcType=CHAR},
+      </if>
+      <if test="season != null" >
+        season = #{season,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hzcf.shoes.model.Order" >
+    update zly_order
+    set pay_time = #{payTime,jdbcType=TIMESTAMP},
+      customer_name = #{customerName,jdbcType=VARCHAR},
+      factory_name = #{factoryName,jdbcType=VARCHAR},
+      item_no = #{itemNo,jdbcType=VARCHAR},
+      number_packages = #{numberPackages,jdbcType=INTEGER},
+      shoe_dual = #{shoeDual,jdbcType=INTEGER},
+      sale_price = #{salePrice,jdbcType=DECIMAL},
+      price_spread = #{priceSpread,jdbcType=DECIMAL},
+      difference_number = #{differenceNumber,jdbcType=INTEGER},
+      returns_number = #{returnsNumber,jdbcType=INTEGER},
+      customer_is_defective_goods = #{customerIsDefectiveGoods,jdbcType=CHAR},
+      factory_is_defective_goods = #{factoryIsDefectiveGoods,jdbcType=CHAR},
+      season = #{season,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      operator = #{operator,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

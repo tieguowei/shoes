@@ -1,4 +1,4 @@
-package com.hzcf.shoes.web.zly;
+package com.hzcf.shoes.web.store;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -28,12 +28,12 @@ import com.hzcf.shoes.util.StringUtil;
 
 /** 
 *
-* Description: 鞋厂管理
+* Description: 订单管理
 *
 */
 @Controller
-@RequestMapping("/zly/shoeFactory")
-public class ZlyShoeFactoryController extends BaseController{
+@RequestMapping("/zly/item")
+public class ItemController extends BaseController{
 
 	@Autowired
 	private ZlyShoeFactoryService zlyShoeFactoryService;
@@ -47,7 +47,7 @@ public class ZlyShoeFactoryController extends BaseController{
 	@RequestMapping("/toPageList")
 	public String toEmpList(String refreshTag,String messageCode,Model model) {
 		showMessageAlert(refreshTag,messageCode,model);
-		return "app/zly/factory/factory_list";
+		return "app/zly/item/item_list";
 	}
 	
 	/**
