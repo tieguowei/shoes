@@ -35,4 +35,8 @@ public interface CustomerPaymentRecordMapper {
     Long getCustomerAccountListTotal(Map<String,Object> param);
 
     List<Map<String,Object>> selectWaitBackMoney(Map<String,Object> map);
+
+    Long getCustomerBackRecordListTotal(Map<String,Object> param);
+
+    List<Map<String,Object>> getCustomerBackRecordList(Map<String,Object> map);
 }

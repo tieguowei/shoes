@@ -35,6 +35,7 @@ public class CustomerServiceImpl implements CustomerService {
             for (Map<String, Object> datum : data) {
                 Map<String,Object> retMap = new HashMap<>();
                 //根据用户名只能查询出一条真实还款的记录 , 为 查询所有的用户的真实还款记录保留一个接口
+                retMap.put("id",datum.get("id"));
                 retMap.put("customerName",datum.get("customerName"));
                 retMap.put("totalGoodsMoney",datum.get("totalGoodsMoney"));
                 List<Map<String,Object>> realBackRecord = this.customerPaymentRecordMapper.selectWaitBackMoney(datum);
@@ -50,6 +51,27 @@ public class CustomerServiceImpl implements CustomerService {
         }
         Long totalRecords = this.customerPaymentRecordMapper.getCustomerAccountListTotal(paramsCondition);
         pageModel.setList(ret);
+        pageModel.setTotalRecords(totalRecords);
+        return pageModel;
+    }
+
+    /**
+     *  用户的回款记录列表
+     * @param paramsCondition
+     * @return
+     */
+    @Override
+    public PageModel selectBackRecordList(Map<String, Object> paramsCondition) {
+        PageModel pageModel = new PageModel();
+        pageModel.setPageNo((Integer) paramsCondition.get("pageNo"));
+        pageModel.setPageSize((Integer) paramsCondition.get("pageSize"));
+        paramsCondition.put("startIndex", pageModel.getStartIndex());
+        paramsCondition.put("endIndex", pageModel.getEndIndex());
+        paramsCondition.put("customerName", paramsCondition.get("customerName"));
+        //查询回款记录列表
+        List<Map<String,Object>> list = this.customerPaymentRecordMapper.getCustomerBackRecordList(paramsCondition);
+        Long totalRecords = this.customerPaymentRecordMapper.getCustomerBackRecordListTotal(paramsCondition);
+        pageModel.setList(list);
         pageModel.setTotalRecords(totalRecords);
         return pageModel;
     }

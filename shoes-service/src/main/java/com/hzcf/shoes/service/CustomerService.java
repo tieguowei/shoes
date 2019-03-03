@@ -12,4 +12,6 @@ public interface CustomerService {
      */
     public PageModel getCustomerAccountList(Map<String, Object> condition);
 
+    public PageModel selectBackRecordList(Map<String, Object> condition);
+
 }

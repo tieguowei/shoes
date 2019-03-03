@@ -311,6 +311,7 @@
             根据客户姓名分组 , 查询 客户姓名 , 总货款( 订单查询的总金额 - 减次 - 退货 )
     -->
             SELECT
+              id ,
               customer_name customerName,
             SUM(
               number_packages * shoe_dual * sale_price - (
@@ -347,7 +348,7 @@
               zly_order
             WHERE 1 = 1
               <if test=" customerName != null and customerName != ''" >
-                customer_name = #{customerName}
+                and customer_name = #{customerName}
               </if>
             GROUP BY
               customer_name
@@ -397,6 +398,37 @@
       </if>
       GROUP BY
           NAME
+  </select>
+
+  <select id="getCustomerBackRecordList" parameterType="java.util.Map" resultType="hashMap">
+    select
+      id ,
+      bill_start_time billStartTime ,
+      bill_end_time billEndTime ,
+      customary_dues customaryDues ,
+      actual_payment actualPayment ,
+      balance_due	balanceDue ,
+      small_change snallChange ,
+      defective_goods	defectiveGoods
+    from zly_customer_payment_record where 1 = 1
+      <if test=" customerName != null and customerName != ''" >
+        AND name = #{customerName}
+      </if>
+    order by create_time desc
+    limit #{startIndex},#{endIndex}
+  </select>
+
+  <select id="getCustomerBackRecordListTotal" parameterType="java.util.Map" resultType="java.lang.Long">
+        select
+            count(0) totalRecord
+        from
+          zly_customer_payment_record
+        where
+          1 = 1
+        <if test=" customerName != null and customerName != ''" >
+          AND name = #{customerName}
+        </if>
+        GROUP BY name
   </select>
 
 </mapper>
