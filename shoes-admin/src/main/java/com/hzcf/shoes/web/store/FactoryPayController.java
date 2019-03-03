@@ -32,7 +32,7 @@ import com.hzcf.shoes.util.StringUtil;
 *
 */
 @Controller
-@RequestMapping("/zly/factoryPay")
+@RequestMapping("/factoryPay")
 public class FactoryPayController extends BaseController{
 
 	@Autowired
