@@ -416,10 +416,10 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  <!-- 员工列表动态查询条件 -->
+  <!-- 订单列表动态查询条件 -->
   <sql id="dynamicPageWhere">
   	<if test="customerName != null">
-  	 and customer_name  LIKE CONCAT('%',#{customerName},'%')
+  	 and customer_name = #{customerName}
  	</if>
  	<if test="factoryName != null">
   		 and factory_name  LIKE CONCAT('%',#{factoryName},'%')
@@ -489,5 +489,34 @@
   	SELECT COUNT(id) FROM zly_order 
 	WHERE 1=1
 	<include refid="dynamicPageWhere"/>
+  </select>
+  
+  <!-- 查询是否有账单 -->
+  <select id="checkBillByCustomerAndPayTime" parameterType="hashmap" resultType="java.util.LinkedHashMap">
+     SELECT
+		DATE_FORMAT(pay_time,'%Y-%m-%d') pay_time,
+		customer_name,
+		factory_name,
+		item_no,
+		number_packages,
+		shoe_dual,
+		sale_price,
+		(number_packages * shoe_dual * sale_price) - (price_spread*difference_number) - (returns_number*sale_price) totalMoney,
+		remark
+    from zly_order where 1 =1 
+  <if test="customerName != null">
+  	 and customer_name = #{customerName}
+ 	</if>
+ 	<if test="minCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+ 		]]>
+    </if>
+    <if test="maxCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <= #{maxCreateTime}
+ 	]]>
+    </if>
+  
   </select>
 </mapper>

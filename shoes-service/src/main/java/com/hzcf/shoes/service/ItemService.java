@@ -1,6 +1,7 @@
 
 package com.hzcf.shoes.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.hzcf.shoes.model.Order;
@@ -39,6 +40,13 @@ public interface ItemService {
 	 * @param order
 	 */
 	public void updateByPrimaryKeySelective(Order order);
+
+	/**
+	 *查询是否有账单
+	 * @param paramsCondition
+	 * @return
+	 */
+	public List<Map<String, Object>> checkBillByCustomerAndPayTime(Map<String, Object> paramsCondition);
 
 	
 }

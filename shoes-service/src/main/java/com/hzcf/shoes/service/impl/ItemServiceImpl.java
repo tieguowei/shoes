@@ -8,11 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hzcf.shoes.dao.OrderMapper;
-import com.hzcf.shoes.dao.ZlyShoeBrandMapper;
-import com.hzcf.shoes.dao.ZlyShoeFactoryMapper;
 import com.hzcf.shoes.model.Order;
-import com.hzcf.shoes.model.ZlyShoeBrand;
-import com.hzcf.shoes.model.ZlyShoeFactory;
 import com.hzcf.shoes.service.ItemService;
 import com.hzcf.shoes.util.PageModel;
 
@@ -53,6 +49,12 @@ public class ItemServiceImpl implements ItemService{
 	@Override
 	public void updateByPrimaryKeySelective(Order order) {
 		orderMapper.updateByPrimaryKeySelective(order);
+	}
+
+
+	@Override
+	public List<Map<String, Object>> checkBillByCustomerAndPayTime(Map<String, Object> paramsCondition) {
+		return orderMapper.checkBillByCustomerAndPayTime(paramsCondition);
 	}
 
 

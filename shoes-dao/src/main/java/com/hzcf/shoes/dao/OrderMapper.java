@@ -33,4 +33,6 @@ public interface OrderMapper {
 	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
 
 	Long findAllByPageCount(Map<String, Object> paramsCondition);
+
+	List<Map<String, Object>> checkBillByCustomerAndPayTime(Map<String, Object> paramsCondition);
 }

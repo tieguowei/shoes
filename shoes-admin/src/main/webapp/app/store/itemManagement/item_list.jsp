@@ -145,6 +145,46 @@
 				});
 			}
 		}
+		
+		//客户账单导出
+		function doCustomerExport(){
+			//客户姓名
+			var customerName = $("#customer_name").textbox("getValue")
+			if (customerName == ""|| typeof (customerName) == "undefined") {
+				$.messager.alert('提示信息', '请在左上方搜索框输入客户姓名！', 'info');
+				return false;
+			}  
+			 //发货时间
+			var minCreateTime =$("#minCreateTime").datebox('getValue');
+			var maxCreateTime =$("#maxCreateTime").datebox('getValue');
+			 if (minCreateTime == "" && maxCreateTime == "") {
+				$.messager.alert('提示信息', '请在上方搜索框输入发货时间！', 'info');
+				return false;
+			}  
+			 $.ajax({
+	   				url : "${app}/item/checkBillByCustomerAndPayTime",
+					type : "post",
+					dataType : "json",
+					data:{
+						"customerName" : customerName,
+						"minCreateTime" : minCreateTime,
+						"maxCreateTime":maxCreateTime
+					},
+					success : function(data){
+						if(data){
+							$.messager.confirm("请确认", "您确定要导出【"+customerName+"】在此时间段的账单吗？", function(b){
+								if(b){
+									$("#searchForm").attr("action", "${app}/item/doCustomerExport");
+									$("#searchForm").attr("method", "POST");
+									$("#searchForm").submit();
+								}
+							});
+						}else{
+							$.messager.alert('提示信息', '客户【'+customerName+" 】在此时间段内无订单！", 'info');
+						}
+					},		
+					});
+		}
 	</script>
 </head>
 
@@ -215,6 +255,10 @@
 			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toAddItem();">添加订单</a>
 		            <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="toEditItem();">修改订单</a>
+					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
+					<a class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true" onclick="doCustomerExport();"><span style="color: red">客户账单导出</span></a>
+					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
+					<a class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true" onclick="doFactoryExport();">鞋厂账单导出</a>
 					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 			</td>
 		</tr>
