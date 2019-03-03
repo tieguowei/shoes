@@ -58,6 +58,24 @@ public class ItemServiceImpl implements ItemService{
 	}
 
 
+	@Override
+	public Map<String, Object> getTotalMoneyByParam(Map<String, Object> paramsCondition) {
+		return orderMapper.getTotalMoneyByParam(paramsCondition);
+	}
+
+
+	@Override
+	public Map<String, Object> getTotaMoneyOwed(String customerName) {
+		return orderMapper.getTotaMoneyOwed(customerName);
+	}
+
+
+	@Override
+	public List<Map<String, Object>> getCustomerPaymentHistory(String customerName) {
+		return orderMapper.getCustomerPaymentHistory(customerName);
+	}
+
+
 
 
 }

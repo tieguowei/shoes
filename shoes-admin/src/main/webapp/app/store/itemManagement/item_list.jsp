@@ -157,8 +157,8 @@
 			 //发货时间
 			var minCreateTime =$("#minCreateTime").datebox('getValue');
 			var maxCreateTime =$("#maxCreateTime").datebox('getValue');
-			 if (minCreateTime == "" && maxCreateTime == "") {
-				$.messager.alert('提示信息', '请在上方搜索框输入发货时间！', 'info');
+			 if (minCreateTime == "" || maxCreateTime == "") {
+				$.messager.alert('提示信息', '请在上方搜索框输入发货起止时间！', 'info');
 				return false;
 			}  
 			 $.ajax({

@@ -35,4 +35,18 @@ public interface OrderMapper {
 	Long findAllByPageCount(Map<String, Object> paramsCondition);
 
 	List<Map<String, Object>> checkBillByCustomerAndPayTime(Map<String, Object> paramsCondition);
+
+	Map<String, Object> getTotalMoneyByParam(Map<String, Object> paramsCondition);
+
+	/**
+	 * 查询客户历史账单总欠款
+	 * @param customerName
+	 * @return
+	 */
+	Map<String, Object> getTotaMoneyOwed(String customerName);
+
+	/*
+	 *查询客户还款记录  
+	 */
+	List<Map<String, Object>> getCustomerPaymentHistory(String customerName);
 }

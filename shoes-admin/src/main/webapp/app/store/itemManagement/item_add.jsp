@@ -10,7 +10,6 @@
 	<%@ include file="/common/header.jsp"%>
 	<script type="text/javascript">
 	//添加
-   //提交
 		function submitForm(){
 			var itemAddForm = $("#itemAddForm");
 			itemAddForm.form('submit',{

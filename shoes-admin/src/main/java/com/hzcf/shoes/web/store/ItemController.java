@@ -197,7 +197,7 @@ public class ItemController extends BaseController{
 	
 	/**
 	 * 
-	 * Description: 订单分页查询列表
+	 * Description: 查询客户固定时间段的订单
 	 */
 	@ResponseBody
 	@RequestMapping(value="/checkBillByCustomerAndPayTime")
@@ -263,7 +263,7 @@ public class ItemController extends BaseController{
 	        HSSFRow row = sheet.createRow(0);
 		    row.setHeightInPoints(50);
 			HSSFCell cell = row.createCell(0);
-			sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,8));//首行合并多少格
+			sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,11));//首行合并多少格
 			String customerName = StringUtil.trim(request.getParameter("customerName"));
 			cell.setCellValue("客户："+customerName+"    账单日期："+format.format(new Date()));
 			cell.setCellStyle(firstStyle);
@@ -273,7 +273,7 @@ public class ItemController extends BaseController{
 			HSSFCell firstCell = firstRow.createCell(0);
 			firstCell.setCellValue("发货记录");
 			firstCell.setCellStyle(secondStyle);
-			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,8));//发货记录合并多少格
+			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,11));//发货记录合并多少格
 
 			
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
@@ -288,6 +288,9 @@ public class ItemController extends BaseController{
 			likedHashMap.put("件数", "件数"); 
 			likedHashMap.put("双数", "双数"); 
 			likedHashMap.put("单价", "单价"); 
+			likedHashMap.put("差价（元）", "退货件数"); 
+			likedHashMap.put("差价件数", "差价件数"); 
+			likedHashMap.put("退货件数", "退货件数"); 
 			likedHashMap.put("总计", "总计"); 
 			likedHashMap.put("备注", "备注"); 
 			dataList.add(0,likedHashMap);
@@ -314,7 +317,7 @@ public class ItemController extends BaseController{
 					Cell cells = rows.createCell(j);
 					String cellLiString = String.valueOf(list.get(j));
 					cells.setCellValue(new HSSFRichTextString(cellLiString));
-					sheet.setColumnWidth(j, 3000);// 设置excel每列宽度
+					sheet.setColumnWidth(j, 2500);// 设置excel每列宽度
 					cells.setCellStyle(str); 
 				}
  				start += 1;
@@ -328,19 +331,17 @@ public class ItemController extends BaseController{
 			HSSFCell nextCell = nextRow.createCell(0);
 			nextCell.setCellValue("还款记录");
 			nextCell.setCellStyle(secondStyle);
-			sheet.addMergedRegion(new CellRangeAddress(size, size, 0, 8));
+			sheet.addMergedRegion(new CellRangeAddress(size, size, 0, 11));
 			LinkedHashMap<String,Object> nextLikedHashMap = new LinkedHashMap<String,Object>();
-			List<Map<String,Object>> nextList = itemService.checkBillByCustomerAndPayTime(paramsCondition);
+			List<Map<String,Object>> nextList = itemService.getCustomerPaymentHistory(customerName);
 
-			nextLikedHashMap.put("出货时间", "出货时间");
-			nextLikedHashMap.put("客户", "客户"); 
-			nextLikedHashMap.put("鞋厂", "鞋厂"); 
-			nextLikedHashMap.put("货号", "货号"); 
-			nextLikedHashMap.put("件数", "件数"); 
-			nextLikedHashMap.put("双数", "双数"); 
-			nextLikedHashMap.put("单价", "单价"); 
-			nextLikedHashMap.put("总计", "总计"); 
-			nextLikedHashMap.put("备注", "备注"); 
+			nextLikedHashMap.put("账单创建时间", "账单创建时间");
+			nextLikedHashMap.put("订单开始时间", "订单开始时间"); 
+			nextLikedHashMap.put("订单结束时间", "订单开始时间"); 
+			nextLikedHashMap.put("应还金额（元）", "应还金额（元）"); 
+			nextLikedHashMap.put("实还金额（元）", "实还金额（元）"); 
+			nextLikedHashMap.put("减次(元）", "减次(元）"); 
+			nextLikedHashMap.put("欠款(元）", "欠款(元）"); 
 			nextList.add(0,nextLikedHashMap);
 			int nextStart = 4+ dataList.size();
 			for (int i = 0; i < nextList.size(); i++) {
@@ -366,7 +367,7 @@ public class ItemController extends BaseController{
 						String cellLiString = String.valueOf(list.get(j));
 						cells.setCellValue(new HSSFRichTextString(cellLiString));
 						cells.setCellStyle(str); 
-						sheet.setColumnWidth(j, 3000);// 设置excel每列宽度
+						sheet.setColumnWidth(j, 5000);// 设置excel每列宽度
 					
 				}
 				nextStart += 1;
@@ -385,6 +386,13 @@ public class ItemController extends BaseController{
                   }
 
               }
+			  //查询用户此时间段内账单
+			  Map<String,Object> map = itemService.getTotalMoneyByParam(paramsCondition);
+			  //查询客户历史账单总欠款
+			  Map<String,Object> data = itemService.getTotaMoneyOwed(customerName);
+			  //账单入库
+			  
+			  //修改此时间段的订单状态
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

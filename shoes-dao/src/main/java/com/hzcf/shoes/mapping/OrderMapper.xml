@@ -491,18 +491,21 @@
 	<include refid="dynamicPageWhere"/>
   </select>
   
-  <!-- 查询是否有账单 -->
+  <!-- 查询客户固定时间段的订单 -->
   <select id="checkBillByCustomerAndPayTime" parameterType="hashmap" resultType="java.util.LinkedHashMap">
      SELECT
-		DATE_FORMAT(pay_time,'%Y-%m-%d') pay_time,
-		customer_name,
-		factory_name,
-		item_no,
-		number_packages,
-		shoe_dual,
-		sale_price,
-		(number_packages * shoe_dual * sale_price) - (price_spread*difference_number) - (returns_number*sale_price) totalMoney,
-		remark
+		IFNULL(DATE_FORMAT(pay_time,'%Y-%m-%d'),'') pay_time,
+		IFNULL(customer_name,'') customer_name,
+		IFNULL(factory_name,'') factory_name,
+		IFNULL(item_no,'') item_no,
+		IFNULL(number_packages,'') number_packages,
+		IFNULL(shoe_dual,'') shoe_dual,
+		IFNULL(sale_price,'') sale_price,
+		IFNULL(price_spread,'') price_spread,
+		IFNULL(difference_number,'') difference_number,
+		IFNULL(returns_number,'') returns_number,
+		IFNULL((number_packages * shoe_dual * sale_price) - (price_spread*difference_number) - (returns_number*sale_price),'')totalMoney,
+		IFNULL(remark,'') remark
     from zly_order where 1 =1 
   <if test="customerName != null">
   	 and customer_name = #{customerName}
@@ -517,6 +520,50 @@
  		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <= #{maxCreateTime}
  	]]>
     </if>
+  </select>
   
+  <!-- 查询客户固定时间段的订单汇总-->
+  <select id="getTotalMoneyByParam" parameterType="hashmap" resultType="hashmap">
+  SELECT
+		sum(number_packages * shoe_dual * sale_price-(price_spread*difference_number)) totalGoodsMoney,
+	  	sum(number_packages * shoe_dual) totalNum,
+		sum(number_packages * shoe_dual * 2 ) jianci
+	FROM
+		zly_order 
+	WHERE
+		customer_name = #{customerName}
+		  <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+			]]>
+		  <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <=#{maxCreateTime}
+			]]>
+  </select>
+  
+  <!-- 查询客户历史账单 总欠款 -->
+  <select id="getTotaMoneyOwed" parameterType="String" resultType="hashmap">
+	SELECT
+		sum(balance_due) balanceDue
+	FROM
+		zly_customer_payment_record
+	WHERE
+		name = #{customerName}
+  </select>
+  
+  <!-- 查看客户还款记录 -->
+  <select id="getCustomerPaymentHistory" parameterType="String" resultType="java.util.LinkedHashMap">
+   SELECT
+	  	IFNULL(create_time,'')create_time,
+		IFNULL(bill_start_time,'') bill_start_time,
+	    IFNULL(bill_end_time,'') bill_end_time,
+	   IFNULL(customary_dues,'') customary_dues ,
+	   IFNULL(actual_payment,'') actual_payment,
+	   IFNULL(balance_due,'') balance_due,
+		IFNULL(defective_goods,'') defective_goods,
+		IFNULL(balance_due,'') balance_due
+FROM
+	zly_customer_payment_record
+WHERE
+	name =#{customerName}
   </select>
 </mapper>

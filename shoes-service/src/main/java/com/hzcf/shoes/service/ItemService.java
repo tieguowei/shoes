@@ -48,5 +48,26 @@ public interface ItemService {
 	 */
 	public List<Map<String, Object>> checkBillByCustomerAndPayTime(Map<String, Object> paramsCondition);
 
+	/**
+	 * 查询客户在固定时间段的账单
+	 * @param paramsCondition
+	 * @return
+	 */
+	public Map<String, Object> getTotalMoneyByParam(Map<String, Object> paramsCondition);
+
+	/**
+	 * 查询客户总欠款
+	 * @param customerName
+	 * @return
+	 */
+	public Map<String, Object> getTotaMoneyOwed(String customerName);
+
+	/**
+	 * 查询客户还款记录
+	 * @param customerName
+	 * @return
+	 */
+	public List<Map<String, Object>> getCustomerPaymentHistory(String customerName);
+
 	
 }
