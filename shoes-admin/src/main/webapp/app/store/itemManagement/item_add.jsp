@@ -98,12 +98,13 @@
 			<tr>
 				<td width="15%" class="tdR"><span style="color: red">*</span>发货时间:</td>
                 <td>
-                    <input id="pay_time" name="payTime"  maxlength="30"
+                    <input id="pay_time" name="payTime"   maxlength="30"
                      class='easyui-datebox' style="width: 150px;height: 24px;" data-options="prompt:'请选择发货日期',editable:false"/>
                 </td>
 				<td width="15%" class="tdR"><span style="color: red">*</span>客户姓名:</td>
 				<td width="35%">
 					<input type="text" id="customer_name" name="customerName" class="easyui-textbox"  style="width: 150px;height: 24px;"/>
+				   <span style="color: red">如客户重名 请仿照： 张三-13678909090</span>
 				</td>
 			</tr>
 			<tr>
@@ -119,22 +120,22 @@
 			<tr>
 				<td class="tdR"><span style="color: red">*</span>件数:</td>
 				<td>
-				   <input type="text"  id="number_packages" name="numberPackages" class="easyui-numberbox"   style="width: 150px;height: 24px;"  />
+				   <input type="text"  id="number_packages" name="numberPackages" min="0" class="easyui-numberbox"   style="width: 150px;height: 24px;"  />
 				</td>
-				<td class="tdR"><span style="color: red">*</span>双数:</td>
+				<td class="tdR"><span style="color: red">*</span>每件双数:</td>
 				<td>
-				   <input type="text"  id="shoe_dual" name="shoeDual" class="easyui-numberbox"  style="width: 150px;height: 24px;"  />
+				   <input type="text"  id="shoe_dual" name="shoeDual" class="easyui-numberbox" min="0" style="width: 150px;height: 24px;"  />
 				</td>
 			</tr>
 			<tr>
 			<td class="tdR"><span style="color: red">*</span>单价（元）:</td>
 				<td>
-				   <input type="text"  id="sale_price" name="salePrice" class="easyui-numberbox"   style="width: 150px;height: 24px;"  />
+				   <input type="text"  id="sale_price" name="salePrice" class="easyui-numberbox"  min="0" style="width: 150px;height: 24px;"  />
 				</td>
 				<td class="tdR"><span style="color: red">*</span>季节:</td>
 				<td >
-					<input type="radio" id="activatedState_1" name="season" value="0"/><label for="activatedState_1">冬季</label>
-					<input type="radio" id="activatedState_2" name="season" value="1"/><label for="activatedState_2">其他季节</label>
+					<input type="radio"  name="season" value="0"/>冬季
+					<input type="radio"  name="season" value="1"/>其他季节
 				</td>
 			</tr>
 			<tr>

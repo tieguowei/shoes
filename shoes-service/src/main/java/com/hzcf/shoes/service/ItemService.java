@@ -27,5 +27,18 @@ public interface ItemService {
 	 */
 	public void insertSelective(Order order);
 
+	/**
+	 * 根据主键查询订单信息
+	 * @param id
+	 * @return
+	 */
+	public Order selectByPrimaryKey(Integer id);
+
+	/**
+	 * 修改订单信息
+	 * @param order
+	 */
+	public void updateByPrimaryKeySelective(Order order);
+
 	
 }

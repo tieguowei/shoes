@@ -424,12 +424,25 @@
  	<if test="factoryName != null">
   		 and factory_name  LIKE CONCAT('%',#{factoryName},'%')
  	</if>
- 	<if test="email != null">
-  		and e.email like '${email}%'
+ 	<if test="customerIsDefectiveGoods != null">
+  		and customer_is_defective_goods = #{customerIsDefectiveGoods}
  	</if>
- 	<if test="deptId != null">
-  		and e.dept_id = #{deptId}
+ 	<if test="factoryIsDefectiveGoods != null">
+  		and factory_is_defective_goods = #{factoryIsDefectiveGoods}
  	</if>
+ 	<if test="season != null">
+  		and season= #{season}
+ 	</if>
+ 	<if test="minCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+ 		]]>
+    </if>
+    <if test="maxCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <= #{maxCreateTime}
+ 	]]>
+    </if>
   </sql>
   
   <!-- 订单列表分页 -->
@@ -451,12 +464,20 @@
 
 		case when returns_number = 0 then ''
 		else returns_number end returns_number,
-		customer_is_defective_goods,
-		factory_is_defective_goods,
-		season,
+		
+		case when customer_is_defective_goods = 0 then '是'
+   		 else '否' end as customer_is_defective_goods,
+
+		case when factory_is_defective_goods = 0 then '是'
+    	else '否' end as factory_is_defective_goods ,
+
+		case when season = 0 then '冬季'
+    	else '其他季节' end as season ,
+	 
 		(number_packages * shoe_dual * sale_price) - (price_spread*difference_number) - (returns_number*sale_price) totalMoney,
 		create_time,
-		update_time
+		update_time,
+		remark
 	FROM zly_order 
 	WHERE 1=1
 	<include refid="dynamicPageWhere"/>

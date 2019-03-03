@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -19,9 +20,7 @@ import com.hzcf.shoes.baseweb.DataMsg;
 import com.hzcf.shoes.model.Employee;
 import com.hzcf.shoes.model.Order;
 import com.hzcf.shoes.service.ItemService;
-import com.hzcf.shoes.util.MD5Util;
 import com.hzcf.shoes.util.PageModel;
-import com.hzcf.shoes.util.PropertyUtil;
 import com.hzcf.shoes.util.StringUtil;
 
 
@@ -68,26 +67,29 @@ public class ItemController extends BaseController{
 			if (StringUtil.isNotBlank(factoryName)) {
 				paramsCondition.put("factoryName", factoryName);
 			}
-			String email = StringUtil.trim(request.getParameter("email"));// 邮箱
-			if (StringUtil.isNotBlank(email)) {
-				paramsCondition.put("email", email);
+			String factoryIsDefectiveGoods = StringUtil.trim(request.getParameter("factoryIsDefectiveGoods"));// 鞋厂是否减次
+			if (StringUtil.isNotBlank(factoryIsDefectiveGoods)) {
+				paramsCondition.put("factoryIsDefectiveGoods", factoryIsDefectiveGoods);
 			}
-			/*String firstDept = request.getParameter("firstDept");//一级部门
-			if (StringUtil.isNumeric(firstDept)) {
-				paramsCondition.put("deptId", Integer.parseInt(firstDept));
+			String customerIsDefectiveGoods = request.getParameter("customerIsDefectiveGoods");//客户是否减次
+			if (StringUtil.isNumeric(customerIsDefectiveGoods)) {
+				paramsCondition.put("customerIsDefectiveGoods", customerIsDefectiveGoods);
 			}
-			String areaId = request.getParameter("areaId");//员工所属地区
-			if (StringUtil.isNumeric(areaId)) {
-				paramsCondition.put("deptId", Integer.parseInt(areaId));
+			String season = request.getParameter("season");//季节
+			if (StringUtil.isNumeric(season)) {
+				paramsCondition.put("season", season);
 			}
-			String salesDeptId = request.getParameter("salesDeptId");//员工所属营业部
-			if (StringUtil.isNumeric(salesDeptId)) {
-				paramsCondition.put("deptId", Integer.parseInt(salesDeptId));
+			
+			//发货开始时间
+			String minCreateTime = request.getParameter("minCreateTime");
+			if(StringUtil.isNotBlank(minCreateTime)){
+				paramsCondition.put("minCreateTime", minCreateTime.trim());
 			}
-			String teamId = request.getParameter("teamId");//员工所属团队
-			if (StringUtil.isNumeric(teamId)) {
-				paramsCondition.put("deptId", Integer.parseInt(teamId));
-			}*/
+			//发货结束时间
+			String maxCreateTime = request.getParameter("maxCreateTime");
+			if(StringUtil.isNotBlank(maxCreateTime)){
+				paramsCondition.put("maxCreateTime", maxCreateTime.trim());
+			}
 			PageModel pageModel = itemService.findAllByPage(paramsCondition);
 			dataMsg.setTotal(pageModel.getTotalRecords());
 			dataMsg.setRows(pageModel.getList());
@@ -129,5 +131,39 @@ public class ItemController extends BaseController{
 		return dataMsg;
 	}
    
+    /**
+	 * 
+	 * Description: 跳转到修改订单页面
+	 */
+	@RequestMapping(value="/toEditItem/{id}")
+	public String toEditItem(@PathVariable Integer id,Model model) {
+		try {
+			Order order = itemService.selectByPrimaryKey(id);
+			model.addAttribute("order", order);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			return "common/exception";
+		}
+		return "app/store/itemManagement/item_edit";
+	}
+	
 
+	/**
+	 * 
+	 * Description: 修改订单信息
+	 */
+	@ResponseBody
+	@RequestMapping("/doEditItem")
+	public DataMsg doEditItem(@ModelAttribute Order order,HttpSession session,DataMsg dataMsg){
+		try {
+			order.setOperator(getSystemCurrentUser(session).getEmployeeId());
+			order.setUpdateTime(new Date());
+			itemService.updateByPrimaryKeySelective(order);
+			dataMsg.setMessageCode("0003");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setMessageCode("0004");
+		}
+		return dataMsg;
+	}
 }

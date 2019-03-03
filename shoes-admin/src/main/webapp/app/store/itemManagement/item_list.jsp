@@ -56,7 +56,7 @@
 					width : 100
 				},{
 					field : 'shoe_dual',
-					title : '双数',
+					title : '每件双数',
 					width : 100
 				},{
 					field : 'sale_price',
@@ -68,16 +68,32 @@
 					width : 110
 				},{
 					field : 'difference_number',
-					title : '差价件数',
+					title : '差价双数',
 					width : 110
 				},{
 					field : 'returns_number',
-					title : '退货件数',
+					title : '退货双数',
 					width : 100
 				},{
 					field : 'totalMoney',
 					title : '合计(元)',
 					width : 100
+				},{
+					field : 'customer_is_defective_goods',
+					title : '客户是否减次',
+					width : 100
+				},{
+					field : 'factory_is_defective_goods',
+					title : '鞋厂是否减次',
+					width : 100
+				},{
+					field : 'season',
+					title : '季节',
+					width : 100
+				},{
+					field : 'remark',
+					title : '备注',
+					width : 200
 				}
 				]],
 			});
@@ -89,24 +105,106 @@
    			parent.createTab('${app}/item/toAddItem','添加订单');
    		}
    		
-        // 跳转到修改控件信息页面
-        function toUpdateFactory(rowId) {
-            var selectRow = datagrid.datagrid('getSelected');
-            if (null == rowId) {
-                $.messager.show({
-                    title: '信息提示',
-                    msg: '请选择一条要修改的记录!',
-                    timeout: 5000,
-                    showType: 'slide'
-                });
-            } else if (null != rowId) {
-                parent.createTab('${app}/zly/shoeFactory/toUpdateFactory/' + rowId, '修改鞋厂');
-            }
-        }
+        
+    	//搜索
+		function searchFun() {
+			datagrid.datagrid('load',serializeObject($("#searchForm")));
+			datagrid.datagrid('clearSelections');
+			datagrid.datagrid('clearChecked');
+		}
+    	
+		//清空
+		function clearFromFun(datagrid){
+			clearForm(datagrid);
+            $('#season').combobox('clear');//清空选中项
+            $('#factory_is_defective_goods').combobox('clear');
+            $('#customer_is_defective_goods').combobox('clear');
+            
+		}
+		
+		//修改订单
+		function toEditItem(){
+			var rows = datagrid.datagrid('getSelections');
+			if(rows.length > 0){
+				if(rows.length > 1){
+					$.messager.show({
+						title:'信息提示',
+						msg:'该操作只能选择一条记录!',
+						timeout:5000,
+						showType:'slide'
+					});
+					return;
+				}
+				parent.createTab('${app}/item/toEditItem/' + rows[0].id,'修改订单');
+			}else{
+				$.messager.show({
+					title:'信息提示',
+					msg:'请选择要修改的记录!',
+					timeout:5000,
+					showType:'slide'
+				});
+			}
+		}
 	</script>
 </head>
 
 <body class="easyui-layout" fit="true" style="width: 100%;height: 100%;">
+	<div region="north" border="false" style="height:61px; overflow:hidden;">
+  	<form id="searchForm">
+		<table border="0" class="searchForm datagrid-toolbar" width="100%">
+			<tr>
+				<td class="tdR">客户姓名:</td>
+				<td>
+					<input id="customer_name" name="customerName" maxlength="28" class='easyui-textbox' style="width: 150px;height: 24px;"/>
+				</td>
+				<td class="tdR">鞋厂名称:</td>
+				<td>
+					<input id="factory_name" name="factoryName" maxlength="30" class='easyui-textbox' style="width: 150px;height: 24px;"/>
+				</td>
+				
+				 <td class="tdR">发货时间:</td>
+				   <td colspan="3">
+					<input id="minCreateTime" name="minCreateTime" editable='false' maxlength="30" class='easyui-datebox' style="width: 105px;height: 24px;" data-options="required:false" placeholder ="--起始时间--"/>
+					至
+					<input id="maxCreateTime" name="maxCreateTime" editable='false' maxlength="30" class='easyui-datebox' style="width: 105px;height: 24px;" data-options="required:false" placeholder ="--终止时间--"/>
+				</td>
+			
+			 <td class="tdR">季节:</td>
+				<td>
+					<select id="season" name="season" class="easyui-combobox"  panelHeight="130px" editable="false" style="width: 130px;">
+						    <option value="">全部</option>
+							<option value="0">冬季</option>
+							<option value="1">其他季节</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+			  
+				<td class="tdR">客户是否减次:</td>
+				<td>
+					<select id="customer_is_defective_goods" name="customerIsDefectiveGoods" class="easyui-combobox"  panelHeight="130px" editable="false" style="width: 150px;">
+						    <option value="">全部</option>
+							<option value="0">是</option>
+							<option value="1">否</option>
+					</select>
+				</td>
+				
+				<td class="tdR">厂家是否减次:</td>
+				<td>
+					<select id="factory_is_defective_goods" name="factoryIsDefectiveGoods" class="easyui-combobox"  panelHeight="130px" editable="false" style="width: 150px;">
+						    <option value="">全部</option>
+							<option value="0">是</option>
+							<option value="1">否</option>
+					</select>
+				</td>
+				<td colspan="5" style="padding-left: 60px;">
+						<a class="easyui-linkbutton" iconCls="icon-search" onclick="searchFun()">查询</a>
+						<a class="easyui-linkbutton" iconCls="icon-clear" onclick="clearFromFun(datagrid);">清空</a>
+				</td>
+			</tr>
+		</table>
+	</form>
+	</div>
 <div region="center" border="false" style="overflow: hidden;">
 	<table id="datagrid"></table>
 </div>
@@ -116,6 +214,8 @@
 			<td width="10%"  id="toolbars" class="tdL">
 			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toAddItem();">添加订单</a>
 		            <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
+			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="toEditItem();">修改订单</a>
+					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 			</td>
 		</tr>
 	</table>
