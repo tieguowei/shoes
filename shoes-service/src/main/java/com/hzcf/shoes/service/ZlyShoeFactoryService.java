@@ -4,8 +4,6 @@ package com.hzcf.shoes.service;
 import java.util.List;
 import java.util.Map;
 
-import com.hzcf.shoes.model.Employee;
-import com.hzcf.shoes.model.EmployeePermissionRelation;
 import com.hzcf.shoes.model.ZlyShoeBrand;
 import com.hzcf.shoes.model.ZlyShoeFactory;
 import com.hzcf.shoes.util.PageModel;

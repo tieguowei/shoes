@@ -12,7 +12,7 @@
         var datagrid;
         $(function(){
             datagrid = $('#datagrid').datagrid({
-                url : '${app}/zly/shoeFactory/getFactoryList',
+                url : '${app}/item/getItemList',
 				title : '',
 				pagination : true,
 				pageSize : <%=Constants.PAGE_SIZE%>,
@@ -35,61 +35,59 @@
 					    return op.pageSize * (op.pageNumber - 1) + (index + 1);
 					}
 				},{
-					field : 'name',
-					title : '购买时间',
-					width : 120
+					field : 'pay_time',
+					title : '发货时间',
+					width : 100
 				},{
-					field : 'name',
+					field : 'customer_name',
+					title : '客户姓名',
+					width : 100
+				},{
+					field : 'factory_name',
 					title : '鞋厂名称',
-					width : 120
+					width : 100
 				},{
-					field : 'telephone',
+					field : 'item_no',
 					title : '货号',
-					width : 120
+					width : 100
 				},{
-					field : 'mobile',
-					title : '客户',
-					width : 120
-				},{
-					field : 'mobile',
+					field : 'number_packages',
 					title : '件数',
-					width : 120
+					width : 100
 				},{
-					field : 'mobile',
+					field : 'shoe_dual',
 					title : '双数',
-					width : 120
+					width : 100
 				},{
-					field : 'mobile',
-					title : '单价',
-					width : 120
+					field : 'sale_price',
+					title : '单价(元)',
+					width : 100
 				},{
-					field : 'mobile',
-					title : '总计',
-					width : 120
+					field : 'price_spread',
+					title : '差价件数',
+					width : 110
 				},{
-					field : 'operate',
-                    align: 'center',
-					title : '操作',
-					width : 200,
-					formatter : function(value,row,index){
-						
-						
-						 var retStr;
-						  retStr1 = "<a href='#' onclick='toUpdateGoldProduct(\"" + row.id + "\");'>修改 &nbsp;&nbsp;</a>";
-						  retStr2 = "<a href='#' onclick='toUpdateGoldProduct(\"" + row.id + "\");'>差价管理 &nbsp;&nbsp;</a>";
-						  retStr = retStr1+ retStr2 + "<a href='#' onclick='toGoldProductdetail(\""+row.id+"\");' >退货管理</a>";
-                         return retStr;
-					}
-				}]],
+					field : 'price_spread',
+					title : '差价(元)',
+					width : 110
+				},{
+					field : 'returns_number',
+					title : '退货件数',
+					width : 100
+				},{
+					field : 'totalMoney',
+					title : '合计(元)',
+					width : 100
+				}
+				]],
 			});
             
 		});
         
         // 跳转到添加新页面页面
-   		function toAddFactory(){
-   			parent.createTab('${app}/zly/shoeFactory/toAddFactory','添加鞋厂');
+   		function toAddItem(){
+   			parent.createTab('${app}/item/toAddItem','添加订单');
    		}
-        
    		
         // 跳转到修改控件信息页面
         function toUpdateFactory(rowId) {
@@ -116,7 +114,7 @@
 	<table border="0" class="searchForm datagrid-toolbar" width="100%">
 		<tr>
 			<td width="10%"  id="toolbars" class="tdL">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toAddFactory();">添加</a>
+			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toAddItem();">添加订单</a>
 		            <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 			</td>
 		</tr>

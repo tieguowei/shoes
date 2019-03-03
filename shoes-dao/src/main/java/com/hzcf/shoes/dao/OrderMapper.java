@@ -3,6 +3,8 @@ package com.hzcf.shoes.dao;
 import com.hzcf.shoes.model.Order;
 import com.hzcf.shoes.model.OrderExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface OrderMapper {
@@ -27,4 +29,8 @@ public interface OrderMapper {
     int updateByPrimaryKeySelective(Order record);
 
     int updateByPrimaryKey(Order record);
+
+	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
+
+	Long findAllByPageCount(Map<String, Object> paramsCondition);
 }

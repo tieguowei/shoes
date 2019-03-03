@@ -3,97 +3,146 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>添加鞋厂</title>
+    <title>添加订单</title>
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
 	<meta http-equiv="expires" content="0">    
 	<%@ include file="/common/header.jsp"%>
 	<script type="text/javascript">
 	//添加
-   function submitForm(){
-		//校验名称是否存在
-	   	var name =$("#name").val(); 
-		$.ajax({
-			url : "${app}/zly/shoeFactory/checkName",
-			type : "post",
-			dataType : "json",
-			data : {
-				name : name
-			},
-			success : function(msg) {
-				if (msg != 0) {
-					$.messager.alert('提示信息', '该产品已存在!', 'info');
-				}else {
-					 var name =$("#name").val(); 
-					   var factoryForm = $("#factoryForm");
-					   factoryForm.form('submit',{
-							url:'${app}/zly/shoeFactory/doAddFactory',
-							success:function(data){
-								closeMask();
-								var obj = eval("(" + data + ")");
-								parent.refreshTab("${app}/zly/shoeFactory/toPageList?messageCode=" + obj.messageCode,"添加鞋厂");
-								parent.closeTab("添加鞋厂");
-							}
-						});
-			   }
-			}
-		});
-			 
-	}
+   //提交
+		function submitForm(){
+			var itemAddForm = $("#itemAddForm");
+			itemAddForm.form('submit',{
+				url:'${app}/item/doAddItem',
+				onSubmit:function(){
+					if(itemAddForm.form("validate")){
+						 //发货时间
+						var pay_time =$("#pay_time").datebox('getValue');
+						if (pay_time == ""|| typeof (pay_time) == "undefined") {
+							$.messager.alert('提示信息', '发货时间不能为空！', 'info');
+							return false;
+						}  
+						//客户姓名
+						var customer_name = $("#customer_name").textbox("getValue")
+						if (customer_name == ""|| typeof (customer_name) == "undefined") {
+							$.messager.alert('提示信息', '客户姓名不能为空！', 'info');
+							return false;
+						}  
+						//鞋厂名称
+						var factory_name = $("#factory_name").textbox("getValue")
+						if (factory_name == "" || typeof (factory_name) == "undefined") {
+							$.messager.alert('提示信息', '鞋厂名称不能为空！', 'info');
+							return false;
+						} 
+						
+						//货号
+						var item_no = $("#item_no").textbox("getValue")
+						if (item_no == "" || typeof (item_no) == "undefined") {
+							$.messager.alert('提示信息', '货号不能为空！', 'info');
+							return false;
+						} 
+						
+						//件数
+						var number_packages = $("#number_packages").numberbox("getValue")
+						if (number_packages == "" || typeof (number_packages) == "undefined") {
+							$.messager.alert('提示信息', '件数不能为空！', 'info');
+							return false;
+						} 
+						
+						//双数
+						var shoe_dual = $("#shoe_dual").numberbox("getValue")
+						if (shoe_dual == "" || typeof (shoe_dual) == "undefined") {
+							$.messager.alert('提示信息', '双数不能为空！', 'info');
+							return false;
+						} 
+						
+						//单价
+						var sale_price = $("#sale_price").numberbox("getValue")
+						if (sale_price == "" || typeof (sale_price) == "undefined") {
+							$.messager.alert('提示信息', '单价不能为空！', 'info');
+							return false;
+						}  
+						
+						var item = $(":radio:checked"); 
+						var len=item.length; 
+						if (len == 0) {
+							$.messager.alert('提示信息', '季节不能为空！', 'info');
+							return false;
+						} 
+						return true;
+					}else{
+						return false;
+					}
+				},
+				success:function(data){
+					closeMask();
+					var obj = eval("(" + data + ")");
+					parent.refreshTab("${app}/item/toPageList?messageCode=" + obj.messageCode,"添加订单");
+					parent.closeTab("添加订单");
+				}
+			});
+		}
 		
 		//取消
 		function resetForm(){
-			parent.closeTab("添加鞋厂");
+			parent.closeTab("添加订单");
 		}
-		 //动态增加表格
-	   		var index = 2;//添加tr索引
-			function addRow() {
-				var listIndex = index - 1;
-				var $tr = $("<tr id='entourage"+index+"'>"
-						  + "<td class='tdR' width='10%'>货号:</td>"
-						  + "<td width='15%'><span>"
-						  +"<input  style='width: 175px; height: 18px;'  id='itemNo"+listIndex+"' name='itemNo' class='easyui-textbox'"
-						+"</span></td>"
-					   + +"</tr>");
-					var trIndex = index - 1;
-					var entourage = '#entourage' + trIndex;
-					$(entourage).after($tr);
-					index = index + 1;
-					$.parser.parse();
-	   }
+		 
 	</script>
 </head>
 
-  <body style="background: white;" >
-  	<form id="factoryForm" class="easyui-form" method="post" modelAttribute="goldProduct" >
-		<table class="tableForm" border="0" width="100%" height: 530px;>
+ <body style="background: white;">
+  	<form id="itemAddForm" class="easyui-form" method="post" modelAttribute="employee">
+		<table class="tableForm" border="1" width="100%" >
 			<tr>
-			    <td class="tdR"><span style="color: red">*</span>鞋厂名称:</td>
-				<td>
-				   <input id="name" name="name"  class="easyui-textbox" prompt="请输入鞋厂名称" data-options="required:true,validType:['name','length[0,30]']" style="width: 175px;height: 24px;"/>&nbsp;&nbsp;
+				<td width="15%" class="tdR"><span style="color: red">*</span>发货时间:</td>
+                <td>
+                    <input id="pay_time" name="payTime"  maxlength="30"
+                     class='easyui-datebox' style="width: 150px;height: 24px;" data-options="prompt:'请选择发货日期',editable:false"/>
+                </td>
+				<td width="15%" class="tdR"><span style="color: red">*</span>客户姓名:</td>
+				<td width="35%">
+					<input type="text" id="customer_name" name="customerName" class="easyui-textbox"  style="width: 150px;height: 24px;"/>
 				</td>
 			</tr>
 			<tr>
-			    <td class="tdR">固定电话:</td>
+				<td class="tdR"><span style="color: red">*</span>鞋厂名称:</td>
 				<td>
-				   <input id="telephone" name="telephone"  class="easyui-textbox" prompt="请输入固定电话"  style="width: 175px;height: 24px;"/>&nbsp;&nbsp;
+				   <input type="text"  id="factory_name" name="factoryName" class="easyui-textbox"   style="width: 150px;height: 24px;"  />
+				</td>
+				<td class="tdR"><span style="color: red">*</span>货号:</td>
+				<td>
+				   <input type="text"  id="item_no" name="itemNo" class="easyui-textbox"  style="width: 150px;height: 24px;"  />
 				</td>
 			</tr>
 			<tr>
-			    <td class="tdR">手机号:</td>
+				<td class="tdR"><span style="color: red">*</span>件数:</td>
 				<td>
-				   <input id="mobile" name="mobile"  class="easyui-textbox" prompt="请输入手机号" style="width: 175px;height: 24px;"/>&nbsp;&nbsp;
+				   <input type="text"  id="number_packages" name="numberPackages" class="easyui-numberbox"   style="width: 150px;height: 24px;"  />
+				</td>
+				<td class="tdR"><span style="color: red">*</span>双数:</td>
+				<td>
+				   <input type="text"  id="shoe_dual" name="shoeDual" class="easyui-numberbox"  style="width: 150px;height: 24px;"  />
 				</td>
 			</tr>
-			<tr id="entourage1">
-					<td class="tdR" width="10%">货号:</td>
-					<td width="15%">
-					<input id="itemNo" name="itemNo" class='easyui-textbox' style="width: 175px; height: 20px;" prompt="请输入货号"/>
-				    </td>
-					<td width="5%"><a class="easyui-linkbutton" style="min-width: 15px;" data-options="iconCls:'l-btn-icon icon-add'" onclick="addRow();">新增货号</a>
-					</td>
-				</tr>	
-			
+			<tr>
+			<td class="tdR"><span style="color: red">*</span>单价（元）:</td>
+				<td>
+				   <input type="text"  id="sale_price" name="salePrice" class="easyui-numberbox"   style="width: 150px;height: 24px;"  />
+				</td>
+				<td class="tdR"><span style="color: red">*</span>季节:</td>
+				<td >
+					<input type="radio" id="activatedState_1" name="season" value="0"/><label for="activatedState_1">冬季</label>
+					<input type="radio" id="activatedState_2" name="season" value="1"/><label for="activatedState_2">其他季节</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdR">备注:</td>
+				<td colspan="3">
+					<input id="remark" name="remark" class='easyui-textbox' data-options="multiline:true,validType:['length[0,50]']" style="width:375px;height:40px"/>
+				</td>
+			</tr>
 			<tr>
 				<td colspan="4" align="center">
 					<a class="easyui-linkbutton" id="submitButton"  iconCls="icon-ok" onclick="submitForm();">提交</a>

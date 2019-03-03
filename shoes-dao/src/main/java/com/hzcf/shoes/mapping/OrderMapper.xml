@@ -3,7 +3,7 @@
 <mapper namespace="com.hzcf.shoes.dao.OrderMapper" >
   <resultMap id="BaseResultMap" type="com.hzcf.shoes.model.Order" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="pay_time" property="payTime" jdbcType="DATE" />
     <result column="customer_name" property="customerName" jdbcType="VARCHAR" />
     <result column="factory_name" property="factoryName" jdbcType="VARCHAR" />
     <result column="item_no" property="itemNo" jdbcType="VARCHAR" />
@@ -16,6 +16,7 @@
     <result column="customer_is_defective_goods" property="customerIsDefectiveGoods" jdbcType="CHAR" />
     <result column="factory_is_defective_goods" property="factoryIsDefectiveGoods" jdbcType="CHAR" />
     <result column="season" property="season" jdbcType="CHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="operator" property="operator" jdbcType="INTEGER" />
@@ -81,7 +82,7 @@
   <sql id="Base_Column_List" >
     id, pay_time, customer_name, factory_name, item_no, number_packages, shoe_dual, sale_price, 
     price_spread, difference_number, returns_number, customer_is_defective_goods, factory_is_defective_goods, 
-    season, create_time, update_time, operator
+    season, remark, create_time, update_time, operator
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hzcf.shoes.model.OrderExample" >
     select
@@ -118,14 +119,16 @@
       factory_name, item_no, number_packages, 
       shoe_dual, sale_price, price_spread, 
       difference_number, returns_number, customer_is_defective_goods, 
-      factory_is_defective_goods, season, create_time, 
-      update_time, operator)
-    values (#{id,jdbcType=INTEGER}, #{payTime,jdbcType=TIMESTAMP}, #{customerName,jdbcType=VARCHAR}, 
+      factory_is_defective_goods, season, remark, 
+      create_time, update_time, operator
+      )
+    values (#{id,jdbcType=INTEGER}, #{payTime,jdbcType=DATE}, #{customerName,jdbcType=VARCHAR}, 
       #{factoryName,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, #{numberPackages,jdbcType=INTEGER}, 
       #{shoeDual,jdbcType=INTEGER}, #{salePrice,jdbcType=DECIMAL}, #{priceSpread,jdbcType=DECIMAL}, 
       #{differenceNumber,jdbcType=INTEGER}, #{returnsNumber,jdbcType=INTEGER}, #{customerIsDefectiveGoods,jdbcType=CHAR}, 
-      #{factoryIsDefectiveGoods,jdbcType=CHAR}, #{season,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER})
+      #{factoryIsDefectiveGoods,jdbcType=CHAR}, #{season,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.hzcf.shoes.model.Order" >
     insert into zly_order
@@ -172,6 +175,9 @@
       <if test="season != null" >
         season,
       </if>
+      <if test="remark != null" >
+        remark,
+      </if>
       <if test="createTime != null" >
         create_time,
       </if>
@@ -187,7 +193,7 @@
         #{id,jdbcType=INTEGER},
       </if>
       <if test="payTime != null" >
-        #{payTime,jdbcType=TIMESTAMP},
+        #{payTime,jdbcType=DATE},
       </if>
       <if test="customerName != null" >
         #{customerName,jdbcType=VARCHAR},
@@ -225,6 +231,9 @@
       <if test="season != null" >
         #{season,jdbcType=CHAR},
       </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -249,7 +258,7 @@
         id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.payTime != null" >
-        pay_time = #{record.payTime,jdbcType=TIMESTAMP},
+        pay_time = #{record.payTime,jdbcType=DATE},
       </if>
       <if test="record.customerName != null" >
         customer_name = #{record.customerName,jdbcType=VARCHAR},
@@ -287,6 +296,9 @@
       <if test="record.season != null" >
         season = #{record.season,jdbcType=CHAR},
       </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -304,7 +316,7 @@
   <update id="updateByExample" parameterType="map" >
     update zly_order
     set id = #{record.id,jdbcType=INTEGER},
-      pay_time = #{record.payTime,jdbcType=TIMESTAMP},
+      pay_time = #{record.payTime,jdbcType=DATE},
       customer_name = #{record.customerName,jdbcType=VARCHAR},
       factory_name = #{record.factoryName,jdbcType=VARCHAR},
       item_no = #{record.itemNo,jdbcType=VARCHAR},
@@ -317,6 +329,7 @@
       customer_is_defective_goods = #{record.customerIsDefectiveGoods,jdbcType=CHAR},
       factory_is_defective_goods = #{record.factoryIsDefectiveGoods,jdbcType=CHAR},
       season = #{record.season,jdbcType=CHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       operator = #{record.operator,jdbcType=INTEGER}
@@ -328,7 +341,7 @@
     update zly_order
     <set >
       <if test="payTime != null" >
-        pay_time = #{payTime,jdbcType=TIMESTAMP},
+        pay_time = #{payTime,jdbcType=DATE},
       </if>
       <if test="customerName != null" >
         customer_name = #{customerName,jdbcType=VARCHAR},
@@ -366,6 +379,9 @@
       <if test="season != null" >
         season = #{season,jdbcType=CHAR},
       </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -380,7 +396,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.hzcf.shoes.model.Order" >
     update zly_order
-    set pay_time = #{payTime,jdbcType=TIMESTAMP},
+    set pay_time = #{payTime,jdbcType=DATE},
       customer_name = #{customerName,jdbcType=VARCHAR},
       factory_name = #{factoryName,jdbcType=VARCHAR},
       item_no = #{itemNo,jdbcType=VARCHAR},
@@ -393,9 +409,59 @@
       customer_is_defective_goods = #{customerIsDefectiveGoods,jdbcType=CHAR},
       factory_is_defective_goods = #{factoryIsDefectiveGoods,jdbcType=CHAR},
       season = #{season,jdbcType=CHAR},
+      remark = #{remark,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       operator = #{operator,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <!-- 员工列表动态查询条件 -->
+  <sql id="dynamicPageWhere">
+  	<if test="customerName != null">
+  	 and customer_name  LIKE CONCAT('%',#{customerName},'%')
+ 	</if>
+ 	<if test="factoryName != null">
+  		 and factory_name  LIKE CONCAT('%',#{factoryName},'%')
+ 	</if>
+ 	<if test="email != null">
+  		and e.email like '${email}%'
+ 	</if>
+ 	<if test="deptId != null">
+  		and e.dept_id = #{deptId}
+ 	</if>
+  </sql>
+  
+  <!-- 订单列表分页 -->
+  <select id="findAllRetMapByPage" resultType="hashmap" parameterType="hashmap">
+  	SELECT
+	  	id,
+		DATE_FORMAT(pay_time,'%Y-%m-%d') pay_time,
+		customer_name,
+		factory_name,
+		item_no,
+		number_packages,
+		shoe_dual,
+		sale_price,
+		if(price_spread,0,'')price_spread,
+		if(difference_number,0,'')difference_number,
+	    if(returns_number,0,'')returns_number,
+		customer_is_defective_goods,
+		factory_is_defective_goods,
+		season,
+		(number_packages * shoe_dual * sale_price) - (price_spread*difference_number) - (returns_number*sale_price) totalMoney,
+		create_time,
+		update_time
+	FROM zly_order 
+	WHERE 1=1
+	<include refid="dynamicPageWhere"/>
+	limit #{startIndex},#{pageSize}
+  </select>
+  
+  <!-- 订单列表分页总数 -->
+  <select id="findAllByPageCount" resultType="long" parameterType="hashmap">
+  	SELECT COUNT(id) FROM zly_order 
+	WHERE 1=1
+	<include refid="dynamicPageWhere"/>
+  </select>
 </mapper>

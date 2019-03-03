@@ -32,6 +32,8 @@ public class Order {
 
     private String season;
 
+    private String remark;
+
     private Date createTime;
 
     private Date updateTime;
@@ -148,6 +150,14 @@ public class Order {
 
     public void setSeason(String season) {
         this.season = season == null ? null : season.trim();
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 
     public Date getCreateTime() {
