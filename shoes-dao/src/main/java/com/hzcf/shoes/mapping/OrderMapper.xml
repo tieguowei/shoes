@@ -572,7 +572,7 @@
   <!-- 查询客户历史账单 总欠款 -->
   <select id="getTotaMoneyOwed" parameterType="String" resultType="hashmap">
 	SELECT
-		sum(balance_due) balanceDue
+		IFNULL(sum(balance_due),0) balanceDue
 	FROM
 		zly_customer_payment_record
 	WHERE
@@ -587,7 +587,7 @@
 	  IFNULL(item_no,'') item_no,
 	  IFNULL(CONCAT(price_spread,' * ',difference_number),'') price_spread,
 	  IFNULL(CONCAT(returns_number,' * ',sale_price),'') returns_number,
-	  IFNULL( ((price_spread*difference_number) + (returns_number*sale_price)) ,'') totalMoney
+	  IFNULL(((price_spread*difference_number) + (returns_number*sale_price)) ,0) totalMoney
 	FROM
 		zly_order
 	WHERE
@@ -602,9 +602,9 @@
   </select>
   
   <!-- 查询客户历史账单时间内(差价和退货)汇总-->
-  <select id="getBillPriceSum" parameterType="hashmap" resultType="hashmap">
+  <select id="getBillPriceSum" parameterType="hashmap" resultType="String">
   SELECT
-	  IFNULL( sum(((price_spread*difference_number) + (returns_number*sale_price))) ,'') totalMoney
+	  IFNULL(sum(((price_spread*difference_number) + (returns_number*sale_price))) ,0) totalMoney
 	FROM
 		zly_order
 	WHERE

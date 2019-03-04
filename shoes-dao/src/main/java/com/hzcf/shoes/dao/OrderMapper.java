@@ -66,5 +66,5 @@ public interface OrderMapper {
 	 * @return
 	 */
 
-	Map<String, Object> getBillPriceSum(Map<String, Object> paramsCondition);
+	String getBillPriceSum(Map<String, Object> paramsCondition);
 }

@@ -88,7 +88,7 @@ public interface ItemService {
 	 * @param valueOf
 	 * @return
 	 */
-	public Map<String, Object> getBillPriceSum(Map<String, Object> paramsCondition);
+	public String getBillPriceSum(Map<String, Object> paramsCondition);
 
 	
 }

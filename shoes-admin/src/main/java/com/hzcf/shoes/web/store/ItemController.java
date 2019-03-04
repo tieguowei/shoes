@@ -3,7 +3,6 @@ package com.hzcf.shoes.web.store;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -282,7 +281,7 @@ public class ItemController extends BaseController{
 		  //查询客户最新账单时间
 		  Map<String,Object> time = itemService.getLastOneTime(String.valueOf(paramsCondition.get("customerName")));
 		  //查询客户历史账单时间内(差价和退货)汇总
-		  Map<String,Object> sumMap = itemService.getBillPriceSum(paramsCondition);
+		  String sumMap = itemService.getBillPriceSum(paramsCondition);
 		  
 		  HSSFRow nextRow = sheet.createRow(dataSize);
 			nextRow.setHeightInPoints(30);
@@ -307,17 +306,17 @@ public class ItemController extends BaseController{
 		  	dataMap.put("tn",totalMap.get("totalNum"));//总件
 		  	dataMap.put("tm",totalMap.get("totalGoodsMoney"));//总计金额
 		  	dataMap.put("jc",totalMap.get("jianci"));//减次
-		    if(null == sumMap){
+		    if(StringUtil.isBlank(sumMap)){
     		  	dataMap.put("returnPrice","0");//历史账单差价和退货
             }else{
-    		  	dataMap.put("returnPrice",sumMap.get("totalMoney"));//历史账单差价和退货
+    		  	dataMap.put("returnPrice",sumMap);//历史账单差价和退货
             }
 		  	dataMap.put("tb",totalMap.get("blanceDue"));//本次账单欠款额
 		  	dataMap.put("hb",data.get("balanceDue"));//历史账单总欠款
 		 
-            //累计欠款= 欠款额 + 历史账单欠款 - 历史账单欠款和退货汇总
-           /* BigDecimal subtract = new BigDecimal(String.valueOf(totalMap.get("blanceDue"))).add(new BigDecimal(String.valueOf(data.get("blanceDue")))).subtract(new BigDecimal(String.valueOf(sumMap.get("totalMoney"))));
-		  	dataMap.put("累计欠款",subtract);*///累计欠款
+            //累计欠款= 本次欠款额 + 历史账单总欠款 
+		  	BigDecimal add = new BigDecimal(String.valueOf(totalMap.get("blanceDue"))).add(new BigDecimal(String.valueOf(data.get("balanceDue"))));
+		  	dataMap.put("累计欠款",add);
 
 		  	
 		  	dataList.add(1,dataMap);
@@ -404,7 +403,12 @@ public class ItemController extends BaseController{
 	public List<Map<String, Object>> setPayRecord(String customerName, HSSFSheet sheet, HSSFCellStyle listTitleStyle,
 			HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int size) {
 		List<Map<String,Object>> nextList = itemService.getCustomerPaymentHistory(customerName);
+		
+		
+		
+		
 		if(null != nextList && nextList.size()>0){
+			
 			HSSFRow nextRow = sheet.createRow(size);
 			nextRow.setHeightInPoints(30);
 			HSSFCell nextCell = nextRow.createCell(0);
@@ -503,7 +507,6 @@ public class ItemController extends BaseController{
 	}
 
 	public void setTitle(String customerName,HSSFWorkbook wb, HSSFSheet sheet) {
-       //设置表头样式和文字颜色
 		HSSFCellStyle firstStyle = wb.createCellStyle();
 	    firstStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);//垂直居中  
 	    firstStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);//水平居中  
@@ -542,7 +545,7 @@ public class ItemController extends BaseController{
 	
 	public HSSFCellStyle setListTitleStyle(HSSFWorkbook wb) {
 		HSSFCellStyle listTitleStyle = wb.createCellStyle();
-		 listTitleStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		 listTitleStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());//浅灰色
 		 listTitleStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		 listTitleStyle.setWrapText(true);
 		 listTitleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);//水平居中  

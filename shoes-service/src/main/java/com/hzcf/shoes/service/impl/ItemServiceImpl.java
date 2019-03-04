@@ -108,7 +108,7 @@ public class ItemServiceImpl implements ItemService{
 
 
 	@Override
-	public Map<String, Object> getBillPriceSum(Map<String, Object> paramsCondition) {
+	public String getBillPriceSum(Map<String, Object> paramsCondition) {
 		return orderMapper.getBillPriceSum(paramsCondition);
 	}
 
