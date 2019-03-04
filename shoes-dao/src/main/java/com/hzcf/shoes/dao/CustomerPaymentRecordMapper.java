@@ -39,4 +39,9 @@ public interface CustomerPaymentRecordMapper {
     Long getCustomerBackRecordListTotal(Map<String,Object> param);
 
     List<Map<String,Object>> getCustomerBackRecordList(Map<String,Object> map);
+
+	Map<String, Object> getBillStartTime(String customerName);
+
+	Map<String, Object> getBillEndTime(String customerName);
+
 }

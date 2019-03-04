@@ -30,6 +30,10 @@ public class Order {
 
     private String factoryIsDefectiveGoods;
 
+    private String spredStatus;
+
+    private String returnStatus;
+
     private String season;
 
     private String remark;
@@ -142,6 +146,22 @@ public class Order {
 
     public void setFactoryIsDefectiveGoods(String factoryIsDefectiveGoods) {
         this.factoryIsDefectiveGoods = factoryIsDefectiveGoods == null ? null : factoryIsDefectiveGoods.trim();
+    }
+
+    public String getSpredStatus() {
+        return spredStatus;
+    }
+
+    public void setSpredStatus(String spredStatus) {
+        this.spredStatus = spredStatus == null ? null : spredStatus.trim();
+    }
+
+    public String getReturnStatus() {
+        return returnStatus;
+    }
+
+    public void setReturnStatus(String returnStatus) {
+        this.returnStatus = returnStatus == null ? null : returnStatus.trim();
     }
 
     public String getSeason() {

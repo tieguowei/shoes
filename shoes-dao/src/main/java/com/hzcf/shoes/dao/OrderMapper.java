@@ -45,8 +45,26 @@ public interface OrderMapper {
 	 */
 	Map<String, Object> getTotaMoneyOwed(String customerName);
 
-	/*
-	 *查询客户还款记录  
+
+	/**
+	 * 查询客户历史账单时间内有无差价和退货
+	 * @param reqMap
+	 * @return
 	 */
-	List<Map<String, Object>> getCustomerPaymentHistory(String customerName);
+	List<Map<String, Object>> getOrderByStartAndEndTime(Map<String, Object> reqMap);
+
+	/**
+	 * 查询客户最新一笔账单时间
+	 * @param customerName
+	 * @return
+	 */
+	Map<String, Object> getLastOneTime(String customerName);
+
+	/**
+	 * 查询客户历史账单时间内(差价和退货)汇总
+	 * @param paramsCondition
+	 * @return
+	 */
+
+	Map<String, Object> getBillPriceSum(Map<String, Object> paramsCondition);
 }

@@ -69,5 +69,26 @@ public interface ItemService {
 	 */
 	public List<Map<String, Object>> getCustomerPaymentHistory(String customerName);
 
+	/**
+	 * 查询历史账单中订单的差价和退货
+	 * @param customerName
+	 * @return
+	 */
+	public List<Map<String, Object>> getBillPrice(String customerName);
+
+	/**
+	 * 查询客户最新一笔账单时间
+	 * @param customerName
+	 * @return
+	 */
+	public Map<String, Object> getLastOneTime(String customerName);
+
+	/**
+	 * 查询客户历史账单时间内(差价和退货)汇总
+	 * @param valueOf
+	 * @return
+	 */
+	public Map<String, Object> getBillPriceSum(Map<String, Object> paramsCondition);
+
 	
 }

@@ -1,12 +1,15 @@
 
 package com.hzcf.shoes.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hzcf.shoes.dao.CustomerPayHistoryMapper;
+import com.hzcf.shoes.dao.CustomerPaymentRecordMapper;
 import com.hzcf.shoes.dao.OrderMapper;
 import com.hzcf.shoes.model.Order;
 import com.hzcf.shoes.service.ItemService;
@@ -17,7 +20,10 @@ public class ItemServiceImpl implements ItemService{
 
 	@Autowired
 	private OrderMapper orderMapper;
-
+	@Autowired
+	private CustomerPayHistoryMapper  customerPayHistoryMapper;
+	@Autowired
+	private CustomerPaymentRecordMapper  customerPaymentRecordMapper;
 
 	@Override
 	public PageModel findAllByPage(Map<String, Object> paramsCondition) {
@@ -72,8 +78,41 @@ public class ItemServiceImpl implements ItemService{
 
 	@Override
 	public List<Map<String, Object>> getCustomerPaymentHistory(String customerName) {
-		return orderMapper.getCustomerPaymentHistory(customerName);
+		return customerPayHistoryMapper.getCustomerPaymentHistory(customerName);
 	}
+
+
+	@Override
+	public List<Map<String, Object>> getBillPrice(String customerName) {
+		//查询此客户历史账单的起始时间
+		Map<String,Object> reqMap = new HashMap<String,Object>();
+		Map<String,Object> smap = customerPaymentRecordMapper.getBillStartTime(customerName);
+		Map<String,Object> emap = customerPaymentRecordMapper.getBillEndTime(customerName);
+		if(null != smap){
+			//查询订单表中此时间段内有没有差价或者退货
+			reqMap.put("minCreateTime", smap.get("bill_start_time"));
+			reqMap.put("maxCreateTime", emap.get("bill_end_time"));
+			reqMap.put("customerName", customerName);
+			List<Map<String,Object>> list = orderMapper.getOrderByStartAndEndTime(reqMap);
+		    return list;
+		}
+		return null;
+	}
+
+
+	@Override
+	public Map<String, Object> getLastOneTime(String customerName) {
+		return orderMapper.getLastOneTime(customerName);
+	}
+
+
+
+	@Override
+	public Map<String, Object> getBillPriceSum(Map<String, Object> paramsCondition) {
+		return orderMapper.getBillPriceSum(paramsCondition);
+	}
+
+
 
 
 

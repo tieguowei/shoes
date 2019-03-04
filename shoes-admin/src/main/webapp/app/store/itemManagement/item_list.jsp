@@ -98,6 +98,35 @@
 				]],
 			});
             
+            //限制输入发货时间 结束时间 >= 开始时间
+            $("#minCreateTime").datebox({  
+                onSelect : function(beginDate){  
+                    $('#maxCreateTime').datebox().datebox('calendar').calendar({  
+                        validator: function(date){
+                        	var now = new Date();
+                            return beginDate<=date && date <= now &&  beginDate <=now ;  
+                        }  
+                    });  
+                }  
+            });  
+            	//结束时间<= 当前时间
+            $('#maxCreateTime').datebox().datebox('calendar').calendar({  
+                validator: function(date){
+                	var now = new Date();
+                	return date <= now; 
+                }  
+            });  
+            
+          //开始时间<= 当前时间
+            $('#minCreateTime').datebox().datebox('calendar').calendar({  
+                validator: function(date){
+                	var now = new Date();
+                	return date <= now; 
+                }  
+            });  	
+            	
+            
+            
 		});
         
         // 跳转到添加新页面页面
