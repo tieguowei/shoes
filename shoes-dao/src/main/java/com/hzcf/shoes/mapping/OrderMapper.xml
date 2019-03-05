@@ -636,7 +636,7 @@
    <!-- 查询客户有无未处理订单 -->
   <select id="checkCustomerItemIsOver" parameterType="hashmap" resultType="hashMap">
      SELECT
-		count(id)
+		id
     from zly_order where customer_name = #{customerName}
  	<if test="minCreateTime != null">
       <![CDATA[
@@ -648,7 +648,7 @@
  		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <= #{maxCreateTime}
  	]]>
     </if>
-    AND ((spred_status is null or spred_status != 0) or(return_status is null or return_status != 0))
+    AND ((spred_status is not null and spred_status != 0) or(return_status is not null or return_status != 0))
   </select>
   
   <select id="selectById" parameterType="java.lang.Integer" resultType="hashmap">

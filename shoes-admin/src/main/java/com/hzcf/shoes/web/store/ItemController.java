@@ -272,18 +272,25 @@ public class ItemController extends BaseController{
 			String sumMap = itemService.getBillPriceSum(paramsCondition);
 			setTotalData(sumMap,totalMap,customerName, sheet, listTitleStyle, cellStyle,secondStyle,dataSize);
 			if (wb != null) {
-				/**
-				 * 5.客户账单入库
-				 */
-				insertCustomerBill(session, customerName, itemList, totalMap, sumMap);
-				/**
-				 * 6.修改此账单中的订单标记（客户已减次）
-				 */
-				paramsCondition.put("customerIsDefectiveGoods", "0");
-				paramsCondition.put("updateTime", new Date());
-				paramsCondition.put("operator", getSystemCurrentUser(session).getEmployeeId());
-				itemService.updateItemStatus(paramsCondition);
 				
+				//此账单有发货记录才入库账单 并且修改此账单中订单的标记
+				if(null != itemList && itemList.size() >0){
+					/**
+					 * 5.客户账单入库
+					 */
+					insertCustomerBill(session, customerName, itemList, totalMap, sumMap);
+					/**
+					 * 6.修改此账单中的订单标记（客户已减次）
+					 */
+					paramsCondition.put("customerIsDefectiveGoods", "0");
+					paramsCondition.put("updateTime", new Date());
+					paramsCondition.put("operator", getSystemCurrentUser(session).getEmployeeId());
+					itemService.updateItemStatus(paramsCondition);
+				}
+				
+				/**
+				 * 7.修改此账单中差价和退货的订单状态（改为已处理）
+				 */
 				String fileName = format.format(new Date()) + "【" + customerName + "】账单" + ".xlsx";
 				String headStr = "attachment; filename=\"" + new String(fileName.getBytes("utf-8"), "ISO8859-1")
 						+ "\"";
