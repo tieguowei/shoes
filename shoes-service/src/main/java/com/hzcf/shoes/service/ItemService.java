@@ -85,6 +85,12 @@ public interface ItemService {
 	 */
 	public List<Map<String, Object>> checkCustomerItemIsOver(Map<String, Object> paramsCondition);
 
+	/**
+	 * 修改此账单中差价和退货的订单状态
+	 * @param paramsCondition
+	 */
+	public void updatePriceAndReturnStatus(Map<String, Object> paramsCondition);
+
 
 	
 }

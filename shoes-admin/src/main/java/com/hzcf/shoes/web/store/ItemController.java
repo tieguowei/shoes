@@ -210,10 +210,17 @@ public class ItemController extends BaseController{
 		try {
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			customerParm(request, paramsCondition);
-			List<Map<String,Object>> list = itemService.checkCustomerItemIsOver(paramsCondition);
-			if(null != list && list.size()>0){
+			//先判断此时间内有没有订单（有：直接导出   无：再判断有没有差价 和退货）
+			List<Map<String,Object>> itemList = itemService.checkBillByCustomerAndPayTime(paramsCondition);
+			if(null != itemList && itemList.size()>0){
 				return true;
+			}else{
+				List<Map<String,Object>> list = itemService.checkCustomerItemIsOver(paramsCondition);
+				if(null != list && list.size()>0){
+					return true;
+				}
 			}
+			
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 		}
@@ -227,11 +234,11 @@ public class ItemController extends BaseController{
 	 */
 	@RequestMapping("/doCustomerExport")
 	public void doCustomerExport(HttpSession session,HttpServletRequest request, HttpServletResponse response) {
-		try {
 			String customerName = StringUtil.trim(request.getParameter("customerName"));
 			//组装请求参数
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			customerParm(request,paramsCondition);
+		try {
 			HSSFWorkbook wb = new HSSFWorkbook();
 			HSSFSheet sheet = wb.createSheet("sheet1");
 	         //列表首行标题样式
@@ -271,26 +278,26 @@ public class ItemController extends BaseController{
 			//查询客户历史账单时间内(差价和退货)汇总
 			String sumMap = itemService.getBillPriceSum(paramsCondition);
 			setTotalData(sumMap,totalMap,customerName, sheet, listTitleStyle, cellStyle,secondStyle,dataSize);
+			
+			/**
+			 * 5.修改此账单中差价和退货的订单状态（改为已处理）
+			 * 参数一：差价和退货是否处理状态  0：是 1：否
+			 */
+			updatePriceAndReturnStatus("1","0",session, paramsCondition);
 			if (wb != null) {
-				
 				//此账单有发货记录才入库账单 并且修改此账单中订单的标记
 				if(null != itemList && itemList.size() >0){
 					/**
-					 * 5.客户账单入库
+					 * 6.修改此账单中的订单标记（客户已减次）
+					 *  参数一：客户是否减次状态 0：是 1：否
+					 */
+					updateItemStatus("0",session, paramsCondition);
+					
+					/**
+					 * 7.客户账单入库
 					 */
 					insertCustomerBill(session, customerName, itemList, totalMap, sumMap);
-					/**
-					 * 6.修改此账单中的订单标记（客户已减次）
-					 */
-					paramsCondition.put("customerIsDefectiveGoods", "0");
-					paramsCondition.put("updateTime", new Date());
-					paramsCondition.put("operator", getSystemCurrentUser(session).getEmployeeId());
-					itemService.updateItemStatus(paramsCondition);
 				}
-				
-				/**
-				 * 7.修改此账单中差价和退货的订单状态（改为已处理）
-				 */
 				String fileName = format.format(new Date()) + "【" + customerName + "】账单" + ".xlsx";
 				String headStr = "attachment; filename=\"" + new String(fileName.getBytes("utf-8"), "ISO8859-1")
 						+ "\"";
@@ -299,19 +306,37 @@ public class ItemController extends BaseController{
 				OutputStream out = response.getOutputStream();
 				wb.write(out);
 			}
-			
-			
-			/**
-			   * 1.生成账单之后 将此区间所有的订单改为已减次.
-				 1.生成账单之后 先将此区间内订单状态修改
-			   */
 		} catch (Exception e) {
-			/**
-			 * 出现异常情况，所有状态还原
-			 */
 			logger.error(e.getMessage(), e);
+			try {
+				/**
+				 * 异常情况  还原此账单中差价和退货的订单状态
+				 */
+				updatePriceAndReturnStatus("0","1",session, paramsCondition);
+				/**
+				 * 异常情况 还原此账单中的订单标记状态
+				 */
+				updateItemStatus("0",session, paramsCondition);
+			} catch (Exception e2) {
+				logger.error(e.getMessage(), e);
+			}
 		}
 
+	}
+
+	public void updateItemStatus(String status,HttpSession session, Map<String, Object> paramsCondition) {
+		paramsCondition.put("customerIsDefectiveGoods", status);
+		paramsCondition.put("updateTime", new Date());
+		paramsCondition.put("operator", getSystemCurrentUser(session).getEmployeeId());
+		itemService.updateItemStatus(paramsCondition);
+	}
+
+	public void updatePriceAndReturnStatus(String before,String after,HttpSession session, Map<String, Object> paramsCondition) {
+		paramsCondition.put("before", before);
+		paramsCondition.put("after", after);
+		paramsCondition.put("updateTime", new Date());
+		paramsCondition.put("operator", getSystemCurrentUser(session).getEmployeeId());
+		itemService.updatePriceAndReturnStatus(paramsCondition);
 	}
 
 	public void insertCustomerBill(HttpSession session, String customerName, List<Map<String, Object>> itemList,
@@ -323,6 +348,7 @@ public class ItemController extends BaseController{
 		customerbill.setCustomaryDues(new BigDecimal(String.valueOf(totalMap.get("blanceDue"))));//本次账单应还金额
 		customerbill.setSpredReturnMoney(new BigDecimal(sumMap));//本次账单（总差价+总退货价）
 		customerbill.setCreateTime(new Date());
+		customerbill.setBalanceDue(new BigDecimal(String.valueOf(totalMap.get("blanceDue"))));
 		customerbill.setOperator(getSystemCurrentUser(session).getEmployeeId());
 		customerBillService.insertCustomerBill(customerbill);
 	}
@@ -366,10 +392,17 @@ public class ItemController extends BaseController{
 		  	if(null != time){
 		  		dataMap.put("hb",data.get("balanceDue"));//历史账单总欠款
 		  	}
-            //累计欠款= 本次欠款额 + 历史账单总欠款 
-		  	BigDecimal add = new BigDecimal(String.valueOf(totalMap.get("blanceDue"))).add(new BigDecimal(String.valueOf(data.get("balanceDue"))));
-		  	dataMap.put("累计欠款",add);
-
+           
+		  	//有差价 累计欠款= 本次欠款额 + 历史账单总欠款 -差价
+		  	if(!"0.00".equals(sumMap)){
+			  	BigDecimal add = new BigDecimal(String.valueOf(totalMap.get("blanceDue"))).add(new BigDecimal(String.valueOf(data.get("balanceDue")))).subtract(new BigDecimal(sumMap));
+			  	dataMap.put("累计欠款",add);
+		  	}else{
+		  		 //无差价 累计欠款= 本次欠款额 + 历史账单总欠款 
+			  	BigDecimal add = new BigDecimal(String.valueOf(totalMap.get("blanceDue"))).add(new BigDecimal(String.valueOf(data.get("balanceDue"))));
+			  	dataMap.put("累计欠款",add);
+		  	}
+		  	
 		  	
 		  	dataList.add(1,dataMap);
 		  	int nextStart = 1 + dataSize;

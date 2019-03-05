@@ -79,4 +79,15 @@ public interface OrderMapper {
 	 * @param order
 	 */
 	void updateById(Order order);
+
+	/**
+	 * 修改此账单中差价的订单状态
+	 * @param paramsCondition
+	 */
+	void updatePriceStatus(Map<String, Object> paramsCondition);
+	/**
+	 * 修改此账单中退货的订单状态
+	 * @param paramsCondition
+	 */
+	void updateReturnStatus(Map<String, Object> paramsCondition);
 }

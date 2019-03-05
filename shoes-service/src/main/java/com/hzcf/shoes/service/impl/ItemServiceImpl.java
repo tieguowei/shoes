@@ -110,6 +110,13 @@ public class ItemServiceImpl implements ItemService{
 	}
 
 
+	@Override
+	public void updatePriceAndReturnStatus(Map<String, Object> paramsCondition) {
+		orderMapper.updatePriceStatus(paramsCondition);
+		orderMapper.updateReturnStatus(paramsCondition);
+	}
+
+
 
 
 

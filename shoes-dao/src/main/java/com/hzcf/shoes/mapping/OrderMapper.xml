@@ -749,4 +749,38 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  
+  <!-- 修改此账单中差价的订单状态 -->
+  <update id="updatePriceStatus" parameterType="hashmap">
+   update
+	 zly_order
+  	 	SET spred_status =#{after}
+     WHERE
+		customer_name =#{customerName}
+	 <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+			]]>
+		  <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <=#{maxCreateTime}
+	]]>
+	and spred_status = #{before}
+  </update>
+  
+  
+   <!-- 修改此账单中退货的订单状态 -->
+  <update id="updateReturnStatus" parameterType="hashmap">
+   update
+	 zly_order
+  	 	SET return_status =#{after}
+     WHERE
+		customer_name =#{customerName}
+	 <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+			]]>
+		  <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <=#{maxCreateTime}
+	]]>
+	and return_status = #{before}
+  </update>
 </mapper>
