@@ -573,7 +573,7 @@
   
  
   
-  <!-- 查询客户历史账单时间内有无差价和退货 列表 -->
+  <!-- 查询客户历史账单时间内有无差价和退货 列表(未处理状态) -->
   <select id="getOrderByStartAndEndTime" parameterType="hashmap" resultType="java.util.LinkedHashMap">
   SELECT
 	  IFNULL(DATE_FORMAT(pay_time,'%Y-%m-%d'),'') pay_time,
@@ -594,7 +594,7 @@
 		  <![CDATA[
 			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <=#{maxCreateTime}
 	]]>
-	AND (price_spread != 0 or difference_number != 0  or returns_number != 0 )
+	AND (spred_status = 1 or return_status =1)
   	order by pay_time asc
   </select>
   
@@ -612,7 +612,7 @@
 		  <![CDATA[
 			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <=#{maxCreateTime}
 	]]>
-	AND (price_spread != 0 or difference_number != 0  or returns_number != 0 )
+	AND (spred_status = 1 or return_status =1)
   </select>
   
   <!-- 修改订单（客户或者鞋厂 是否减次状态） -->
@@ -650,7 +650,7 @@
  		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <= #{maxCreateTime}
  	]]>
     </if>
-    AND ((spred_status is not null and spred_status != 0) or(return_status is not null or return_status != 0))
+		AND (spred_status = 1 or return_status =1)
   </select>
   
   <!-- 主键查询 -->

@@ -210,7 +210,7 @@ public class ItemController extends BaseController{
 		try {
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			customerParm(request, paramsCondition);
-			//先判断此时间内有没有订单（有：直接导出   无：再判断有没有差价 和退货）
+			//先判断此时间内有没有订单（有：直接导出   无：判断有没有差价 和退货）
 			List<Map<String,Object>> itemList = itemService.checkBillByCustomerAndPayTime(paramsCondition);
 			if(null != itemList && itemList.size()>0){
 				return true;
@@ -260,19 +260,19 @@ public class ItemController extends BaseController{
 			/**
 			 * 2.组装还款记录
 			 */
-			int size = 3 +itemList.size();
+			int size =2+itemList.size();
 			List<Map<String,Object> >payList =setPayRecord(customerName, sheet, listTitleStyle, cellStyle, secondStyle, size);
 			
 			/**
 			 * 3.组装历史账单中有差价和退货的订单
 			 */
-			int startSize = 5 + itemList.size() + payList.size();
+			int startSize = 3 + itemList.size() + payList.size();
 			List<Map<String,Object>> priceList  = setPriceSpread(customerName, sheet, listTitleStyle, cellStyle, secondStyle,startSize);
 			
 			/**
 			 * 4.组装账单汇总数据
 			 */
-			int dataSize = 6 + itemList.size() + priceList.size()+payList.size();
+			int dataSize =4+ itemList.size() + priceList.size()+payList.size();
 			//查询客户此时间段的订单汇总
 			Map<String,Object> totalMap = itemService.getTotalMoneyByParam(paramsCondition);
 			//查询客户历史账单时间内(差价和退货)汇总
