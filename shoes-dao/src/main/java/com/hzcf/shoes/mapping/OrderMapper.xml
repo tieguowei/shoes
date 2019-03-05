@@ -579,8 +579,10 @@
 	  IFNULL(DATE_FORMAT(pay_time,'%Y-%m-%d'),'') pay_time,
 	  IFNULL(factory_name,'') factory_name,
 	  IFNULL(item_no,'') item_no,
-	  IFNULL(CONCAT(price_spread,' * ',difference_number),'') price_spread,
-	  IFNULL(CONCAT(returns_number,' * ',sale_price),'') returns_number,
+	  	case when price_spread = 0 then ''
+		else (CONCAT(price_spread,' * ',difference_number)) end  price_spread,
+		case when returns_number = 0 then ''
+		else (CONCAT(returns_number,' * ',sale_price)) end  returns_number,
 	  IFNULL(((price_spread*difference_number) + (returns_number*sale_price)) ,0) totalMoney
 	FROM
 		zly_order
@@ -651,6 +653,7 @@
     AND ((spred_status is not null and spred_status != 0) or(return_status is not null or return_status != 0))
   </select>
   
+  <!-- 主键查询 -->
   <select id="selectById" parameterType="java.lang.Integer" resultType="hashmap">
    SELECT
 		id,
