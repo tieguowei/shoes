@@ -70,6 +70,22 @@
 							$.messager.alert('提示信息', '季节不能为空！', 'info');
 							return false;
 						} 
+						
+						//有差价 必须有差价双数 
+						var price_spread = $("#price_spread").numberbox("getValue")
+						var difference_number = $("#difference_number").numberbox("getValue")
+						if("0.00" != price_spread &&  price_spread != "" ){
+							if("0" == difference_number || difference_number == ""){
+								$.messager.alert('提示信息', '差价双数不能为空或为0！', 'info');
+								return false;
+							}
+						}
+						if("0" != difference_number && difference_number != "" ){
+							if("0.00" == price_spread || price_spread == ""){
+								$.messager.alert('提示信息', '差价不能为空或为0！', 'info');
+								return false;
+							}
+						}
 						return true;
 					}else{
 						return false;
@@ -95,6 +111,8 @@
  <body style="background: white;">
   	<form id="itemAddForm" class="easyui-form" method="post" modelAttribute="order">
 		<table class="tableForm" border="1" width="100%" >
+		
+			<input type="text" id="id" name="id" value="${order.payTime}"/>
 		  		<input type="hidden" id="id" name="id" value="${order.id}"/>
 			<tr>
 				<td width="15%" class="tdR"><span style="color: red">*</span>发货时间:</td>
@@ -134,8 +152,8 @@
 				</td>
 				<td class="tdR"><span style="color: red">*</span>季节:</td>
 				<td>
-					  <input type="radio" name="season" <c:if test="${order.season== '0'}">checked="checked"</c:if>>冬季
-  					  <input type="radio" name="season" <c:if test="${order.season== '1'}">checked="checked"</c:if>>其他季节
+					  <input type="radio" name="season" value="0" <c:if test="${order.season== '0'}">checked="checked"</c:if>>冬季
+  					  <input type="radio" name="season" value="1" <c:if test="${order.season== '1'}">checked="checked"</c:if>>其他季节
 				</td>
 			</tr>
 			<tr>

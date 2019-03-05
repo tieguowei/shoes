@@ -1,6 +1,7 @@
 
 package com.hzcf.shoes.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.hzcf.shoes.dao.OrderMapper;
 import com.hzcf.shoes.model.Order;
 import com.hzcf.shoes.service.ItemService;
 import com.hzcf.shoes.util.PageModel;
+import com.hzcf.shoes.util.StringUtil;
 
 @Service
 public class ItemServiceImpl implements ItemService{
@@ -47,13 +49,13 @@ public class ItemServiceImpl implements ItemService{
 
 	@Override
 	public Order selectByPrimaryKey(Integer id) {
-		return orderMapper.selectByPrimaryKey(id);
+		return orderMapper.selectById(id);
 	}
 
 
 	@Override
-	public void updateByPrimaryKeySelective(Order order) {
-		orderMapper.updateByPrimaryKeySelective(order);
+	public void updateById(Order order) {
+		orderMapper.updateById(order);
 	}
 
 

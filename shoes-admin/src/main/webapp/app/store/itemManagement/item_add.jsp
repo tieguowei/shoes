@@ -129,7 +129,7 @@
 			<tr>
 			<td class="tdR"><span style="color: red">*</span>单价（元）:</td>
 				<td>
-				   <input type="text"  id="sale_price" name="salePrice" class="easyui-numberbox"  min="0" style="width: 150px;height: 24px;"  />
+				   <input type="text"  id="sale_price" precision="2" name="salePrice" class="easyui-numberbox"  min="0" style="width: 150px;height: 24px;"  />
 				</td>
 				<td class="tdR"><span style="color: red">*</span>季节:</td>
 				<td >

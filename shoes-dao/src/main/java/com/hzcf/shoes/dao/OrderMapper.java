@@ -68,4 +68,15 @@ public interface OrderMapper {
 	 * @return
 	 */
 	List<Map<String, Object>> checkCustomerItemIsOver(Map<String, Object> paramsCondition);
+
+	/**
+	 * 根据主键查询
+	 */
+	Order selectById(Integer id);
+
+	/**
+	 * 自定义修改方法
+	 * @param order
+	 */
+	void updateById(Order order);
 }

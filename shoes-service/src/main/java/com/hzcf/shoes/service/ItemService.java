@@ -39,7 +39,7 @@ public interface ItemService {
 	 * 修改订单信息
 	 * @param order
 	 */
-	public void updateByPrimaryKeySelective(Order order);
+	public void updateById(Order order);
 
 	/**
 	 *查询是否有账单

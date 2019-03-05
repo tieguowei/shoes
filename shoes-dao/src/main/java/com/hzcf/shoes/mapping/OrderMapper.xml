@@ -511,6 +511,7 @@
 	FROM zly_order 
 	WHERE 1=1
 	<include refid="dynamicPageWhere"/>
+	order by pay_time asc
 	limit #{startIndex},#{pageSize}
   </select>
   
@@ -592,6 +593,7 @@
 			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <=#{maxCreateTime}
 	]]>
 	AND (price_spread != 0 or difference_number != 0  or returns_number != 0 )
+  	order by pay_time asc
   </select>
   
   <!-- 查询客户历史账单时间内(差价和退货)汇总-->
@@ -648,4 +650,110 @@
     </if>
     AND (spred_status ==1 or return_status ==1 )
   </select>
+  
+  <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+   SELECT
+		id,
+		DATE_FORMAT(pay_time, '%Y-%m-%d') pay_time,
+		customer_name,
+		factory_name,
+		item_no,
+		number_packages,
+		shoe_dual,
+		sale_price,
+		price_spread,
+		difference_number,
+		returns_number,
+		customer_is_defective_goods,
+		factory_is_defective_goods,
+		spred_status,
+		return_status,
+		season,
+		remark,
+		create_time,
+		update_time,
+		operator
+	FROM
+		zly_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+    <update id="updateById" parameterType="com.hzcf.shoes.model.Order">
+    update zly_order
+    <set>
+      <if test="payTime != null">
+        pay_time = #{payTime,jdbcType=DATE},
+      </if>
+      <if test="customerName != null">
+        customer_name = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryName != null">
+        factory_name = #{factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null">
+        item_no = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="numberPackages != null">
+        number_packages = #{numberPackages,jdbcType=INTEGER},
+      </if>
+      <if test="shoeDual != null">
+        shoe_dual = #{shoeDual,jdbcType=INTEGER},
+      </if>
+      <if test="salePrice != null">
+        sale_price = #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="priceSpread != null">
+        price_spread = #{priceSpread,jdbcType=DECIMAL},
+      </if>
+      <if test="priceSpread == null">
+        price_spread = 0,
+      </if>
+      <if test="differenceNumber != null">
+        difference_number = #{differenceNumber,jdbcType=INTEGER},
+      </if>
+      <if test="differenceNumber == null">
+        difference_number = 0,
+      </if>
+      <if test="returnsNumber != null">
+        returns_number = #{returnsNumber,jdbcType=INTEGER},
+      </if>
+      <if test="returnsNumber == null">
+        returns_number = 0,
+      </if>
+      <if test="customerIsDefectiveGoods != null">
+        customer_is_defective_goods = #{customerIsDefectiveGoods,jdbcType=CHAR},
+      </if>
+      <if test="factoryIsDefectiveGoods != null">
+        factory_is_defective_goods = #{factoryIsDefectiveGoods,jdbcType=CHAR},
+      </if>
+      
+      
+      <if test="priceSpread != null and  priceSpread !=0">
+        spred_status = 1,
+      </if>
+      
+      
+      <if test="returnsNumber != null and returnsNumber !=0">
+        return_status = 1,
+      </if>
+      
+      <if test="season != null">
+        season = #{season,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        operator = #{operator,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 </mapper>

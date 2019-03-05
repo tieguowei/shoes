@@ -191,7 +191,7 @@ public class ItemController extends BaseController{
 		try {
 			order.setOperator(getSystemCurrentUser(session).getEmployeeId());
 			order.setUpdateTime(new Date());
-			itemService.updateByPrimaryKeySelective(order);
+			itemService.updateById(order);
 			dataMsg.setMessageCode("0003");
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
