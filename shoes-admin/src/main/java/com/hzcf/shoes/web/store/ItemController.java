@@ -171,8 +171,8 @@ public class ItemController extends BaseController{
 	@RequestMapping(value="/toEditItem/{id}")
 	public String toEditItem(@PathVariable Integer id,Model model) {
 		try {
-			Order order = itemService.selectByPrimaryKey(id);
-			model.addAttribute("order", order);
+			Map<String,Object> map = itemService.selectById(id);
+			model.addAttribute("order", map);
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 			return "common/exception";

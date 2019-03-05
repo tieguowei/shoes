@@ -637,7 +637,7 @@
   <select id="checkCustomerItemIsOver" parameterType="hashmap" resultType="hashMap">
      SELECT
 		count(id)
-    from zly_order where and customer_name = #{customerName}
+    from zly_order where customer_name = #{customerName}
  	<if test="minCreateTime != null">
       <![CDATA[
  		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
@@ -648,31 +648,26 @@
  		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <= #{maxCreateTime}
  	]]>
     </if>
-    AND (spred_status ==1 or return_status ==1 )
+    AND ((spred_status is null or spred_status != 0) or(return_status is null or return_status != 0))
   </select>
   
-  <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectById" parameterType="java.lang.Integer" resultType="hashmap">
    SELECT
 		id,
-		DATE_FORMAT(pay_time, '%Y-%m-%d') pay_time,
-		customer_name,
-		factory_name,
-		item_no,
-		number_packages,
-		shoe_dual,
-		sale_price,
-		price_spread,
-		difference_number,
-		returns_number,
-		customer_is_defective_goods,
-		factory_is_defective_goods,
-		spred_status,
-		return_status,
+		DATE_FORMAT(pay_time, '%Y-%m-%d') payTime,
+		customer_name customerName,
+		factory_name factoryName,
+		item_no itemNo,
+		number_packages numberPackages,
+		shoe_dual shoeDual,
+		sale_price salePrice,
+		price_spread priceSpread,
+		difference_number differenceNumber,
+		returns_number returnsNumber,
+		customer_is_defective_goods customerIsDefectiveGoods,
+		factory_is_defective_goods factoryIsDefectiveGoods,
 		season,
-		remark,
-		create_time,
-		update_time,
-		operator
+		remark
 	FROM
 		zly_order
     where id = #{id,jdbcType=INTEGER}
@@ -728,11 +723,9 @@
         factory_is_defective_goods = #{factoryIsDefectiveGoods,jdbcType=CHAR},
       </if>
       
-      
       <if test="priceSpread != null and  priceSpread !=0">
         spred_status = 1,
       </if>
-      
       
       <if test="returnsNumber != null and returnsNumber !=0">
         return_status = 1,

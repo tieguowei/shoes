@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService{
 
 
 	@Override
-	public Order selectByPrimaryKey(Integer id) {
+	public Map<String,Object> selectById(Integer id) {
 		return orderMapper.selectById(id);
 	}
 

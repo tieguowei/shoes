@@ -9,6 +9,16 @@
 	<meta http-equiv="expires" content="0">    
 	<%@ include file="/common/header.jsp"%>
 	<script type="text/javascript">
+	 $(function(){
+         //发货时间<= 当前时间
+           $('#pay_time').datebox().datebox('calendar').calendar({  
+               validator: function(date){
+               	var now = new Date();
+               	return date <= now; 
+               }  
+           });  	
+           
+		});
 	//添加
 		function submitForm(){
 			var itemAddForm = $("#itemAddForm");

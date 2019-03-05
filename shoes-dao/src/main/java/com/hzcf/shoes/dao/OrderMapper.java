@@ -72,7 +72,7 @@ public interface OrderMapper {
 	/**
 	 * 根据主键查询
 	 */
-	Order selectById(Integer id);
+	Map<String, Object> selectById(Integer id);
 
 	/**
 	 * 自定义修改方法

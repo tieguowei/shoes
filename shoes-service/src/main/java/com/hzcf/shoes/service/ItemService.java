@@ -33,7 +33,7 @@ public interface ItemService {
 	 * @param id
 	 * @return
 	 */
-	public Order selectByPrimaryKey(Integer id);
+	public Map<String, Object> selectById(Integer id);
 
 	/**
 	 * 修改订单信息

@@ -9,7 +9,16 @@
 	<meta http-equiv="expires" content="0">    
 	<%@ include file="/common/header.jsp"%>
 	<script type="text/javascript">
-	//添加
+	 $(function(){
+         //发货时间<= 当前时间
+           $('#pay_time').datebox().datebox('calendar').calendar({  
+               validator: function(date){
+               	var now = new Date();
+               	return date <= now; 
+               }  
+           });  	
+           
+		});
    //提交
 		function submitForm(){
 			var itemAddForm = $("#itemAddForm");
@@ -112,7 +121,6 @@
   	<form id="itemAddForm" class="easyui-form" method="post" modelAttribute="order">
 		<table class="tableForm" border="1" width="100%" >
 		
-			<input type="text" id="id" name="id" value="${order.payTime}"/>
 		  		<input type="hidden" id="id" name="id" value="${order.id}"/>
 			<tr>
 				<td width="15%" class="tdR"><span style="color: red">*</span>发货时间:</td>
