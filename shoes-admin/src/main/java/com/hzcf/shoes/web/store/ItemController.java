@@ -266,13 +266,13 @@ public class ItemController extends BaseController{
 			/**
 			 * 3.组装历史账单中有差价和退货的订单
 			 */
-			int startSize = 3 + itemList.size() + payList.size();
-			List<Map<String,Object>> priceList  = setPriceSpread(customerName, sheet, listTitleStyle, cellStyle, secondStyle,startSize);
+			int startSize = 4 + itemList.size() + payList.size();
+			List<Map<String,Object>> priceList  = setPriceSpread(paramsCondition, sheet, listTitleStyle, cellStyle, secondStyle,startSize);
 			
 			/**
 			 * 4.组装账单汇总数据
 			 */
-			int dataSize =4+ itemList.size() + priceList.size()+payList.size();
+			int dataSize =6+ itemList.size() + priceList.size()+payList.size();
 			//查询客户此时间段的订单汇总
 			Map<String,Object> totalMap = itemService.getTotalMoneyByParam(paramsCondition);
 			//查询客户历史账单时间内(差价和退货)汇总
@@ -389,6 +389,7 @@ public class ItemController extends BaseController{
 		    	dataMap.put("returnPrice",sumMap);//本次账单(历史账单差价和退货)
             }
 		  	dataMap.put("tb",totalMap.get("blanceDue"));//本次账单（应还金额 = 欠款额）
+		  	
 		  	if(null != time){
 		  		dataMap.put("hb",data.get("balanceDue"));//历史账单总欠款
 		  	}
@@ -435,9 +436,9 @@ public class ItemController extends BaseController{
 			}
 	}
 
-	private List<Map<String, Object>> setPriceSpread(String customerName, HSSFSheet sheet, HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int startSize) {
+	private List<Map<String, Object>> setPriceSpread(Map<String, Object> paramsCondition, HSSFSheet sheet, HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int startSize) {
 		List<Map<String,Object>> priceList = new  ArrayList<Map<String,Object>>();
-		priceList =  itemService.getBillPrice(customerName);
+		priceList =  itemService.getBillPrice(paramsCondition);
 		if(null != priceList && priceList.size()>0){
 			HSSFRow nextRow = sheet.createRow(startSize);
 			nextRow.setHeightInPoints(30);

@@ -59,10 +59,10 @@ public interface ItemService {
 
 	/**
 	 * 查询历史账单中订单的差价和退货
-	 * @param customerName
+	 * @param paramsCondition
 	 * @return
 	 */
-	public List<Map<String, Object>> getBillPrice(String customerName);
+	public List<Map<String, Object>> getBillPrice(Map<String, Object> paramsCondition);
 
 
 	/**

@@ -73,18 +73,24 @@ public class ItemServiceImpl implements ItemService{
 	
 
 	@Override
-	public List<Map<String, Object>> getBillPrice(String customerName) {
+	public List<Map<String, Object>> getBillPrice(Map<String,Object> paramsCondition ) {
 		List<Map<String,Object>> list =  new ArrayList<Map<String,Object>>();
 		//查询此客户历史账单的起始时间
 		Map<String,Object> reqMap = new HashMap<String,Object>();
-		Map<String,Object> smap = customerPaymentRecordMapper.getBillStartTime(customerName);
-		Map<String,Object> emap = customerPaymentRecordMapper.getBillEndTime(customerName);
+		Map<String,Object> smap = customerPaymentRecordMapper.getBillStartTime(String.valueOf(paramsCondition.get("customerName")));
+		Map<String,Object> emap = customerPaymentRecordMapper.getBillEndTime(String.valueOf(paramsCondition.get("customerName")));
 		if(null != smap){
-			//查询订单表中此时间段内有没有差价或者退货
+			//查询订单表中历史账单内有没有差价或者退货
 			reqMap.put("minCreateTime", smap.get("bill_start_time"));
 			reqMap.put("maxCreateTime", emap.get("bill_end_time"));
-			reqMap.put("customerName", customerName);
-			 list = orderMapper.getOrderByStartAndEndTime(reqMap);
+			reqMap.put("customerName", String.valueOf(paramsCondition.get("customerName")));
+			list = orderMapper.getOrderByStartAndEndTime(reqMap);
+			//查询订单表中此时间段内有没有差价或者退货
+			reqMap.put("minCreateTime", paramsCondition.get("minCreateTime"));
+			reqMap.put("maxCreateTime", paramsCondition.get("maxCreateTime"));
+			reqMap.put("customerName", String.valueOf(paramsCondition.get("customerName")));
+			List<Map<String, Object>> list2 = orderMapper.getOrderByStartAndEndTime(reqMap);
+			list.addAll(list2);
 		}
 		return list;
 	}
