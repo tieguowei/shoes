@@ -394,8 +394,12 @@ public class ItemController extends BaseController{
 		  		dataMap.put("hb",data.get("balanceDue"));//历史账单总欠款
 		  	}
            
-		  	//有差价 累计欠款= 本次欠款额 + 历史账单总欠款 -差价
-		  	if(!"0.00".equals(sumMap)){
+		  	 
+		  	/**
+		  	 * 有差价并且最后是年底最后一个账单（处减差和总欠款 其他均为空）
+		  	 * 累计欠款= 本次欠款额 + 历史账单总欠款 -差价
+		  	 */
+		  	if(!"0.00".equals(sumMap) && "0.00".equals(String.valueOf(totalMap.get("totalGoodsMoney")))){
 			  	BigDecimal add = new BigDecimal(String.valueOf(totalMap.get("blanceDue"))).add(new BigDecimal(String.valueOf(data.get("balanceDue")))).subtract(new BigDecimal(sumMap));
 			  	dataMap.put("累计欠款",add);
 		  	}else{
