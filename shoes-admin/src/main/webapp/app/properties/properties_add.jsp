@@ -1,0 +1,83 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ include file="/common/taglibs.jsp"%>
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>添加属性页面</title>
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<%@ include file="/common/header.jsp"%>
+	<script type="text/javascript">
+		//提交
+		function submitForm(){
+			var pageForm = $("#pageForm");
+			pageForm.form('submit',{
+				url:'${app}/properties/doAddPropertieses',
+				onSubmit:function(){
+					if(pageForm.form("validate")){
+						openMask();
+						return true;
+					}else{
+						return false;
+					}
+				},
+				success:function(data){
+					closeMask();
+					var obj = eval("(" + data + ")");
+					parent.refreshTab("${app}/properties/toPropList.shtml?messageCode=" + obj.messageCode,"页面管理");
+					parent.closeTab("添加页面");
+				}
+			});
+		}
+		
+		//取消
+		function resetForm(){
+			parent.closeTab("添加页面");
+		}
+		
+	</script>
+  </head>
+  
+  <body style="background: white;">
+  	<form id="pageForm" class="easyui-form" method="post" modelAttribute="ssmProperties">
+		<table class="tableForm" border="0" width="100%">
+			<tr>
+			    <td class="tdR"><span style="color: red">*</span>属性名称:</td>
+				<td>
+					<input id="propertyName" name="propertyName" class="easyui-textbox" style="width: 175px;height: 24px;"/>&nbsp;&nbsp;
+					
+				</td>
+			</tr>
+			<tr>
+			    <td class="tdR"><span style="color: red">*</span>属性值(string):</td>
+				<td>
+					<input id="propertyStringValue" name="propertyStringValue" class="easyui-textbox" style="width: 175px;height: 24px;"/>&nbsp;&nbsp;
+					
+				</td>
+			</tr>
+			
+			<tr>
+			    <td class="tdR"><span style="color: red">*</span>属性值(数字):</td>
+				<td>
+					<input id="propertyFigureValue" name="propertyFigureValue" class="easyui-textbox"  style="width: 175px;height: 24px;"/>&nbsp;&nbsp;
+					
+				</td>
+			</tr>
+			<tr>
+				<td class="tdR"><span style="color: red">*</span>属性描述:</td>
+				<td>
+					<input id="propertyDesc" name="propertyDesc" class='easyui-textbox'  style="width:330px;height:60px"/>				
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4" align="center">
+					<a class="easyui-linkbutton" id="submitButton"  iconCls="icon-ok" onclick="submitForm();">提交</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:resetForm();">取消</a>
+				</td>
+			</tr>
+		</table>
+	</form>
+  </body>
+</html>

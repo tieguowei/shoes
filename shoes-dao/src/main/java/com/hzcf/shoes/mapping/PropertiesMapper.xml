@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzcf.shoes.dao.PropertiesMapper" >
+  <resultMap id="BaseResultMap" type="com.hzcf.shoes.model.SsmProperties" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
+    <result column="property_string_value" property="propertyStringValue" jdbcType="VARCHAR" />
+    <result column="property_figure_value" property="propertyFigureValue" jdbcType="DECIMAL" />
+    <result column="property_desc" property="propertyDesc" jdbcType="VARCHAR" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, property_name, property_string_value, property_figure_value, property_desc, update_user_id, 
+    update_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ssm_properties
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectProperties" resultMap="BaseResultMap">
+  select 
+    <include refid="Base_Column_List" />
+    from ssm_properties
+    where id = #{id,jdbcType=INTEGER}
+</select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ssm_properties
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.hzcf.shoes.model.SsmProperties" >
+    insert into ssm_properties (id, property_name, property_string_value, 
+      property_figure_value, property_desc, update_user_id, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{propertyName,jdbcType=VARCHAR}, #{propertyStringValue,jdbcType=VARCHAR}, 
+      #{propertyFigureValue,jdbcType=DECIMAL}, #{propertyDesc,jdbcType=VARCHAR}, #{updateUserId,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hzcf.shoes.model.SsmProperties" >
+    insert into ssm_properties
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="propertyName != null" >
+        property_name,
+      </if>
+      <if test="propertyStringValue != null" >
+        property_string_value,
+      </if>
+      <if test="propertyFigureValue != null" >
+        property_figure_value,
+      </if>
+      <if test="propertyDesc != null" >
+        property_desc,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="propertyName != null" >
+        #{propertyName,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyStringValue != null" >
+        #{propertyStringValue,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyFigureValue != null" >
+        #{propertyFigureValue,jdbcType=DECIMAL},
+      </if>
+      <if test="propertyDesc != null" >
+        #{propertyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hzcf.shoes.model.SsmProperties" >
+    update ssm_properties
+    <set >
+      <if test="propertyName != null" >
+        property_name = #{propertyName,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyStringValue != null" >
+        property_string_value = #{propertyStringValue,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyFigureValue != null" >
+        property_figure_value = #{propertyFigureValue,jdbcType=DECIMAL},
+      </if>
+      <if test="propertyDesc != null" >
+        property_desc = #{propertyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hzcf.shoes.model.SsmProperties" >
+    update ssm_properties
+    set property_name = #{propertyName,jdbcType=VARCHAR},
+      property_string_value = #{propertyStringValue,jdbcType=VARCHAR},
+      property_figure_value = #{propertyFigureValue,jdbcType=DECIMAL},
+      property_desc = #{propertyDesc,jdbcType=VARCHAR},
+      update_user_id = #{updateUserId,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 属性列表查询条件 -->
+  <sql id="whereClause">
+  	<if test="propertyName != null">
+  		and sp.property_name like '${propertyName}%'
+  	</if>
+  	<if test="propertyStringValue != null">
+  		and sp.property_string_value like '${propertyStringValue}%'
+  	</if>
+  </sql>
+  <!-- 属性信息查询页面记录 -->
+  <select id="findAllRetMapByPage" parameterType="map" resultType="hashmap">
+		SELECT
+			sp.id,
+			sp.property_name,
+			sp.property_string_value,
+			sp.property_figure_value,
+			sp.property_desc,
+			sp.update_user_id,
+			sp.update_time
+		FROM ssm_properties sp
+		WHERE 1 = 1
+		<include refid="whereClause" />
+		order by sp.update_time asc
+		limit #{startIndex},#{pageSize}
+   </select>
+   
+   <!-- 属性记录列表分页总数  -->
+   <select id="findAllByPageCount" resultType="Long" parameterType="hashmap">
+		SELECT COUNT(sp.id) FROM ssm_properties sp WHERE 1 = 1
+		<include refid="whereClause" />
+	</select>
+  
+  
+  <!-- 根据key查询value -->
+  <select id="selectVersion" resultType="java.lang.String" parameterType="java.lang.String">
+  
+  select property_string_value from ssm_properties where property_name = #{propertyName}
+  </select>
+</mapper>

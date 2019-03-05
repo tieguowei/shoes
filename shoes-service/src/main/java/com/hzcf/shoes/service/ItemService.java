@@ -72,5 +72,19 @@ public interface ItemService {
 	 */
 	public String getBillPriceSum(Map<String, Object> paramsCondition);
 
+	/**
+	 * 修改订单（客户或者鞋厂 是否减次状态）
+	 * @param paramsCondition
+	 */
+	public void updateItemStatus(Map<String, Object> paramsCondition);
+
+	/**
+	 * 查询客户有无未处理订单
+	 * @param paramsCondition
+	 * @return
+	 */
+	public List<Map<String, Object>> checkCustomerItemIsOver(Map<String, Object> paramsCondition);
+
+
 	
 }

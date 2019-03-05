@@ -187,11 +187,11 @@
 			var minCreateTime =$("#minCreateTime").datebox('getValue');
 			var maxCreateTime =$("#maxCreateTime").datebox('getValue');
 			 if (minCreateTime == "" || maxCreateTime == "") {
-				$.messager.alert('提示信息', '请在上方搜索框输入发货起止时间！', 'info');
+				$.messager.alert('提示信息', '请输入发货起止时间！', 'info');
 				return false;
 			}  
 			 $.ajax({
-	   				url : "${app}/item/checkBillByCustomerAndPayTime",
+	   				url : "${app}/item/checkCustomerItemIsOver",
 					type : "post",
 					dataType : "json",
 					data:{
@@ -209,7 +209,7 @@
 								}
 							});
 						}else{
-							$.messager.alert('提示信息', '客户【'+customerName+" 】在此时间段内无订单！", 'info');
+							$.messager.alert('提示信息', '客户【'+customerName+" 】在此时间段内订单已处理完毕！", 'info');
 						}
 					},		
 					});

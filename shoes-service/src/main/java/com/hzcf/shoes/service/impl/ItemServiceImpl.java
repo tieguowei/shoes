@@ -96,6 +96,18 @@ public class ItemServiceImpl implements ItemService{
 	}
 
 
+	@Override
+	public void updateItemStatus(Map<String, Object> paramsCondition) {
+		orderMapper.updateItemStatus(paramsCondition);
+	}
+
+
+	@Override
+	public List<Map<String, Object>> checkCustomerItemIsOver(Map<String, Object> paramsCondition) {
+		return orderMapper.checkCustomerItemIsOver(paramsCondition);
+	}
+
+
 
 
 

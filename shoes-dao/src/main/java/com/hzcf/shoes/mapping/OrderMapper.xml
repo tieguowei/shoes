@@ -609,6 +609,43 @@
 			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <=#{maxCreateTime}
 	]]>
 	AND (price_spread != 0 or difference_number != 0  or returns_number != 0 )
+  </select>
   
+  <!-- 修改订单（客户或者鞋厂 是否减次状态） -->
+  <update id="updateItemStatus" parameterType="hashmap">
+  update
+	 zly_order
+	 <if test="customerIsDefectiveGoods != null">
+  		 SET customer_is_defective_goods =#{customerIsDefectiveGoods}
+     </if>
+     <if test="factoryIsDefectiveGoods != null">
+  		 SET factory_is_defective_goods = #{factoryIsDefectiveGoods}
+     </if>
+     WHERE
+		customer_name =#{customerName}
+	 <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+			]]>
+		  <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <=#{maxCreateTime}
+	]]>
+  </update>
+  
+   <!-- 查询客户有无未处理订单 -->
+  <select id="checkCustomerItemIsOver" parameterType="hashmap" resultType="hashMap">
+     SELECT
+		count(id)
+    from zly_order where and customer_name = #{customerName}
+ 	<if test="minCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+ 		]]>
+    </if>
+    <if test="maxCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <= #{maxCreateTime}
+ 	]]>
+    </if>
+    AND (spred_status ==1 or return_status ==1 )
   </select>
 </mapper>

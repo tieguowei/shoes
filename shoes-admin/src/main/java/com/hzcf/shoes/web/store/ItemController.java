@@ -202,15 +202,15 @@ public class ItemController extends BaseController{
 	
 	/**
 	 * 
-	 * Description: 查询客户固定时间段的订单
+	 * Description: 查询客户有无未处理订单
 	 */
 	@ResponseBody
-	@RequestMapping(value="/checkBillByCustomerAndPayTime")
-	public  boolean checkBillByCustomerAndPayTime(HttpServletRequest request,DataMsg dataMsg) {
+	@RequestMapping(value="/checkCustomerItemIsOver")
+	public  boolean checkCustomerItemIsOver(HttpServletRequest request,DataMsg dataMsg) {
 		try {
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			customerParm(request, paramsCondition);
-			List<Map<String,Object>> list = itemService.checkBillByCustomerAndPayTime(paramsCondition);
+			List<Map<String,Object>> list = itemService.checkCustomerItemIsOver(paramsCondition);
 			if(null != list && list.size()>0){
 				return true;
 			}
@@ -257,13 +257,13 @@ public class ItemController extends BaseController{
 			List<Map<String,Object> >payList =setPayRecord(customerName, sheet, listTitleStyle, cellStyle, secondStyle, size);
 			
 			/**
-			 * 3.组装历史账单中订单的差价和退货
+			 * 3.组装历史账单中有差价和退货的订单
 			 */
 			int startSize = 5 + itemList.size() + payList.size();
 			List<Map<String,Object>> priceList  = setPriceSpread(customerName, sheet, listTitleStyle, cellStyle, secondStyle,startSize);
 			
 			/**
-			 * 4.组装汇总数据
+			 * 4.组装账单汇总数据
 			 */
 			int dataSize = 6 + itemList.size() + priceList.size()+payList.size();
 			//查询客户此时间段的订单汇总
@@ -277,8 +277,13 @@ public class ItemController extends BaseController{
 				 */
 				insertCustomerBill(session, customerName, itemList, totalMap, sumMap);
 				/**
-				 * 6.修改此账单种订单标记（客户是否减次）
+				 * 6.修改此账单中的订单标记（客户已减次）
 				 */
+				paramsCondition.put("customerIsDefectiveGoods", "0");
+				paramsCondition.put("updateTime", new Date());
+				paramsCondition.put("operator", getSystemCurrentUser(session).getEmployeeId());
+				itemService.updateItemStatus(paramsCondition);
+				
 				String fileName = format.format(new Date()) + "【" + customerName + "】账单" + ".xlsx";
 				String headStr = "attachment; filename=\"" + new String(fileName.getBytes("utf-8"), "ISO8859-1")
 						+ "\"";
@@ -294,6 +299,9 @@ public class ItemController extends BaseController{
 				 1.生成账单之后 先将此区间内订单状态修改
 			   */
 		} catch (Exception e) {
+			/**
+			 * 出现异常情况，所有状态还原
+			 */
 			logger.error(e.getMessage(), e);
 		}
 
@@ -490,52 +498,56 @@ public class ItemController extends BaseController{
 
 	public List<Map<String, Object>> setItemRecord(Map<String, Object> paramsCondition, HSSFSheet sheet,
 		HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle) {
-		HSSFRow firstRow = sheet.createRow(1);
-		firstRow.setHeightInPoints(30);
-		HSSFCell firstCell = firstRow.createCell(0);
-		firstCell.setCellValue("发货记录");
-		firstCell.setCellStyle(secondStyle);
-		sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,8));
-		List<Map<String,Object>> dataList = itemService.checkBillByCustomerAndPayTime(paramsCondition);
-		LinkedHashMap<String,Object> likedHashMap = new LinkedHashMap<String,Object>();
-		likedHashMap.put("发货时间", "发货时间");
-		likedHashMap.put("客户", "客户"); 
-		likedHashMap.put("鞋厂", "鞋厂"); 
-		likedHashMap.put("货号", "货号"); 
-		likedHashMap.put("件数", "件数"); 
-		likedHashMap.put("双数", "双数"); 
-		likedHashMap.put("单价(元)", "单价(元)"); 
-		likedHashMap.put("总计(元)", "总计(元)"); 
-		likedHashMap.put("备注", "备注"); 
-		dataList.add(0,likedHashMap);
-		int start = 2;
-		for (int i = 0; i < dataList.size(); i++) {
-			Row rows = sheet.createRow(start);
-			//为首行设置样式
-			HSSFCellStyle str;
-			if(i == 0 ){
-				rows.setHeightInPoints(20);
-				str = listTitleStyle;
-			}else{
-				str = cellStyle;
+		List<Map<String,Object>> dataList = new ArrayList<Map<String,Object>>();
+		 dataList = itemService.checkBillByCustomerAndPayTime(paramsCondition);
+		 if(null != dataList && dataList.size()>0){
+			 HSSFRow firstRow = sheet.createRow(1);
+			firstRow.setHeightInPoints(30);
+			HSSFCell firstCell = firstRow.createCell(0);
+			firstCell.setCellValue("发货记录");
+			firstCell.setCellStyle(secondStyle);
+			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,8));
+			
+			LinkedHashMap<String,Object> likedHashMap = new LinkedHashMap<String,Object>();
+			likedHashMap.put("发货时间", "发货时间");
+			likedHashMap.put("客户", "客户"); 
+			likedHashMap.put("鞋厂", "鞋厂"); 
+			likedHashMap.put("货号", "货号"); 
+			likedHashMap.put("件数", "件数"); 
+			likedHashMap.put("双数", "双数"); 
+			likedHashMap.put("单价(元)", "单价(元)"); 
+			likedHashMap.put("总计(元)", "总计(元)"); 
+			likedHashMap.put("备注", "备注"); 
+			dataList.add(0,likedHashMap);
+			int start = 2;
+			for (int i = 0; i < dataList.size(); i++) {
+				Row rows = sheet.createRow(start);
+				//为首行设置样式
+				HSSFCellStyle str;
+				if(i == 0 ){
+					rows.setHeightInPoints(20);
+					str = listTitleStyle;
+				}else{
+					str = cellStyle;
+				}
+				Map<String, Object> map2 = dataList.get(i);//遍历每个对象
+			     List list = new ArrayList();
+				 Iterator iter = map2.entrySet().iterator(); // 获得map的Iterator
+				while (iter.hasNext()) {
+					Entry entry = (Entry) iter.next();
+					list.add(entry.getValue());
+				}
+			    
+				for (int j = 0; j < list.size(); j++) {
+					Cell cells = rows.createCell(j);
+					String cellLiString = String.valueOf(list.get(j));
+					cells.setCellValue(new HSSFRichTextString(cellLiString));
+					sheet.setColumnWidth(j, 3000);// 设置excel每列宽度
+					cells.setCellStyle(str); 
+				}
+				start += 1;
 			}
-			Map<String, Object> map2 = dataList.get(i);//遍历每个对象
-		     List list = new ArrayList();
-			 Iterator iter = map2.entrySet().iterator(); // 获得map的Iterator
-			while (iter.hasNext()) {
-				Entry entry = (Entry) iter.next();
-				list.add(entry.getValue());
-			}
-		    
-			for (int j = 0; j < list.size(); j++) {
-				Cell cells = rows.createCell(j);
-				String cellLiString = String.valueOf(list.get(j));
-				cells.setCellValue(new HSSFRichTextString(cellLiString));
-				sheet.setColumnWidth(j, 3000);// 设置excel每列宽度
-				cells.setCellStyle(str); 
-			}
-			start += 1;
-		}
+		 }
 		return dataList;
 	}
 
