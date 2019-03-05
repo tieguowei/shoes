@@ -1,6 +1,7 @@
 
 package com.hzcf.shoes.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,6 @@ public class ItemServiceImpl implements ItemService{
 
 	@Autowired
 	private OrderMapper orderMapper;
-	@Autowired
-	private CustomerPayHistoryMapper  customerPayHistoryMapper;
 	@Autowired
 	private CustomerPaymentRecordMapper  customerPaymentRecordMapper;
 
@@ -69,21 +68,11 @@ public class ItemServiceImpl implements ItemService{
 		return orderMapper.getTotalMoneyByParam(paramsCondition);
 	}
 
-
-	@Override
-	public Map<String, Object> getTotaMoneyOwed(String customerName) {
-		return orderMapper.getTotaMoneyOwed(customerName);
-	}
-
-
-	@Override
-	public List<Map<String, Object>> getCustomerPaymentHistory(String customerName) {
-		return customerPayHistoryMapper.getCustomerPaymentHistory(customerName);
-	}
-
+	
 
 	@Override
 	public List<Map<String, Object>> getBillPrice(String customerName) {
+		List<Map<String,Object>> list =  new ArrayList<Map<String,Object>>();
 		//查询此客户历史账单的起始时间
 		Map<String,Object> reqMap = new HashMap<String,Object>();
 		Map<String,Object> smap = customerPaymentRecordMapper.getBillStartTime(customerName);
@@ -93,17 +82,11 @@ public class ItemServiceImpl implements ItemService{
 			reqMap.put("minCreateTime", smap.get("bill_start_time"));
 			reqMap.put("maxCreateTime", emap.get("bill_end_time"));
 			reqMap.put("customerName", customerName);
-			List<Map<String,Object>> list = orderMapper.getOrderByStartAndEndTime(reqMap);
-		    return list;
+			 list = orderMapper.getOrderByStartAndEndTime(reqMap);
 		}
-		return null;
+		return list;
 	}
 
-
-	@Override
-	public Map<String, Object> getLastOneTime(String customerName) {
-		return orderMapper.getLastOneTime(customerName);
-	}
 
 
 

@@ -11,9 +11,9 @@
     <result column="balance_due" jdbcType="DECIMAL" property="balanceDue" />
     <result column="small_change" jdbcType="DECIMAL" property="smallChange" />
     <result column="defective_goods" jdbcType="DECIMAL" property="defectiveGoods" />
-    <result column="spred_money" jdbcType="DECIMAL" property="spredMoney" />
-    <result column="return_money" jdbcType="DECIMAL" property="returnMoney" />
+    <result column="spred_return_money" jdbcType="DECIMAL" property="spredReturnMoney" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="operator" jdbcType="INTEGER" property="operator" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -76,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, name, bill_start_time, bill_end_time, customary_dues, actual_payment, balance_due, 
-    small_change, defective_goods, spred_money, return_money, create_time, operator
+    small_change, defective_goods, spred_return_money, create_time, update_time, operator
   </sql>
   <select id="selectByExample" parameterType="com.hzcf.shoes.model.CustomerPaymentRecordExample" resultMap="BaseResultMap">
     select
@@ -112,12 +112,12 @@
     insert into zly_customer_payment_record (id, name, bill_start_time, 
       bill_end_time, customary_dues, actual_payment, 
       balance_due, small_change, defective_goods, 
-      spred_money, return_money, create_time, 
+      spred_return_money, create_time, update_time, 
       operator)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{billStartTime,jdbcType=DATE}, 
       #{billEndTime,jdbcType=DATE}, #{customaryDues,jdbcType=DECIMAL}, #{actualPayment,jdbcType=DECIMAL}, 
       #{balanceDue,jdbcType=DECIMAL}, #{smallChange,jdbcType=DECIMAL}, #{defectiveGoods,jdbcType=DECIMAL}, 
-      #{spredMoney,jdbcType=DECIMAL}, #{returnMoney,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{spredReturnMoney,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{operator,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.hzcf.shoes.model.CustomerPaymentRecord">
@@ -150,14 +150,14 @@
       <if test="defectiveGoods != null">
         defective_goods,
       </if>
-      <if test="spredMoney != null">
-        spred_money,
-      </if>
-      <if test="returnMoney != null">
-        return_money,
+      <if test="spredReturnMoney != null">
+        spred_return_money,
       </if>
       <if test="createTime != null">
         create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
       </if>
       <if test="operator != null">
         operator,
@@ -191,14 +191,14 @@
       <if test="defectiveGoods != null">
         #{defectiveGoods,jdbcType=DECIMAL},
       </if>
-      <if test="spredMoney != null">
-        #{spredMoney,jdbcType=DECIMAL},
-      </if>
-      <if test="returnMoney != null">
-        #{returnMoney,jdbcType=DECIMAL},
+      <if test="spredReturnMoney != null">
+        #{spredReturnMoney,jdbcType=DECIMAL},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="operator != null">
         #{operator,jdbcType=INTEGER},
@@ -241,14 +241,14 @@
       <if test="record.defectiveGoods != null">
         defective_goods = #{record.defectiveGoods,jdbcType=DECIMAL},
       </if>
-      <if test="record.spredMoney != null">
-        spred_money = #{record.spredMoney,jdbcType=DECIMAL},
-      </if>
-      <if test="record.returnMoney != null">
-        return_money = #{record.returnMoney,jdbcType=DECIMAL},
+      <if test="record.spredReturnMoney != null">
+        spred_return_money = #{record.spredReturnMoney,jdbcType=DECIMAL},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.operator != null">
         operator = #{record.operator,jdbcType=INTEGER},
@@ -269,9 +269,9 @@
       balance_due = #{record.balanceDue,jdbcType=DECIMAL},
       small_change = #{record.smallChange,jdbcType=DECIMAL},
       defective_goods = #{record.defectiveGoods,jdbcType=DECIMAL},
-      spred_money = #{record.spredMoney,jdbcType=DECIMAL},
-      return_money = #{record.returnMoney,jdbcType=DECIMAL},
+      spred_return_money = #{record.spredReturnMoney,jdbcType=DECIMAL},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       operator = #{record.operator,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -304,14 +304,14 @@
       <if test="defectiveGoods != null">
         defective_goods = #{defectiveGoods,jdbcType=DECIMAL},
       </if>
-      <if test="spredMoney != null">
-        spred_money = #{spredMoney,jdbcType=DECIMAL},
-      </if>
-      <if test="returnMoney != null">
-        return_money = #{returnMoney,jdbcType=DECIMAL},
+      <if test="spredReturnMoney != null">
+        spred_return_money = #{spredReturnMoney,jdbcType=DECIMAL},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="operator != null">
         operator = #{operator,jdbcType=INTEGER},
@@ -329,9 +329,9 @@
       balance_due = #{balanceDue,jdbcType=DECIMAL},
       small_change = #{smallChange,jdbcType=DECIMAL},
       defective_goods = #{defectiveGoods,jdbcType=DECIMAL},
-      spred_money = #{spredMoney,jdbcType=DECIMAL},
-      return_money = #{returnMoney,jdbcType=DECIMAL},
+      spred_return_money = #{spredReturnMoney,jdbcType=DECIMAL},
       create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
       operator = #{operator,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -484,4 +484,27 @@
 	ORDER BY
 		bill_start_time desc limit 1
 </select>
+
+ <!-- 查询客户历史账单 总欠款 -->
+  <select id="getTotaMoneyOwed" parameterType="String" resultType="hashmap">
+	SELECT
+		IFNULL(sum(balance_due),0) balanceDue
+	FROM
+		zly_customer_payment_record
+	WHERE
+		name = #{customerName}
+  </select>
+  
+   <!-- 查询客户最新一笔账单时间 -->
+  <select id="getLastOneTime" parameterType="String" resultType="hashmap">
+  SELECT
+		DATE_FORMAT(create_time,'%Y-%m-%d') create_time
+	FROM
+		zly_customer_payment_record
+	WHERE
+		name = #{customerName}
+	ORDER BY
+		create_time DESC
+	LIMIT 1
+  </select>
 </mapper>

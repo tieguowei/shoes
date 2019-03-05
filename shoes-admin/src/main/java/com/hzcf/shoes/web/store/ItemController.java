@@ -1,8 +1,8 @@
 package com.hzcf.shoes.web.store;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +40,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
+import com.hzcf.shoes.model.CustomerPaymentRecord;
 import com.hzcf.shoes.model.Order;
+import com.hzcf.shoes.service.CustomerBillService;
+import com.hzcf.shoes.service.CustomerPayHistoryService;
 import com.hzcf.shoes.service.ItemService;
 import com.hzcf.shoes.util.PageModel;
 import com.hzcf.shoes.util.StringUtil;
@@ -57,8 +60,14 @@ public class ItemController extends BaseController{
 
 	@Autowired
 	private ItemService itemService;
-	SimpleDateFormat format = new SimpleDateFormat("yyyy年M月d日");
+	@Autowired
+	private CustomerBillService customerBillService;
+	@Autowired
+	private CustomerPayHistoryService customerPayHistoryService;
 	
+	SimpleDateFormat format = new SimpleDateFormat("yyyy年M月d日");
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
 	
 	/**
 	 * 
@@ -217,7 +226,7 @@ public class ItemController extends BaseController{
 	 * @param response
 	 */
 	@RequestMapping("/doCustomerExport")
-	public void doCustomerExport(HttpServletRequest request, HttpServletResponse response) {
+	public void doCustomerExport(HttpSession session,HttpServletRequest request, HttpServletResponse response) {
 		try {
 			String customerName = StringUtil.trim(request.getParameter("customerName"));
 			//组装请求参数
@@ -235,37 +244,54 @@ public class ItemController extends BaseController{
 			HSSFCellStyle secondStyle = setStyleForItemAndPay(wb);
 			//设置表头
 	        setTitle(customerName, wb,sheet);
-	        //组装发货记录
+	       
+	        /**
+	         * 1.组装发货记录
+	         */
 			List<Map<String, Object>> itemList = setItemRecord(paramsCondition, sheet, listTitleStyle, cellStyle,secondStyle);
-			//组装还款记录
+			
+			/**
+			 * 2.组装还款记录
+			 */
 			int size = 3 +itemList.size();
-			List<Map<String,Object>> payList =setPayRecord(customerName, sheet, listTitleStyle, cellStyle, secondStyle, size);
+			List<Map<String,Object> >payList =setPayRecord(customerName, sheet, listTitleStyle, cellStyle, secondStyle, size);
 			
-			//组装历史账单中订单的差价和退货
+			/**
+			 * 3.组装历史账单中订单的差价和退货
+			 */
 			int startSize = 5 + itemList.size() + payList.size();
-			List<Map<String,Object>> priceList = setPriceSpread(customerName, sheet, listTitleStyle, cellStyle, secondStyle,startSize);
+			List<Map<String,Object>> priceList  = setPriceSpread(customerName, sheet, listTitleStyle, cellStyle, secondStyle,startSize);
 			
-			//组装汇总数据
+			/**
+			 * 4.组装汇总数据
+			 */
 			int dataSize = 6 + itemList.size() + priceList.size()+payList.size();
-			setTotalData(priceList,paramsCondition, sheet, listTitleStyle, cellStyle,secondStyle,dataSize);
+			//查询客户此时间段的订单汇总
+			Map<String,Object> totalMap = itemService.getTotalMoneyByParam(paramsCondition);
+			//查询客户历史账单时间内(差价和退货)汇总
+			String sumMap = itemService.getBillPriceSum(paramsCondition);
+			setTotalData(sumMap,totalMap,customerName, sheet, listTitleStyle, cellStyle,secondStyle,dataSize);
 			if (wb != null) {
-				try {
-					String fileName = format.format(new Date()) + "【" + customerName + "】" + ".xlsx";
-					String headStr = "attachment; filename=\"" + new String(fileName.getBytes("utf-8"), "ISO8859-1")
-							+ "\"";
-					response.setContentType("APPLICATION/OCTET-STREAM;charset=utf-8");
-					response.setHeader("Content-Disposition", headStr);
-					OutputStream out = response.getOutputStream();
-					wb.write(out);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
+				/**
+				 * 5.客户账单入库
+				 */
+				insertCustomerBill(session, customerName, itemList, totalMap, sumMap);
+				/**
+				 * 6.修改此账单种订单标记（客户是否减次）
+				 */
+				String fileName = format.format(new Date()) + "【" + customerName + "】账单" + ".xlsx";
+				String headStr = "attachment; filename=\"" + new String(fileName.getBytes("utf-8"), "ISO8859-1")
+						+ "\"";
+				response.setContentType("APPLICATION/OCTET-STREAM;charset=utf-8");
+				response.setHeader("Content-Disposition", headStr);
+				OutputStream out = response.getOutputStream();
+				wb.write(out);
 			}
-			  /**
+			
+			
+			/**
 			   * 1.生成账单之后 将此区间所有的订单改为已减次.
 				 1.生成账单之后 先将此区间内订单状态修改
-				 2.在账单表中插入一条数据
 			   */
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -273,16 +299,24 @@ public class ItemController extends BaseController{
 
 	}
 
-	private void setTotalData(List<Map<String, Object>> priceList, Map<String, Object> paramsCondition, HSSFSheet sheet, HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int dataSize) {
-		  //查询客户此时间段的订单汇总
-		  Map<String,Object> totalMap = itemService.getTotalMoneyByParam(paramsCondition);
+	public void insertCustomerBill(HttpSession session, String customerName, List<Map<String, Object>> itemList,
+			Map<String, Object> totalMap, String sumMap) throws ParseException {
+		CustomerPaymentRecord customerbill = new CustomerPaymentRecord();
+		customerbill.setName(customerName); //客户姓名
+		customerbill.setBillStartTime(dateFormat.parse(itemList.get(1).get("pay_time").toString()));//本次账单中订单开始时间
+		customerbill.setBillEndTime(dateFormat.parse(itemList.get(itemList.size()-1).get("pay_time").toString()));//本次账单中订单结束时间
+		customerbill.setCustomaryDues(new BigDecimal(String.valueOf(totalMap.get("blanceDue"))));//本次账单应还金额
+		customerbill.setSpredReturnMoney(new BigDecimal(sumMap));//本次账单（总差价+总退货价）
+		customerbill.setCreateTime(new Date());
+		customerbill.setOperator(getSystemCurrentUser(session).getEmployeeId());
+		customerBillService.insertCustomerBill(customerbill);
+	}
+
+	private void setTotalData(String sumMap, Map<String, Object> totalMap, String customerName,HSSFSheet sheet, HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int dataSize) {
 		  //查询客户历史账单总欠款
-		  Map<String,Object> data = itemService.getTotaMoneyOwed(String.valueOf(paramsCondition.get("customerName")));
+		  Map<String,Object> data = customerBillService.getTotaMoneyOwed(customerName);
 		  //查询客户最新账单时间
-		  Map<String,Object> time = itemService.getLastOneTime(String.valueOf(paramsCondition.get("customerName")));
-		  //查询客户历史账单时间内(差价和退货)汇总
-		  String sumMap = itemService.getBillPriceSum(paramsCondition);
-		  
+		  Map<String,Object> time = customerBillService.getLastOneTime(customerName);
 		  HSSFRow nextRow = sheet.createRow(dataSize);
 			nextRow.setHeightInPoints(30);
 			HSSFCell nextCell = nextRow.createCell(0);
@@ -296,24 +330,27 @@ public class ItemController extends BaseController{
 			nextLikedHashMap.put("总件", "总件"); 
 			nextLikedHashMap.put("总计金额（元）", "总计金额（元）"); 
 			nextLikedHashMap.put("减次（元）", "减次（元）");
-			nextLikedHashMap.put("历史账单差价和退货（元）", "历史账单差价和退货（元）");
+			if(!"0.00".equals(sumMap) ){
+				 nextLikedHashMap.put("历史账单差价和退货（元）", "历史账单差价和退货（元）");
+			 }
 			nextLikedHashMap.put("欠款额（元）", "欠款额（元）");
-			nextLikedHashMap.put(time.get("create_time")+"账单欠款（元）",time.get("create_time")+"账单欠款（元）");
+			if(null != time){
+				nextLikedHashMap.put(time.get("create_time")+"账单欠款（元）",time.get("create_time")+"账单欠款（元）");
+			}
 			nextLikedHashMap.put("累计欠款（元）", "累计欠款（元）");
 			dataList.add(0,nextLikedHashMap);
 		  	LinkedHashMap<Object,Object> dataMap = new LinkedHashMap<Object,Object>();
 		  	dataMap.put(format.format(new Date()),format.format(new Date()));
-		  	dataMap.put("tn",totalMap.get("totalNum"));//总件
-		  	dataMap.put("tm",totalMap.get("totalGoodsMoney"));//总计金额
-		  	dataMap.put("jc",totalMap.get("jianci"));//减次
-		    if(StringUtil.isBlank(sumMap)){
-    		  	dataMap.put("returnPrice","0");//历史账单差价和退货
-            }else{
-    		  	dataMap.put("returnPrice",sumMap);//历史账单差价和退货
+		  	dataMap.put("tn",totalMap.get("totalNum"));//本次账单总件
+		  	dataMap.put("tm",totalMap.get("totalGoodsMoney"));//本次账单总计金额
+		  	dataMap.put("jc",totalMap.get("jianci"));//本次账单减次
+		  	if(!"0.00".equals(sumMap)){
+		    	dataMap.put("returnPrice",sumMap);//本次账单(历史账单差价和退货)
             }
-		  	dataMap.put("tb",totalMap.get("blanceDue"));//本次账单欠款额
-		  	dataMap.put("hb",data.get("balanceDue"));//历史账单总欠款
-		 
+		  	dataMap.put("tb",totalMap.get("blanceDue"));//本次账单（应还金额 = 欠款额）
+		  	if(null != time){
+		  		dataMap.put("hb",data.get("balanceDue"));//历史账单总欠款
+		  	}
             //累计欠款= 本次欠款额 + 历史账单总欠款 
 		  	BigDecimal add = new BigDecimal(String.valueOf(totalMap.get("blanceDue"))).add(new BigDecimal(String.valueOf(data.get("balanceDue"))));
 		  	dataMap.put("累计欠款",add);
@@ -351,8 +388,9 @@ public class ItemController extends BaseController{
 	}
 
 	private List<Map<String, Object>> setPriceSpread(String customerName, HSSFSheet sheet, HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int startSize) {
-		List<Map<String,Object>> nextList = itemService.getBillPrice(customerName);
-		if(null != nextList && nextList.size()>0){
+		List<Map<String,Object>> priceList = new  ArrayList<Map<String,Object>>();
+		priceList =  itemService.getBillPrice(customerName);
+		if(null != priceList && priceList.size()>0){
 			HSSFRow nextRow = sheet.createRow(startSize);
 			nextRow.setHeightInPoints(30);
 			HSSFCell nextCell = nextRow.createCell(0);
@@ -366,9 +404,9 @@ public class ItemController extends BaseController{
 			map.put("差价金额（元）", "差价金额（元）");
 			map.put("退货金额（元）", "退货金额（元）");
 			map.put("总计（元）", "总计（元）");
-			nextList.add(0,map);
+			priceList.add(0,map);
 			int nextStart = 1 + startSize;
-			for (int i = 0; i < nextList.size(); i++) {
+			for (int i = 0; i < priceList.size(); i++) {
 				Row rows = sheet.createRow(nextStart);
 				//为首行设置样式
 				HSSFCellStyle str;
@@ -378,7 +416,7 @@ public class ItemController extends BaseController{
 				}else{
 					str = cellStyle;
 				}
-				Map<String, Object> map2 = nextList.get(i);
+				Map<String, Object> map2 = priceList.get(i);
 				List list = new ArrayList();
 				Iterator iter = map2.entrySet().iterator(); // 获得map的Iterator
 				while (iter.hasNext()) {
@@ -396,19 +434,14 @@ public class ItemController extends BaseController{
 				nextStart += 1;
 			}
 		}
-		return nextList;
-		
+		return priceList;
 	}
 
 	public List<Map<String, Object>> setPayRecord(String customerName, HSSFSheet sheet, HSSFCellStyle listTitleStyle,
 			HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int size) {
-		List<Map<String,Object>> nextList = itemService.getCustomerPaymentHistory(customerName);
-		
-		
-		
-		
-		if(null != nextList && nextList.size()>0){
-			
+			List<Map<String,Object>> payList = new  ArrayList<Map<String,Object>>();
+			payList =  customerPayHistoryService.getCustomerPaymentHistory(customerName);
+		    if(null != payList && payList.size()>0){
 			HSSFRow nextRow = sheet.createRow(size);
 			nextRow.setHeightInPoints(30);
 			HSSFCell nextCell = nextRow.createCell(0);
@@ -420,9 +453,9 @@ public class ItemController extends BaseController{
 			map.put("还款时间", "还款时间");
 			map.put("银行名称", "银行名称"); 
 			map.put("还款金额(元)", "还款金额(元)"); 
-			nextList.add(0,map);
+			payList.add(0,map);
 			int nextStart = 1+ size;
-			for (int i = 0; i < nextList.size(); i++) {
+			for (int i = 0; i < payList.size(); i++) {
 				Row rows = sheet.createRow(nextStart);
 				//为首行设置样式
 				HSSFCellStyle str;
@@ -432,7 +465,7 @@ public class ItemController extends BaseController{
 				}else{
 					str = cellStyle;
 				}
-				Map<String, Object> map2 = nextList.get(i);
+				Map<String, Object> map2 = payList.get(i);
 				List list = new ArrayList();
 				Iterator iter = map2.entrySet().iterator(); // 获得map的Iterator
 				while (iter.hasNext()) {
@@ -450,19 +483,19 @@ public class ItemController extends BaseController{
 				nextStart += 1;
 			}
 		}
-		return nextList;
+		return payList;
 	}
 
 	
 
 	public List<Map<String, Object>> setItemRecord(Map<String, Object> paramsCondition, HSSFSheet sheet,
-			HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle) {
+		HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle) {
 		HSSFRow firstRow = sheet.createRow(1);
 		firstRow.setHeightInPoints(30);
 		HSSFCell firstCell = firstRow.createCell(0);
 		firstCell.setCellValue("发货记录");
 		firstCell.setCellStyle(secondStyle);
-		sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,9));
+		sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,8));
 		List<Map<String,Object>> dataList = itemService.checkBillByCustomerAndPayTime(paramsCondition);
 		LinkedHashMap<String,Object> likedHashMap = new LinkedHashMap<String,Object>();
 		likedHashMap.put("发货时间", "发货时间");
@@ -518,7 +551,7 @@ public class ItemController extends BaseController{
 		HSSFRow row = sheet.createRow(0);
 		row.setHeightInPoints(50);
 		HSSFCell cell = row.createCell(0);
-		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,9));//首行合并多少格
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,8));//首行合并多少格
 		cell.setCellValue("客户："+customerName+"    账单日期："+format.format(new Date()));
 		cell.setCellStyle(firstStyle);
 	}

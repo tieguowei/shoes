@@ -12,8 +12,7 @@
         var datagrid;
         $(function(){
             datagrid = $('#datagrid').datagrid({
-                url : '${app}/customerPay/customerBackRecordSelect',
-                queryParams: { 'customerName': '${customerName}' },
+                url : '${app}/customerBill/getCustomerList',
 				title : '',
 				pagination : true,
 				pageSize : <%=Constants.PAGE_SIZE%>,
@@ -31,57 +30,46 @@
 					field:'rowNumbers',
 				    title: '序号',
 				    align: 'center',
-				    width: 80,
+				    width: 150,
 				    formatter: function(val,rec,index){
 						var op = $('#datagrid').datagrid('options');
 					    return op.pageSize * (op.pageNumber - 1) + (index + 1);
 					}
 				},{
-					field : 'billStartTime',
-					title : '账单开始时间',
+					field : 'customerName',
+					title : '客户姓名',
 					align: 'center',
-					width : 150
+					width : 200
 				},{
-					field : 'billEndTime',
-					title : '账单结束时间',
+					field : 'totalGoodsMoney',
+					title : '总货款',
 					align: 'center',
-					width : 150
+					width : 200
 				},{
-					field : 'customaryDues',
-					title : '本次账单应还金额（元）',
+					field : 'waitBackMoney',
+					title : '欠款',
 					align: 'center',
-					width : 150
+					width : 200
 				}
-				,{
-                    field : 'actualPayment',
-                    title : '本次账单实还金额（元）',
-                    align: 'center',
-                    width : 150
-                }
-                ,{
-                    field : 'balanceDue',
-                    title : '本次账单欠款（元）',
-                    align: 'center',
-                    width : 150
-                }
-                ,{
-                    field : 'snallChange',
-                    title : '本次账单抹零（元）',
-                    align: 'center',
-                    width : 150
-                }
-                ,{
-                    field : 'defectiveGoods',
-                    title : '本次账单减次（元）',
-                    align: 'center',
-                    width : 150
-                }
 				]],
 			});
+            
 		});
+        
+   		//搜索
+        function searchFun() {
+            datagrid.datagrid('load',serializeObject($("#searchForm")));
+            datagrid.datagrid('clearSelections');
+            datagrid.datagrid('clearChecked');
+        }
 
-		 //修改回款记录
-        function updateBackRecord(){
+       //清空
+        function clearFromFun(datagrid){
+            clearForm(datagrid);
+        }
+
+        //回款记录查询
+        function backRecordSelect(){
             var rows = datagrid.datagrid('getSelections');
             if(rows.length > 0){
                 if(rows.length > 1){
@@ -93,11 +81,11 @@
                     });
                     return;
                 }
-                parent.createTab('${app}/customerPay/updateCustomerBackRecorde/' + rows[0].id,'回款记录更新');
+                parent.createTab('${app}/customerBill/customerBackRecordSelectPage/' + rows[0].customerName,'回款记录查询');
             }else{
                 $.messager.show({
                     title:'信息提示',
-                    msg:'请选择要更新的记录!',
+                    msg:'请选择要查询的记录!',
                     timeout:5000,
                     showType:'slide'
                 });
@@ -106,6 +94,24 @@
 	</script>
 </head>
 <body class="easyui-layout" fit="true" style="width: 100%;height: 100%;">
+<div region="north" border="false" align="left" style="height:61px; overflow:hidden; " >
+    <form id="searchForm">
+    		<table border="0" class="searchForm datagrid-toolbar" width="100%">
+    			<tr>
+    				<td class="tdR" >客户姓名:</td>
+    				<td>
+    					<input id="customer_name" name="customerName" maxlength="28" class='easyui-textbox' style="width: 150px;height: 24px;"/>
+    				</td>
+    			</tr>
+    			<tr>
+    				<td align="center" colspan="5" >
+    						<a class="easyui-linkbutton" iconCls="icon-search" onclick="searchFun()">查询</a>
+    						<a class="easyui-linkbutton" iconCls="icon-clear" onclick="clearFromFun(datagrid);">清空</a>
+    				</td>
+    			</tr>
+    		</table>
+    </form>
+</div>
 <div region="center" border="false" style="overflow: hidden;">
 	<table id="datagrid"></table>
 </div>
@@ -113,7 +119,7 @@
 	<table border="0" class="searchForm datagrid-toolbar" width="100%">
 		<tr>
 			<td width="10%"  id="toolbars" class="tdL">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateBackRecord();">回款记录更新</a>
+			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="backRecordSelect();">回款记录查询</a>
                     <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 			</td>
 		</tr>

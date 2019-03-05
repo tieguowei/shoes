@@ -38,12 +38,6 @@ public interface OrderMapper {
 
 	Map<String, Object> getTotalMoneyByParam(Map<String, Object> paramsCondition);
 
-	/**
-	 * 查询客户历史账单总欠款
-	 * @param customerName
-	 * @return
-	 */
-	Map<String, Object> getTotaMoneyOwed(String customerName);
 
 
 	/**
@@ -53,12 +47,6 @@ public interface OrderMapper {
 	 */
 	List<Map<String, Object>> getOrderByStartAndEndTime(Map<String, Object> reqMap);
 
-	/**
-	 * 查询客户最新一笔账单时间
-	 * @param customerName
-	 * @return
-	 */
-	Map<String, Object> getLastOneTime(String customerName);
 
 	/**
 	 * 查询客户历史账单时间内(差价和退货)汇总

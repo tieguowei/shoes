@@ -22,11 +22,11 @@ public class CustomerPaymentRecord {
 
     private BigDecimal defectiveGoods;
 
-    private BigDecimal spredMoney;
-
-    private BigDecimal returnMoney;
+    private BigDecimal spredReturnMoney;
 
     private Date createTime;
+
+    private Date updateTime;
 
     private Integer operator;
 
@@ -102,20 +102,12 @@ public class CustomerPaymentRecord {
         this.defectiveGoods = defectiveGoods;
     }
 
-    public BigDecimal getSpredMoney() {
-        return spredMoney;
+    public BigDecimal getSpredReturnMoney() {
+        return spredReturnMoney;
     }
 
-    public void setSpredMoney(BigDecimal spredMoney) {
-        this.spredMoney = spredMoney;
-    }
-
-    public BigDecimal getReturnMoney() {
-        return returnMoney;
-    }
-
-    public void setReturnMoney(BigDecimal returnMoney) {
-        this.returnMoney = returnMoney;
+    public void setSpredReturnMoney(BigDecimal spredReturnMoney) {
+        this.spredReturnMoney = spredReturnMoney;
     }
 
     public Date getCreateTime() {
@@ -124,6 +116,14 @@ public class CustomerPaymentRecord {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     public Integer getOperator() {

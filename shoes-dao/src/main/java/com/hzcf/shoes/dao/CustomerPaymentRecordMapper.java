@@ -43,5 +43,16 @@ public interface CustomerPaymentRecordMapper {
 	Map<String, Object> getBillStartTime(String customerName);
 
 	Map<String, Object> getBillEndTime(String customerName);
-
+	/**
+	 * 查询客户历史账单总欠款
+	 * @param customerName
+	 * @return
+	 */
+	Map<String, Object> getTotaMoneyOwed(String customerName);
+	/**
+	 * 查询客户最新一笔账单时间
+	 * @param customerName
+	 * @return
+	 */
+	Map<String, Object> getLastOneTime(String customerName);
 }
