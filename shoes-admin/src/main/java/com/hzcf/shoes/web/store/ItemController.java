@@ -393,7 +393,8 @@ public class ItemController extends BaseController{
 			dataList.add(0,nextLikedHashMap);
 		  	LinkedHashMap<Object,Object> dataMap = new LinkedHashMap<Object,Object>();
 		  	dataMap.put(format.format(new Date()),format.format(new Date()));
-		  	dataMap.put("tn",totalMap.get("totalNum"));//本次账单总件
+		  	String totalNum = String.valueOf(totalMap.get("totalNum"));
+		  	dataMap.put("tn",totalNum);//本次账单总件
 		  	dataMap.put("tm",totalMap.get("totalGoodsMoney"));//本次账单总计金额
 		  	dataMap.put("jc",totalMap.get("jianci"));//本次账单减次
 		  	
@@ -407,7 +408,11 @@ public class ItemController extends BaseController{
 		  	 */
 		  	String  object = String.valueOf(totalMap.get("blanceDue"));//此金额已经减次
 		  	BigDecimal qke = new BigDecimal(object).subtract(new BigDecimal(sumMap));
-		  	dataMap.put("tb",qke);
+		  	if("0".equals(totalNum)){//表明是年后最后一次账单后的减差价和退货
+		  		dataMap.put("qke",0);
+		  	}else{
+		  		dataMap.put("qke",qke);
+		  	}
 		  	
 		  	if(null != time){
 		  		dataMap.put("hb",data.get("balanceDue"));//历史账单总欠款
