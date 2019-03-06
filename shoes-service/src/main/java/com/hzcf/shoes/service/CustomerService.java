@@ -12,7 +12,12 @@ public interface CustomerService {
      */
 	public PageModel findAllByPage(Map<String, Object> paramsCondition);
 
-    public PageModel selectBackRecordList(Map<String, Object> condition);
+	/**
+	 * 查询客户账单列表
+	 * @param paramsCondition
+	 * @return
+	 */
+	public PageModel getCustomerBillList(Map<String, Object> paramsCondition);
 
 
 }

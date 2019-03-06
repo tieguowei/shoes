@@ -4,7 +4,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<title>客户账单管理</title>
+	<title>客户账单列表</title>
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
 	<meta http-equiv="expires" content="0">
@@ -12,7 +12,7 @@
         var datagrid;
         $(function(){
             datagrid = $('#datagrid').datagrid({
-                url : '${app}/customerBill/customerBackRecordSelect',
+                url : '${app}/customerBill/getCustomerBillList',
                 queryParams: { 'customerName': '${customerName}' },
 				title : '',
 				pagination : true,
@@ -37,44 +37,58 @@
 					    return op.pageSize * (op.pageNumber - 1) + (index + 1);
 					}
 				},{
-					field : 'billStartTime',
-					title : '账单开始时间',
+					field : 'createTime',
+					title : '账单时间',
 					align: 'center',
-					width : 150
+					width : 120
+				},{
+					field : 'billStartTime',
+					title : '订单开始时间',
+					align: 'center',
+					width : 120
 				},{
 					field : 'billEndTime',
-					title : '账单结束时间',
+					title : '订单结束时间',
 					align: 'center',
-					width : 150
+					width : 120
 				},{
 					field : 'customaryDues',
-					title : '本次账单应还金额（元）',
+					title : '应还金额（元）',
 					align: 'center',
-					width : 150
+					width : 120
 				}
 				,{
                     field : 'actualPayment',
-                    title : '本次账单实还金额（元）',
+                    title : '实还金额（元）',
                     align: 'center',
-                    width : 150
+                    width : 120
                 }
                 ,{
                     field : 'balanceDue',
-                    title : '本次账单欠款（元）',
+                    title : '欠款（元）',
                     align: 'center',
-                    width : 150
+                    width : 120
                 }
                 ,{
                     field : 'snallChange',
-                    title : '本次账单抹零（元）',
+                    title : '抹零（元）',
                     align: 'center',
-                    width : 150
-                }
-                ,{
+                    width : 120
+                },{
                     field : 'defectiveGoods',
-                    title : '本次账单减次（元）',
+                    title : '减次（元）',
                     align: 'center',
-                    width : 150
+                    width : 120
+                },{
+                    field : 'defectiveGoods',
+                    title : '减次（元）',
+                    align: 'center',
+                    width : 120
+                },{
+                    field : 'billStatusZH',
+                    title : '是否结清',
+                    align: 'center',
+                    width : 120
                 }
 				]],
 			});
@@ -97,7 +111,7 @@
             }else{
                 $.messager.show({
                     title:'信息提示',
-                    msg:'请选择要更新的记录!',
+                    msg:'请选择要修改的账单!',
                     timeout:5000,
                     showType:'slide'
                 });
@@ -113,8 +127,11 @@
 	<table border="0" class="searchForm datagrid-toolbar" width="100%">
 		<tr>
 			<td width="10%"  id="toolbars" class="tdL">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateBackRecord();">回款记录更新</a>
+			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateBackRecord();">修改账单</a>
                     <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
+			</td>
+			<td>
+				<span style="color: red">客户：${customerName}</span>
 			</td>
 		</tr>
 	</table>

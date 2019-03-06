@@ -101,11 +101,11 @@
                     });
                     return;
                 }
-                parent.createTab('${app}/customerBill/customerBackRecordSelectPage/' + rows[0].customerName,'回款记录查询');
+                parent.createTab('${app}/customerBill/toCustomerBillList/'+rows[0].customer_name ,'账单列表');
             }else{
                 $.messager.show({
                     title:'信息提示',
-                    msg:'请选择要查询的客户!',
+                    msg:'请选择要查看的客户!',
                     timeout:5000,
                     showType:'slide'
                 });
@@ -131,25 +131,6 @@
 			</table>
 		</form>
 	</div>
-	
-<!-- <div region="north" border="false" align="left" style="height:61px; overflow:hidden; " >
-    <form id="searchForm">
-    		<table border="0" class="searchForm datagrid-toolbar" width="100%">
-    			<tr>
-    				<td class="tdR" >客户姓名:</td>
-    				<td>
-    					<input id="customer_name" name="customerName" maxlength="28" class='easyui-textbox' style="width: 150px;height: 24px;"/>
-    				</td>
-    			</tr>
-    			<tr>
-    				<td align="center" colspan="5" >
-    						<a class="easyui-linkbutton" iconCls="icon-search" onclick="searchFun()">查询</a>
-    						<a class="easyui-linkbutton" iconCls="icon-clear" onclick="clearFromFun(datagrid);">清空</a>
-    				</td>
-    			</tr>
-    		</table>
-    </form>
-</div> -->
 <div region="center" border="false" style="overflow: hidden;">
 	<table id="datagrid"></table>
 </div>
@@ -157,7 +138,7 @@
 	<table border="0" class="searchForm datagrid-toolbar" width="100%">
 		<tr>
 			<td width="10%"  id="toolbars" class="tdL">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="backRecordSelect();">查看账单详情</a>
+			  		<a class="easyui-linkbutton"  data-options="iconCls:'icon-ok',plain:true" onclick="backRecordSelect();">查看账单详情</a>
                     <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 			</td>
 		</tr>

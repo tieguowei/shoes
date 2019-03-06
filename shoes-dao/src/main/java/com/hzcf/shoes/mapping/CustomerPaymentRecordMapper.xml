@@ -398,134 +398,36 @@
 	</if> 
   </select>
   
-  
-  
-  
-  <select id="getCustomerAccountList" parameterType="java.util.Map" resultType="hashMap">
-    <!--
-        客户账单管理列表
-        查询思路 :
-            根据客户姓名分组 , 查询 客户姓名 , 总货款( 订单查询的总金额 - 减次 - 退货 )
-    -->
-            SELECT
-              id ,
-              customer_name customerName,
-            SUM(
-              number_packages * shoe_dual * sale_price - (
-            CASE
-            WHEN price_spread IS NULL THEN
-              0
-            ELSE
-              price_spread
-            END
-              ) * (
-            CASE
-            WHEN difference_number IS NULL THEN
-              0
-            ELSE
-              difference_number
-            END
-              ) - (
-            CASE
-            WHEN sale_price IS NULL THEN
-              0
-            ELSE
-                sale_price
-            END
-              ) * (
-            CASE
-            WHEN returns_number IS NULL THEN
-              0
-            ELSE
-                returns_number
-            END
-              )
-                ) totalGoodsMoney
-            FROM
-              zly_order
-            WHERE 1 = 1
-              <if test=" customerName != null and customerName != ''" >
-                and customer_name = #{customerName}
-              </if>
-            GROUP BY
-              customer_name
-            limit #{startIndex},#{endIndex}
-  </select>
 
-  <select id="getCustomerAccountListTotal" parameterType="java.util.Map" resultType="java.lang.Long">
-    select count(0) from (
-      SELECT
-          customer_name
-        FROM
-        zly_order
-        WHERE 1 = 1
-        <if test=" customerName != null and customerName != ''" >
-          and customer_name = #{customerName}
-        </if>
-        GROUP BY
-        customer_name
-    ) temp
-  </select>
-
-  <select id="selectWaitBackMoney" parameterType="java.util.Map" resultType="hashMap">
-      SELECT
-          NAME customerName,
-      SUM(
-      (
-        CASE
-          WHEN actual_payment IS NULL THEN
-            0
-          ELSE
-          actual_payment
-        END
-        ) + (
-        CASE
-          WHEN small_change IS NULL THEN
-            0
-        ELSE
-          small_change
-        END
-        )
-      ) realBackMoney
-      FROM
-          zly_customer_payment_record
-      WHERE 1 = 1
-      <if test=" customerName != null and customerName != ''" >
-        AND name = #{customerName}
-      </if>
-      GROUP BY
-          NAME
-  </select>
-
+<!-- 根据姓名查询客户账单列表 -->
   <select id="getCustomerBackRecordList" parameterType="java.util.Map" resultType="hashMap">
     select
-      id ,
-      bill_start_time billStartTime ,
-      bill_end_time billEndTime ,
+       id ,
+		DATE_FORMAT(create_time,'%Y-%m-%d') createTime,
+		DATE_FORMAT(bill_start_time,'%Y-%m-%d') billStartTime,
+		DATE_FORMAT(bill_end_time,'%Y-%m-%d') billEndTime,
       customary_dues customaryDues ,
       actual_payment actualPayment ,
       balance_due	balanceDue ,
       small_change snallChange ,
-      defective_goods	defectiveGoods
-    from zly_customer_payment_record where 1 = 1
-      <if test=" customerName != null and customerName != ''" >
-        AND name = #{customerName}
-      </if>
+      defective_goods	defectiveGoods,
+     bill_status  billStatus,
+     case when bill_status = 0 then '是'
+     else '否' end  as billStatusZH
+   	 from zly_customer_payment_record 
+     where customer_name = #{customerName}
     order by create_time desc
     limit #{startIndex},#{endIndex}
   </select>
 
+<!-- 查询客户账单列表count -->
   <select id="getCustomerBackRecordListTotal" parameterType="java.util.Map" resultType="java.lang.Long">
         select
             count(0) totalRecord
         from
           zly_customer_payment_record
         where
-          1 = 1
-        <if test=" customerName != null and customerName != ''" >
-          AND name = #{customerName}
-        </if>
-        GROUP BY name
+          customer_name = #{customerName}
   </select>
 
 <!-- 查询客户账单中订单的开始时间 -->

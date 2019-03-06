@@ -33,24 +33,20 @@ public class CustomerServiceImpl implements CustomerService {
 		return pageModel;
     }
 
-    /**
-     *  用户的回款记录列表
-     * @param paramsCondition
-     * @return
-     */
-    @Override
-    public PageModel selectBackRecordList(Map<String, Object> paramsCondition) {
-        PageModel pageModel = new PageModel();
-        pageModel.setPageNo((Integer) paramsCondition.get("pageNo"));
-        pageModel.setPageSize((Integer) paramsCondition.get("pageSize"));
-        paramsCondition.put("startIndex", pageModel.getStartIndex());
-        paramsCondition.put("endIndex", pageModel.getEndIndex());
-        paramsCondition.put("customerName", paramsCondition.get("customerName"));
-        //查询回款记录列表
-        List<Map<String,Object>> list = this.customerPaymentRecordMapper.getCustomerBackRecordList(paramsCondition);
-        Long totalRecords = this.customerPaymentRecordMapper.getCustomerBackRecordListTotal(paramsCondition);
-        pageModel.setList(list);
-        pageModel.setTotalRecords(totalRecords);
-        return pageModel;
-    }
+
+	@Override
+	public PageModel getCustomerBillList(Map<String, Object> paramsCondition) {
+		 PageModel pageModel = new PageModel();
+	        pageModel.setPageNo((Integer) paramsCondition.get("pageNo"));
+	        pageModel.setPageSize((Integer) paramsCondition.get("pageSize"));
+	        paramsCondition.put("startIndex", pageModel.getStartIndex());
+	        paramsCondition.put("endIndex", pageModel.getEndIndex());
+	        paramsCondition.put("customerName", paramsCondition.get("customerName"));
+	        //查询回款记录列表
+	        List<Map<String,Object>> list = this.customerPaymentRecordMapper.getCustomerBackRecordList(paramsCondition);
+	        Long totalRecords = this.customerPaymentRecordMapper.getCustomerBackRecordListTotal(paramsCondition);
+	        pageModel.setList(list);
+	        pageModel.setTotalRecords(totalRecords);
+	        return pageModel;
+	}
 }

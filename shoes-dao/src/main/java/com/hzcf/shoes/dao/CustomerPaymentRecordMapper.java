@@ -30,12 +30,6 @@ public interface CustomerPaymentRecordMapper {
 
     int updateByPrimaryKey(CustomerPaymentRecord record);
 
-    List<Map<String,Object>> getCustomerAccountList(Map<String,Object> param);
-
-    Long getCustomerAccountListTotal(Map<String,Object> param);
-
-    List<Map<String,Object>> selectWaitBackMoney(Map<String,Object> map);
-
     Long getCustomerBackRecordListTotal(Map<String,Object> param);
 
     List<Map<String,Object>> getCustomerBackRecordList(Map<String,Object> map);
