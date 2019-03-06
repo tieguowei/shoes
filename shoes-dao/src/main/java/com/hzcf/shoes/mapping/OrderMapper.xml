@@ -525,7 +525,6 @@
   <select id="checkBillByCustomerAndPayTime" parameterType="hashmap" resultType="java.util.LinkedHashMap">
      SELECT
 		IFNULL(DATE_FORMAT(pay_time,'%Y-%m-%d'),'') pay_time,
-		IFNULL(customer_name,'') customer_name,
 		IFNULL(factory_name,'') factory_name,
 		IFNULL(item_no,'') item_no,
 		IFNULL(number_packages,0) number_packages,

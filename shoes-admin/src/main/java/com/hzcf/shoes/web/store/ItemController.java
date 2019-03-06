@@ -356,10 +356,12 @@ public class ItemController extends BaseController{
 		customerbill.setName(customerName); //客户姓名
 		customerbill.setBillStartTime(dateFormat.parse(itemList.get(1).get("pay_time").toString()));//本次账单中订单开始时间
 		customerbill.setBillEndTime(dateFormat.parse(itemList.get(itemList.size()-1).get("pay_time").toString()));//本次账单中订单结束时间
-		customerbill.setCustomaryDues(new BigDecimal(String.valueOf(totalMap.get("blanceDue"))));//本次账单应还金额
+		String  object = String.valueOf(totalMap.get("blanceDue"));//此金额已经减次
+	  	BigDecimal qke = new BigDecimal(object).subtract(new BigDecimal(sumMap));
+		customerbill.setCustomaryDues(qke);//本次账单应还金额
 		customerbill.setSpredReturnMoney(new BigDecimal(sumMap));//本次账单（总差价+总退货价）
 		customerbill.setCreateTime(new Date());
-		customerbill.setBalanceDue(new BigDecimal(String.valueOf(totalMap.get("blanceDue"))));
+		customerbill.setBalanceDue(qke);//本次账单欠款
 		customerbill.setOperator(getSystemCurrentUser(session).getEmployeeId());
 		customerBillService.insertCustomerBill(customerbill);
 	}
@@ -374,7 +376,7 @@ public class ItemController extends BaseController{
 			HSSFCell nextCell = nextRow.createCell(0);
 			nextCell.setCellValue("本次账单详情");
 			nextCell.setCellStyle(secondStyle);
-			sheet.addMergedRegion(new CellRangeAddress(dataSize, dataSize, 0, 8));
+			sheet.addMergedRegion(new CellRangeAddress(dataSize, dataSize, 0, 7));
 			
 		  List<Map<Object,Object>> dataList = new ArrayList<Map<Object,Object>>();
 		  	LinkedHashMap<Object,Object> nextLikedHashMap = new LinkedHashMap<Object,Object>();
@@ -382,7 +384,7 @@ public class ItemController extends BaseController{
 			nextLikedHashMap.put("总件", "总件"); 
 			nextLikedHashMap.put("总计金额（元）", "总计金额（元）"); 
 			nextLikedHashMap.put("减次（元）", "减次（元）");
-			if(!"0.00".equals(sumMap) ){
+			if(!"0.00".equals(sumMap)){
 				 nextLikedHashMap.put("历史账单差价和退货（元）", "历史账单差价和退货（元）");
 			 }
 			nextLikedHashMap.put("欠款额（元）", "欠款额（元）");
@@ -403,7 +405,7 @@ public class ItemController extends BaseController{
             }
 		  	
 		  	/**
-		  	 * 本次账单 应还金额(欠款额）
+		  	 * 本次账单 应还金额(欠款额)
 		  	 * 算法：总计金额 - 减次 - 历史账单差价和退货
 		  	 */
 		  	String  object = String.valueOf(totalMap.get("blanceDue"));//此金额已经减次
@@ -427,8 +429,13 @@ public class ItemController extends BaseController{
 		  	 *  差价手动填平账单即可
 		  	 */
 		  	if(!"0.00".equals(sumMap) && "0.00".equals(String.valueOf(totalMap.get("totalGoodsMoney")))){
-			  	BigDecimal add =new BigDecimal(String.valueOf(data.get("balanceDue"))).subtract(new BigDecimal(sumMap));
-			  	dataMap.put("累计欠款",add);
+		  		BigDecimal add =new BigDecimal(String.valueOf(data.get("balanceDue"))).subtract(new BigDecimal(sumMap));
+		  		if(null == time && "0".equals(totalNum) && "0.00".equals(sumMap)){//如果没有历史账单 本次欠款额又为0 时  累计欠款直接为0
+		  			dataMap.put("累计欠款",0);
+		  		}else{
+		  			dataMap.put("累计欠款",add);
+		  		}
+		  		
 		  	}else{
 		  		 //无差价 累计欠款= 本次欠款额 + 历史账单总欠款 
 			  	BigDecimal add = qke.add(new BigDecimal(String.valueOf(data.get("balanceDue"))));
@@ -476,7 +483,7 @@ public class ItemController extends BaseController{
 			HSSFCell nextCell = nextRow.createCell(0);
 			nextCell.setCellValue("差价和退货");
 			nextCell.setCellStyle(secondStyle);
-			sheet.addMergedRegion(new CellRangeAddress(startSize, startSize, 0, 8));
+			sheet.addMergedRegion(new CellRangeAddress(startSize, startSize, 0, 7));
 			LinkedHashMap<String,Object> map = new LinkedHashMap<String,Object>();
 			map.put("发货时间", "发货时间");
 			map.put("鞋厂", "鞋厂"); 
@@ -527,7 +534,7 @@ public class ItemController extends BaseController{
 			HSSFCell nextCell = nextRow.createCell(0);
 			nextCell.setCellValue("还款记录");
 			nextCell.setCellStyle(secondStyle);
-			sheet.addMergedRegion(new CellRangeAddress(size, size, 0, 8));
+			sheet.addMergedRegion(new CellRangeAddress(size, size, 0, 7));
 			LinkedHashMap<String,Object> map = new LinkedHashMap<String,Object>();
 
 			map.put("还款时间", "还款时间");
@@ -578,11 +585,10 @@ public class ItemController extends BaseController{
 			HSSFCell firstCell = firstRow.createCell(0);
 			firstCell.setCellValue("发货记录");
 			firstCell.setCellStyle(secondStyle);
-			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,8));
+			sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,7));
 			
 			LinkedHashMap<String,Object> likedHashMap = new LinkedHashMap<String,Object>();
 			likedHashMap.put("发货时间", "发货时间");
-			likedHashMap.put("客户", "客户"); 
 			likedHashMap.put("鞋厂", "鞋厂"); 
 			likedHashMap.put("货号", "货号"); 
 			likedHashMap.put("件数", "件数"); 
@@ -635,7 +641,7 @@ public class ItemController extends BaseController{
 		HSSFRow row = sheet.createRow(0);
 		row.setHeightInPoints(50);
 		HSSFCell cell = row.createCell(0);
-		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,8));//首行合并多少格
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,7));//首行合并多少格
 		cell.setCellValue("客户："+customerName+"    账单日期："+format.format(new Date()));
 		cell.setCellStyle(firstStyle);
 	}
