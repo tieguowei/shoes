@@ -85,13 +85,13 @@
 						var difference_number = $("#difference_number").numberbox("getValue")
 						if("0.00" != price_spread &&  price_spread != "" ){
 							if("0" == difference_number || difference_number == ""){
-								$.messager.alert('提示信息', '差价双数不能为空或为0！', 'info');
+								$.messager.alert('提示信息', '请输入差价双数！', 'info');
 								return false;
 							}
 						}
 						if("0" != difference_number && difference_number != "" ){
 							if("0.00" == price_spread || price_spread == ""){
-								$.messager.alert('提示信息', '差价不能为空或为0！', 'info');
+								$.messager.alert('提示信息', '请输入差价！', 'info');
 								return false;
 							}
 						}

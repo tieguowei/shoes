@@ -18,6 +18,6 @@
 		<constructor-arg name="host" value="${redis.ip}"></constructor-arg>
 		<constructor-arg name="port" value="${redis.port}"></constructor-arg>
 	</bean>
-	<bean id="jedisClientUtil" class="com.hzcf.shoes.util.JedisClientUtil"/>
+	<!-- <bean id="jedisClientUtil" class="com.hzcf.shoes.util.JedisClientUtil"/> -->
 
 </beans>

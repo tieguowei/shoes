@@ -504,8 +504,7 @@
 		case when season = 0 then '冬季'
     	else '其他季节' end as season ,
 	 
-		(number_packages * shoe_dual * sale_price) - (price_spread*difference_number) - (returns_number*sale_price) totalMoney,
-		create_time,
+		(number_packages * shoe_dual * sale_price)  totalMoney,		create_time,
 		update_time,
 		remark
 	FROM zly_order 
@@ -534,7 +533,8 @@
 		IFNULL(sale_price,0) sale_price,
 		IFNULL((number_packages * shoe_dual * sale_price),0)totalMoney,
 		IFNULL(remark,'') remark
-    from zly_order where customer_is_defective_goods = 1
+    from zly_order 
+    where customer_is_defective_goods = 1
   <if test="customerName != null">
   	 and customer_name = #{customerName}
  	</if>
@@ -557,7 +557,8 @@
 			IFNULL((sum(number_packages * shoe_dual * sale_price)),0) totalGoodsMoney,
 		  	IFNULL((sum(number_packages * shoe_dual)),0) totalNum,
 			IFNULL((sum(number_packages * shoe_dual * 2 )),0) jianci,
-			IFNULL((sum(number_packages * shoe_dual * sale_price-(price_spread*difference_number) - (returns_number*sale_price) - (number_packages * shoe_dual * 2))),0) blanceDue
+			<!-- 计算本次欠款 总金额-减次 （然后在程序中减去本账单所有退货和差价即可 ）-->
+			IFNULL((sum(number_packages * shoe_dual * sale_price- (number_packages * shoe_dual * 2))),0) blanceDue
 	FROM
 		zly_order 
 	WHERE

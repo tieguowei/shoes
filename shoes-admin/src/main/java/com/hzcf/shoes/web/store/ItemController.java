@@ -2,6 +2,7 @@ package com.hzcf.shoes.web.store;
 
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -238,6 +239,10 @@ public class ItemController extends BaseController{
 			//组装请求参数
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			customerParm(request,paramsCondition);
+			List<Map<String, Object>> itemList = new ArrayList<Map<String, Object>>();
+			//修改订单是否减次组装参数
+			Map<String,Object> updateItemStatus = new HashMap<String,Object>();
+
 		try {
 			HSSFWorkbook wb = new HSSFWorkbook();
 			HSSFSheet sheet = wb.createSheet("sheet1");
@@ -255,7 +260,7 @@ public class ItemController extends BaseController{
 	        /**
 	         * 1.组装发货记录
 	         */
-			List<Map<String, Object>> itemList = setItemRecord(paramsCondition, sheet, listTitleStyle, cellStyle,secondStyle);
+			 itemList = setItemRecord(paramsCondition, sheet, listTitleStyle, cellStyle,secondStyle);
 			
 			/**
 			 * 2.组装还款记录
@@ -275,13 +280,13 @@ public class ItemController extends BaseController{
 			int dataSize =6+ itemList.size() + priceList.size()+payList.size();
 			//查询客户此时间段的订单汇总
 			Map<String,Object> totalMap = itemService.getTotalMoneyByParam(paramsCondition);
-			//查询客户历史账单时间内(差价和退货)汇总
+			//查询客户历史账单时间 + 本次账单(差价和退货)汇总
 			String sumMap = itemService.getBillPriceSum(paramsCondition);
 			setTotalData(sumMap,totalMap,customerName, sheet, listTitleStyle, cellStyle,secondStyle,dataSize);
 			
 			/**
 			 * 5.修改此账单中差价和退货的订单状态（改为已处理）
-			 * 参数一：差价和退货是否处理状态  0：是 1：否
+			 *  参数：差价和退货是否处理状态  0：是 1：否
 			 */
 			updatePriceAndReturnStatus("1","0",session, paramsCondition);
 			if (wb != null) {
@@ -291,8 +296,10 @@ public class ItemController extends BaseController{
 					 * 6.修改此账单中的订单标记（客户已减次）
 					 *  参数一：客户是否减次状态 0：是 1：否
 					 */
-					updateItemStatus("0",session, paramsCondition);
-					
+					updateItemStatus.put("minCreateTime", itemList.get(1).get("pay_time"));//本次账单中订单开始时间
+					updateItemStatus.put("maxCreateTime", itemList.get(itemList.size()-1).get("pay_time"));//本次账单中订单开始时间
+					updateItemStatus.put("customerName", paramsCondition.get("customerName"));
+					updateItemStatus("0",session, updateItemStatus);
 					/**
 					 * 7.客户账单入库
 					 */
@@ -315,8 +322,11 @@ public class ItemController extends BaseController{
 				updatePriceAndReturnStatus("0","1",session, paramsCondition);
 				/**
 				 * 异常情况 还原此账单中的订单标记状态
+				 * 年底最后一次无发货记录的账单 失败不回滚此状态
 				 */
-				updateItemStatus("0",session, paramsCondition);
+				if(null != itemList && itemList.size()>0){
+					updateItemStatus("1",session, updateItemStatus);
+				}
 			} catch (Exception e2) {
 				logger.error(e.getMessage(), e);
 			}
@@ -332,11 +342,12 @@ public class ItemController extends BaseController{
 	}
 
 	public void updatePriceAndReturnStatus(String before,String after,HttpSession session, Map<String, Object> paramsCondition) {
-		paramsCondition.put("before", before);
-		paramsCondition.put("after", after);
-		paramsCondition.put("updateTime", new Date());
-		paramsCondition.put("operator", getSystemCurrentUser(session).getEmployeeId());
-		itemService.updatePriceAndReturnStatus(paramsCondition);
+		Map<String,Object> reqMap = new HashMap<String,Object>();
+		reqMap.put("before", before);
+		reqMap.put("after", after);
+		reqMap.put("updateTime", new Date());
+		reqMap.put("operator", getSystemCurrentUser(session).getEmployeeId());
+		itemService.updatePriceAndReturnStatus(reqMap,paramsCondition);
 	}
 
 	public void insertCustomerBill(HttpSession session, String customerName, List<Map<String, Object>> itemList,
@@ -385,10 +396,18 @@ public class ItemController extends BaseController{
 		  	dataMap.put("tn",totalMap.get("totalNum"));//本次账单总件
 		  	dataMap.put("tm",totalMap.get("totalGoodsMoney"));//本次账单总计金额
 		  	dataMap.put("jc",totalMap.get("jianci"));//本次账单减次
+		  	
 		  	if(!"0.00".equals(sumMap)){
 		    	dataMap.put("returnPrice",sumMap);//本次账单(历史账单差价和退货)
             }
-		  	dataMap.put("tb",totalMap.get("blanceDue"));//本次账单（应还金额 = 欠款额）
+		  	
+		  	/**
+		  	 * 本次账单 应还金额(欠款额）
+		  	 * 算法：总计金额 - 减次 - 历史账单差价和退货
+		  	 */
+		  	String  object = String.valueOf(totalMap.get("blanceDue"));//此金额已经减次
+		  	BigDecimal qke = new BigDecimal(object).subtract(new BigDecimal(sumMap));
+		  	dataMap.put("tb",qke);
 		  	
 		  	if(null != time){
 		  		dataMap.put("hb",data.get("balanceDue"));//历史账单总欠款
@@ -396,15 +415,18 @@ public class ItemController extends BaseController{
            
 		  	 
 		  	/**
-		  	 * 有差价并且最后是年底最后一个账单（处减差和总欠款 其他均为空）
-		  	 * 累计欠款= 本次欠款额 + 历史账单总欠款 -差价
+		  	 * 有差价并且是年底最后一个账单
+		  	 * 
+		  	 *  累计欠款算法：= 历史账单总欠款 -差价
+		  	 *  
+		  	 *  差价手动填平账单即可
 		  	 */
 		  	if(!"0.00".equals(sumMap) && "0.00".equals(String.valueOf(totalMap.get("totalGoodsMoney")))){
-			  	BigDecimal add = new BigDecimal(String.valueOf(totalMap.get("blanceDue"))).add(new BigDecimal(String.valueOf(data.get("balanceDue")))).subtract(new BigDecimal(sumMap));
+			  	BigDecimal add =new BigDecimal(String.valueOf(data.get("balanceDue"))).subtract(new BigDecimal(sumMap));
 			  	dataMap.put("累计欠款",add);
 		  	}else{
 		  		 //无差价 累计欠款= 本次欠款额 + 历史账单总欠款 
-			  	BigDecimal add = new BigDecimal(String.valueOf(totalMap.get("blanceDue"))).add(new BigDecimal(String.valueOf(data.get("balanceDue"))));
+			  	BigDecimal add = qke.add(new BigDecimal(String.valueOf(data.get("balanceDue"))));
 			  	dataMap.put("累计欠款",add);
 		  	}
 		  	
@@ -440,7 +462,7 @@ public class ItemController extends BaseController{
 			}
 	}
 
-	private List<Map<String, Object>> setPriceSpread(Map<String, Object> paramsCondition, HSSFSheet sheet, HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int startSize) {
+	private List<Map<String, Object>> setPriceSpread(Map<String, Object> paramsCondition, HSSFSheet sheet, HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int startSize) throws Exception {
 		List<Map<String,Object>> priceList = new  ArrayList<Map<String,Object>>();
 		priceList =  itemService.getBillPrice(paramsCondition);
 		if(null != priceList && priceList.size()>0){

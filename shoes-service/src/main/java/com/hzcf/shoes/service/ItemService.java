@@ -62,7 +62,7 @@ public interface ItemService {
 	 * @param paramsCondition
 	 * @return
 	 */
-	public List<Map<String, Object>> getBillPrice(Map<String, Object> paramsCondition);
+	public List<Map<String, Object>> getBillPrice(Map<String, Object> paramsCondition) throws Exception ;
 
 
 	/**
@@ -88,8 +88,9 @@ public interface ItemService {
 	/**
 	 * 修改此账单中差价和退货的订单状态
 	 * @param paramsCondition
+	 * @param paramsCondition2 
 	 */
-	public void updatePriceAndReturnStatus(Map<String, Object> paramsCondition);
+	public void updatePriceAndReturnStatus(Map<String, Object> reqMap, Map<String, Object> paramsCondition);
 
 
 	
