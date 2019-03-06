@@ -36,20 +36,40 @@
 					    return op.pageSize * (op.pageNumber - 1) + (index + 1);
 					}
 				},{
-					field : 'customerName',
+					field : 'customer_name',
 					title : '客户姓名',
 					align: 'center',
-					width : 200
+					width : 120
+				},{
+					field : 'customary_dues',
+					title : '应还总额（元）',
+					align: 'center',
+					width : 120
 				},{
 					field : 'actual_payment',
-					title : '累计付款',
+					title : '实还总额（元）',
 					align: 'center',
-					width : 200
+					width : 120
 				},{
 					field : 'balance_due',
-					title : '累计欠款',
+					title : '欠款总额（元）',
 					align: 'center',
-					width : 200
+					width : 120
+				},{
+					field : 'small_change',
+					title : '抹零总额（元）',
+					align: 'center',
+					width : 120
+				},{
+					field : 'defective_goods',
+					title : '减次总额（元）',
+					align: 'center',
+					width : 120
+				},{
+					field : 'spred_return_money',
+					title : '差价/退货总额（元）',
+					align: 'center',
+					width : 120
 				}
 				]],
 			});
