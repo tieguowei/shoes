@@ -55,4 +55,8 @@ public interface CustomerPaymentRecordMapper {
 	 * @return
 	 */
 	Map<String, Object> getLastOneTime(String customerName);
+
+	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
+
+	Long findAllByPageCount(Map<String, Object> paramsCondition);
 }

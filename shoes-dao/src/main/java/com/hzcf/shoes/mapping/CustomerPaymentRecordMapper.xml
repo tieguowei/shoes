@@ -3,7 +3,7 @@
 <mapper namespace="com.hzcf.shoes.dao.CustomerPaymentRecordMapper">
   <resultMap id="BaseResultMap" type="com.hzcf.shoes.model.CustomerPaymentRecord">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
     <result column="bill_start_time" jdbcType="DATE" property="billStartTime" />
     <result column="bill_end_time" jdbcType="DATE" property="billEndTime" />
     <result column="customary_dues" jdbcType="DECIMAL" property="customaryDues" />
@@ -12,6 +12,8 @@
     <result column="small_change" jdbcType="DECIMAL" property="smallChange" />
     <result column="defective_goods" jdbcType="DECIMAL" property="defectiveGoods" />
     <result column="spred_return_money" jdbcType="DECIMAL" property="spredReturnMoney" />
+    <result column="bill_status" jdbcType="CHAR" property="billStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="operator" jdbcType="INTEGER" property="operator" />
@@ -75,8 +77,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, bill_start_time, bill_end_time, customary_dues, actual_payment, balance_due, 
-    small_change, defective_goods, spred_return_money, create_time, update_time, operator
+    id, customer_name, bill_start_time, bill_end_time, customary_dues, actual_payment, 
+    balance_due, small_change, defective_goods, spred_return_money, bill_status, remark, 
+    create_time, update_time, operator
   </sql>
   <select id="selectByExample" parameterType="com.hzcf.shoes.model.CustomerPaymentRecordExample" resultMap="BaseResultMap">
     select
@@ -109,16 +112,18 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.hzcf.shoes.model.CustomerPaymentRecord">
-    insert into zly_customer_payment_record (id, name, bill_start_time, 
+    insert into zly_customer_payment_record (id, customer_name, bill_start_time, 
       bill_end_time, customary_dues, actual_payment, 
       balance_due, small_change, defective_goods, 
-      spred_return_money, create_time, update_time, 
-      operator)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{billStartTime,jdbcType=DATE}, 
+      spred_return_money, bill_status, remark, 
+      create_time, update_time, operator
+      )
+    values (#{id,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{billStartTime,jdbcType=DATE}, 
       #{billEndTime,jdbcType=DATE}, #{customaryDues,jdbcType=DECIMAL}, #{actualPayment,jdbcType=DECIMAL}, 
       #{balanceDue,jdbcType=DECIMAL}, #{smallChange,jdbcType=DECIMAL}, #{defectiveGoods,jdbcType=DECIMAL}, 
-      #{spredReturnMoney,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{operator,jdbcType=INTEGER})
+      #{spredReturnMoney,jdbcType=DECIMAL}, #{billStatus,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.hzcf.shoes.model.CustomerPaymentRecord">
     insert into zly_customer_payment_record
@@ -126,8 +131,8 @@
       <if test="id != null">
         id,
       </if>
-      <if test="name != null">
-        name,
+      <if test="customerName != null">
+        customer_name,
       </if>
       <if test="billStartTime != null">
         bill_start_time,
@@ -153,6 +158,12 @@
       <if test="spredReturnMoney != null">
         spred_return_money,
       </if>
+      <if test="billStatus != null">
+        bill_status,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -167,8 +178,8 @@
       <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+      <if test="customerName != null">
+        #{customerName,jdbcType=VARCHAR},
       </if>
       <if test="billStartTime != null">
         #{billStartTime,jdbcType=DATE},
@@ -194,6 +205,12 @@
       <if test="spredReturnMoney != null">
         #{spredReturnMoney,jdbcType=DECIMAL},
       </if>
+      <if test="billStatus != null">
+        #{billStatus,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -217,8 +234,8 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.name != null">
-        name = #{record.name,jdbcType=VARCHAR},
+      <if test="record.customerName != null">
+        customer_name = #{record.customerName,jdbcType=VARCHAR},
       </if>
       <if test="record.billStartTime != null">
         bill_start_time = #{record.billStartTime,jdbcType=DATE},
@@ -244,6 +261,12 @@
       <if test="record.spredReturnMoney != null">
         spred_return_money = #{record.spredReturnMoney,jdbcType=DECIMAL},
       </if>
+      <if test="record.billStatus != null">
+        bill_status = #{record.billStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -261,7 +284,7 @@
   <update id="updateByExample" parameterType="map">
     update zly_customer_payment_record
     set id = #{record.id,jdbcType=INTEGER},
-      name = #{record.name,jdbcType=VARCHAR},
+      customer_name = #{record.customerName,jdbcType=VARCHAR},
       bill_start_time = #{record.billStartTime,jdbcType=DATE},
       bill_end_time = #{record.billEndTime,jdbcType=DATE},
       customary_dues = #{record.customaryDues,jdbcType=DECIMAL},
@@ -270,6 +293,8 @@
       small_change = #{record.smallChange,jdbcType=DECIMAL},
       defective_goods = #{record.defectiveGoods,jdbcType=DECIMAL},
       spred_return_money = #{record.spredReturnMoney,jdbcType=DECIMAL},
+      bill_status = #{record.billStatus,jdbcType=CHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       operator = #{record.operator,jdbcType=INTEGER}
@@ -280,8 +305,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.hzcf.shoes.model.CustomerPaymentRecord">
     update zly_customer_payment_record
     <set>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+      <if test="customerName != null">
+        customer_name = #{customerName,jdbcType=VARCHAR},
       </if>
       <if test="billStartTime != null">
         bill_start_time = #{billStartTime,jdbcType=DATE},
@@ -307,6 +332,12 @@
       <if test="spredReturnMoney != null">
         spred_return_money = #{spredReturnMoney,jdbcType=DECIMAL},
       </if>
+      <if test="billStatus != null">
+        bill_status = #{billStatus,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -321,7 +352,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.hzcf.shoes.model.CustomerPaymentRecord">
     update zly_customer_payment_record
-    set name = #{name,jdbcType=VARCHAR},
+    set customer_name = #{customerName,jdbcType=VARCHAR},
       bill_start_time = #{billStartTime,jdbcType=DATE},
       bill_end_time = #{billEndTime,jdbcType=DATE},
       customary_dues = #{customaryDues,jdbcType=DECIMAL},
@@ -330,12 +361,46 @@
       small_change = #{smallChange,jdbcType=DECIMAL},
       defective_goods = #{defectiveGoods,jdbcType=DECIMAL},
       spred_return_money = #{spredReturnMoney,jdbcType=DECIMAL},
+      bill_status = #{billStatus,jdbcType=CHAR},
+      remark = #{remark,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       operator = #{operator,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
+
+ <!-- 订单列表分页 -->
+  <select id="findAllRetMapByPage" resultType="hashmap" parameterType="hashmap">
+	  SELECT
+	    	id,
+			customer_name,
+			sum(customary_dues) customary_dues,
+			sum(actual_payment) actual_payment,
+			sum(balance_due) balance_due,
+			sum(small_change) small_change,
+			sum(defective_goods) defective_goods,
+ 			sum(spred_return_money) spred_return_money
+	FROM
+		zly_customer_payment_record
+		group by customer_name 
+		<if test="customerName != null">
+			having customer_name = #{customerName} 
+		</if> 
+		limit #{startIndex},#{pageSize}
+  </select>
+  
+  <!-- 订单列表分页总数 -->
+  <select id="findAllByPageCount" resultType="long" parameterType="hashmap">
+  select COUNT(DISTINCT customer_name) from zly_customer_payment_record
+	<if test="customerName != null">
+		where  customer_name = #{customerName} 
+	</if> 
+  </select>
+  
+  
+  
+  
   <select id="getCustomerAccountList" parameterType="java.util.Map" resultType="hashMap">
     <!--
         客户账单管理列表

@@ -6,7 +6,7 @@ import java.util.Date;
 public class CustomerPaymentRecord {
     private Integer id;
 
-    private String name;
+    private String customerName;
 
     private Date billStartTime;
 
@@ -24,6 +24,10 @@ public class CustomerPaymentRecord {
 
     private BigDecimal spredReturnMoney;
 
+    private String billStatus;
+
+    private String remark;
+
     private Date createTime;
 
     private Date updateTime;
@@ -38,12 +42,12 @@ public class CustomerPaymentRecord {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName == null ? null : customerName.trim();
     }
 
     public Date getBillStartTime() {
@@ -108,6 +112,22 @@ public class CustomerPaymentRecord {
 
     public void setSpredReturnMoney(BigDecimal spredReturnMoney) {
         this.spredReturnMoney = spredReturnMoney;
+    }
+
+    public String getBillStatus() {
+        return billStatus;
+    }
+
+    public void setBillStatus(String billStatus) {
+        this.billStatus = billStatus == null ? null : billStatus.trim();
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 
     public Date getCreateTime() {

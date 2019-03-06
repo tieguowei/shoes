@@ -49,12 +49,12 @@ public class CustomerBillController extends BaseController{
 	@RequestMapping("/toPageList")
 	public String toEmpList(String refreshTag,String messageCode,Model model) {
 		showMessageAlert(refreshTag,messageCode,model);
-		return "/app/store/customerBill/customer_pay_list";
+		return "/app/store/customerBill/customer_sum_list";
 	}
 	
 	/**
 	 * 
-	 * Description: 查询客户账单列表
+	 * Description: 查询客户分组列表
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getCustomerList")
@@ -63,8 +63,11 @@ public class CustomerBillController extends BaseController{
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
 			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("rows")));
-			paramsCondition.put("customerName", request.getParameter("customerName"));
-			PageModel pageModel = this.customerService.getCustomerAccountList(paramsCondition);
+			String customerName = StringUtil.trim(request.getParameter("customerName"));// 客户姓名
+			if (StringUtil.isNotBlank(customerName)) {
+				paramsCondition.put("customerName", customerName);
+			}
+			PageModel pageModel = this.customerService.findAllByPage(paramsCondition);
 			dataMsg.setTotal(pageModel.getTotalRecords());
 			dataMsg.setRows(pageModel.getList());
 		} catch (Exception e) {
@@ -97,6 +100,7 @@ public class CustomerBillController extends BaseController{
               paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
               paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("rows")));
               paramsCondition.put("customerName", request.getParameter("customerName"));
+             
               PageModel pageModel = this.customerService.selectBackRecordList(paramsCondition);
               dataMsg.setTotal(pageModel.getTotalRecords());
               dataMsg.setRows(pageModel.getList());

@@ -4,7 +4,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<title>客户账单管理</title>
+	<title>客户汇总页面</title>
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
 	<meta http-equiv="expires" content="0">
@@ -41,13 +41,13 @@
 					align: 'center',
 					width : 200
 				},{
-					field : 'totalGoodsMoney',
-					title : '总货款',
+					field : 'actual_payment',
+					title : '累计付款',
 					align: 'center',
 					width : 200
 				},{
-					field : 'waitBackMoney',
-					title : '欠款',
+					field : 'balance_due',
+					title : '累计欠款',
 					align: 'center',
 					width : 200
 				}
@@ -85,7 +85,7 @@
             }else{
                 $.messager.show({
                     title:'信息提示',
-                    msg:'请选择要查询的记录!',
+                    msg:'请选择要查询的客户!',
                     timeout:5000,
                     showType:'slide'
                 });
@@ -94,7 +94,25 @@
 	</script>
 </head>
 <body class="easyui-layout" fit="true" style="width: 100%;height: 100%;">
-<div region="north" border="false" align="left" style="height:61px; overflow:hidden; " >
+
+<div region="north" border="false" style="height:36px; overflow:hidden;">
+  		<form id="searchForm">
+	  		<table  border="0" class="searchForm datagrid-toolbar" width="100%">
+				<tr>
+					<td class="tdR" width="10%">客户姓名:</td>
+					<td width="35%">
+						<input id="propertyName" name="propertyName" class='easyui-textbox' style="width: 150px;height: 24px;"/>
+					</td>
+					<td width="*%">
+						<a class="easyui-linkbutton" iconCls="icon-search" onclick="searchFun()">查询</a>
+						<a class="easyui-linkbutton" iconCls="icon-clear" onclick="clearForm(datagrid);">清空</a>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	
+<!-- <div region="north" border="false" align="left" style="height:61px; overflow:hidden; " >
     <form id="searchForm">
     		<table border="0" class="searchForm datagrid-toolbar" width="100%">
     			<tr>
@@ -111,7 +129,7 @@
     			</tr>
     		</table>
     </form>
-</div>
+</div> -->
 <div region="center" border="false" style="overflow: hidden;">
 	<table id="datagrid"></table>
 </div>
@@ -119,7 +137,7 @@
 	<table border="0" class="searchForm datagrid-toolbar" width="100%">
 		<tr>
 			<td width="10%"  id="toolbars" class="tdL">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="backRecordSelect();">回款记录查询</a>
+			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="backRecordSelect();">查看账单详情</a>
                     <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 			</td>
 		</tr>

@@ -2,7 +2,6 @@ package com.hzcf.shoes.web.store;
 
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -353,7 +352,7 @@ public class ItemController extends BaseController{
 	public void insertCustomerBill(HttpSession session, String customerName, List<Map<String, Object>> itemList,
 			Map<String, Object> totalMap, String sumMap) throws ParseException {
 		CustomerPaymentRecord customerbill = new CustomerPaymentRecord();
-		customerbill.setName(customerName); //客户姓名
+		customerbill.setCustomerName(customerName); //客户姓名
 		customerbill.setBillStartTime(dateFormat.parse(itemList.get(1).get("pay_time").toString()));//本次账单中订单开始时间
 		customerbill.setBillEndTime(dateFormat.parse(itemList.get(itemList.size()-1).get("pay_time").toString()));//本次账单中订单结束时间
 		String  object = String.valueOf(totalMap.get("blanceDue"));//此金额已经减次

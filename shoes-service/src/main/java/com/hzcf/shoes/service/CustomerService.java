@@ -8,10 +8,11 @@ public interface CustomerService {
 
     /**
      *
-     * Description: 用户账单列表
+     * Description: 客户分组列表
      */
-    public PageModel getCustomerAccountList(Map<String, Object> condition);
+	public PageModel findAllByPage(Map<String, Object> paramsCondition);
 
     public PageModel selectBackRecordList(Map<String, Object> condition);
+
 
 }
