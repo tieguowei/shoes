@@ -44,33 +44,34 @@
 	
 	//抹零逻辑
 	function changeMoney(){
+		var old_balance_due = $("#old_balance_due").val();//原欠款值
+		var  old_customary_dues = $("#old_customary_dues").val();//原应还值
+		 
 		 var small_change = $("#small_change").numberbox("getValue");//抹零金额
 		 var balance_due = $("#balance_due").numberbox("getValue");//欠款
 		 var customary_dues = $("#customary_dues").numberbox("getValue");//应还
-		 
-		
 		//如果抹零金额 大于 欠款金额 给用户提示
-		if(small_change > balance_due){
+		if(parseFloat(small_change) > parseFloat(balance_due)){
 			$.messager.alert('提示信息', '抹零金额不能超过欠款金额！', 'info');
 			 var small_change = $("#small_change").numberbox("setValue",0);//抹零金额清零
 			return ;
 		}
 		//如果抹零金额 等于 欠款金额 账单状态改为 已结清
-		if(small_change == balance_due){
+		if(parseFloat(small_change) == parseFloat(balance_due)){
 			$("#bill_status").val("0");
 		}else{
 			$("#bill_status").val("1");
 		}
 		
 		//欠款金额 - 抹零金额
-		var newBalanceDue =  balance_due-small_change;
+		var newBalanceDue =  old_balance_due-small_change;
 		//应还金额 - 抹零金额
-		var newCustomaryDue = customary_dues-small_change
+		var newCustomaryDue = old_customary_dues-small_change
 		 $("#balance_due").numberbox("setValue",newBalanceDue);
 		 $("#customary_dues").numberbox("setValue",newCustomaryDue);
 	}
 		
-
+	
 	</script>
   </head>
   
@@ -104,10 +105,14 @@
 			<tr>
 				<td width="15%" class="tdR">欠款额（元）:</td>
 				<td width="35%">
-					<input type="text" id="balance_due"  precision="2" name="balanceDue" value="${record.balance_due}" class="easyui-numberbox" readonly="readonly" style="width: 175px;height: 24px;"/>
+				<!-- 原欠款额  修改抹零逻辑使用-->
+					<input type="hidden" id="old_balance_due"  value="${record.balance_due}"/>
+					<input type="text" id="balance_due"  precision="2" name="balanceDue"  value="${record.balance_due}" class="easyui-numberbox"  style="width: 175px;height: 24px;"/>
 				</td>
 				<td width="15%" class="tdR">应还金额（元）:</td>
 				<td width="35%">
+				<!-- 原应还金额 -->
+					<input type="hidden" id="old_customary_dues" value="${record.customary_dues}" />
 					<input type="text" id="customary_dues"  precision="2" name="customaryDues" value="${record.customary_dues}" class="easyui-numberbox" readonly="readonly" style="width: 175px;height: 24px;"/>
 				</td>
 			</tr>
