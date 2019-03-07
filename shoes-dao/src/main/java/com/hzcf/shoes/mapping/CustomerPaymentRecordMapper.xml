@@ -499,7 +499,7 @@
   </select>
   
   <!-- 根据客户姓名查询账单list -->
-  <select id="getCustomerBillListByCustome rName" parameterType="String" resultMap="BaseResultMap">
+  <select id="getCustomerBillListByCustomerName" parameterType="String" resultMap="BaseResultMap">
   SELECT
 	id,
 	customer_name,

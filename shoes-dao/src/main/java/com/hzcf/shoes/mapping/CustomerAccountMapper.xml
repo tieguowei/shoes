@@ -208,4 +208,35 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  
+  
+   <!-- 客户账户列表分页 -->
+  <select id="findAllRetMapByPage" resultType="hashmap" parameterType="hashmap">
+  SELECT
+	  	id,
+		customer_name,
+		balance,
+		remark,
+		DATE_FORMAT(
+			create_time,
+			'%Y-%m-%d %H:%i:%s'
+		) create_time
+		FROM
+	zly_customer_account
+	WHERE 1 = 1
+	<if test="customerName != null">
+  		and customer_name =#{customerName}
+ 	</if>
+	limit #{startIndex},#{pageSize}
+  </select>
+  
+  <!-- 员工账户分页总数 -->
+  <select id="findAllByPageCount" resultType="long" parameterType="hashmap">
+  	SELECT COUNT(id) FROM zly_customer_account
+	WHERE 1=1
+	<if test="customerName != null">
+  		and customer_name =#{customerName}
+ 	</if>
+  </select>
 </mapper>

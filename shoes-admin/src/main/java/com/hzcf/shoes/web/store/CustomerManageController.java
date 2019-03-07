@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +19,7 @@ import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
 import com.hzcf.shoes.model.CustomerPayHistory;
 import com.hzcf.shoes.model.CustomerPaymentRecord;
+import com.hzcf.shoes.service.CustomerAccountService;
 import com.hzcf.shoes.service.CustomerPayHistoryService;
 import com.hzcf.shoes.service.CustomerService;
 import com.hzcf.shoes.util.PageModel;
@@ -39,7 +39,8 @@ public class CustomerManageController extends BaseController{
 	private CustomerService customerService;
 	@Autowired
 	private CustomerPayHistoryService customerPayHistoryService;
-	
+	@Autowired
+	private CustomerAccountService customerAccountService;
 	/**
 	 * 
 	 * Description: 跳转到客户分组列表页面
@@ -206,5 +207,42 @@ public class CustomerManageController extends BaseController{
 		}
 		return dataMsg;
 	}
+    
+    
+	
+	/**
+	 * 
+	 * Description: 跳转到客户账户列表页面
+	 */
+	@RequestMapping("/toCustomerAccountList")
+	public String toCustomerAccountList(String refreshTag,String messageCode,Model model) {
+		showMessageAlert(refreshTag,messageCode,model);
+		return "/app/store/customerManage/customer_account_list";
+	}
+	
+	/**
+	 * 
+	 * Description: 查询客户账户列表
+	 */
+	@ResponseBody
+	@RequestMapping(value="/getCustomerAccountList")
+	public DataMsg getCustomerAccountList(HttpServletRequest request,DataMsg dataMsg) {
+		try {
+			Map<String, Object> paramsCondition = new HashMap<String, Object>();
+			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
+			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("rows")));
+			String customerName = StringUtil.trim(request.getParameter("customerName"));// 客户姓名
+			if (StringUtil.isNotBlank(customerName)) {
+				paramsCondition.put("customerName", customerName);
+			}
+			PageModel pageModel = customerAccountService.findAllByPage(paramsCondition);
+			dataMsg.setTotal(pageModel.getTotalRecords());
+			dataMsg.setRows(pageModel.getList());
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+		return dataMsg;
+	}
+	
     
 }

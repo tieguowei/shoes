@@ -3,6 +3,8 @@ package com.hzcf.shoes.dao;
 import com.hzcf.shoes.model.CustomerAccount;
 import com.hzcf.shoes.model.CustomerAccountExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface CustomerAccountMapper {
@@ -27,4 +29,8 @@ public interface CustomerAccountMapper {
     int updateByPrimaryKeySelective(CustomerAccount record);
 
     int updateByPrimaryKey(CustomerAccount record);
+
+	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
+
+	Long findAllByPageCount(Map<String, Object> paramsCondition);
 }
