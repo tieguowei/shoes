@@ -491,7 +491,7 @@
 		small_change,
 		defective_goods,
 		spred_return_money,
-		bill_status,
+		bill_status billStatus,
 		remark
 	FROM
 		zly_customer_payment_record

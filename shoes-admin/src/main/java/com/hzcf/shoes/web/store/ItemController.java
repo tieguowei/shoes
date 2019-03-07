@@ -360,6 +360,7 @@ public class ItemController extends BaseController{
 		customerbill.setCustomaryDues(qke);//本次账单应还金额
 		customerbill.setSpredReturnMoney(new BigDecimal(sumMap));//本次账单（总差价+总退货价）
 		customerbill.setCreateTime(new Date());
+		customerbill.setBillStatus("1");//默认未结清
 		customerbill.setBalanceDue(qke);//本次账单欠款
 		customerbill.setOperator(getSystemCurrentUser(session).getEmployeeId());
 		customerBillService.insertCustomerBill(customerbill);

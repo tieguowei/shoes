@@ -41,13 +41,33 @@
 			parent.closeTab("修改账单");
 		}
 		
+	
+	//抹零逻辑
 	function changeMoney(){
-		//欠款额 和应还金额 都减去 抹零
-		 var small_change = $("#small_change").numberbox("getValue");
-		 var balance_due = $("#balance_due").numberbox("getValue");
-		 var customary_dues = $("#customary_dues").numberbox("getValue");
-		 $("#balance_due").numberbox("setValue",balance_due-small_change);
-		 $("#customary_dues").numberbox("setValue",customary_dues-small_change);
+		 var small_change = $("#small_change").numberbox("getValue");//抹零金额
+		 var balance_due = $("#balance_due").numberbox("getValue");//欠款
+		 var customary_dues = $("#customary_dues").numberbox("getValue");//应还
+		 
+		
+		//如果抹零金额 大于 欠款金额 给用户提示
+		if(small_change > balance_due){
+			$.messager.alert('提示信息', '抹零金额不能超过欠款金额！', 'info');
+			 var small_change = $("#small_change").numberbox("setValue",0);//抹零金额清零
+			return ;
+		}
+		//如果抹零金额 等于 欠款金额 账单状态改为 已结清
+		if(small_change == balance_due){
+			$("#bill_status").val("0");
+		}else{
+			$("#bill_status").val("1");
+		}
+		
+		//欠款金额 - 抹零金额
+		var newBalanceDue =  balance_due-small_change;
+		//应还金额 - 抹零金额
+		var newCustomaryDue = customary_dues-small_change
+		 $("#balance_due").numberbox("setValue",newBalanceDue);
+		 $("#customary_dues").numberbox("setValue",newCustomaryDue);
 	}
 		
 
@@ -58,7 +78,8 @@
   	<form id="billEditForm" class="easyui-form" method="post" modelAttribute="record">
   		<input type="hidden" id="id" name="id" value="${record.id}"/>
   		  <input type="hidden" id="customer_name" name="customerName" value="${record.customerName}"/>
-  		
+  		  <!-- 账单状态 -->
+  		  <input type="hidden" id="bill_status" name="billStatus" value="${record.billStatus}"/>
 		<table class="tableForm" border="1" width="100%" >
 			<tr>
 				<td width="15%" class="tdR">账单时间:</td>
