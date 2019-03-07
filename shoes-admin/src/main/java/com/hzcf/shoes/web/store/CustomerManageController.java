@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
+import com.hzcf.shoes.model.CustomerPayHistory;
 import com.hzcf.shoes.model.CustomerPaymentRecord;
 import com.hzcf.shoes.model.Order;
+import com.hzcf.shoes.service.CustomerPayHistoryService;
 import com.hzcf.shoes.service.CustomerService;
 import com.hzcf.shoes.util.PageModel;
 import com.hzcf.shoes.util.StringUtil;
@@ -35,7 +37,8 @@ public class CustomerManageController extends BaseController{
 
 	@Autowired
 	private CustomerService customerService;
-
+	@Autowired
+	private CustomerPayHistoryService customerPayHistoryService;
 	
 	/**
 	 * 
@@ -135,6 +138,69 @@ public class CustomerManageController extends BaseController{
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 			dataMsg.setMessageCode("0004");
+		}
+		return dataMsg;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * Description: 跳转到客户付款列表页面
+	 */
+	@RequestMapping("/toCustomerPayList")
+	public String toCustomerPayList(String refreshTag,String messageCode,Model model) {
+		return "/app/store/customerManage/customer_pay_list";
+	}
+	
+	/**
+	 * 
+	 * Description: 查询客户付款列表
+	 */
+	@ResponseBody
+	@RequestMapping(value="/getCustomerPayList")
+	public DataMsg getCustomerPayList(HttpServletRequest request,DataMsg dataMsg) {
+		try {
+			Map<String, Object> paramsCondition = new HashMap<String, Object>();
+			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
+			paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("rows")));
+			String customerName = StringUtil.trim(request.getParameter("customerName"));// 客户姓名
+			if (StringUtil.isNotBlank(customerName)) {
+				paramsCondition.put("customerName", customerName);
+			}
+			PageModel pageModel = customerPayHistoryService.findAllByPage(paramsCondition);
+			dataMsg.setTotal(pageModel.getTotalRecords());
+			dataMsg.setRows(pageModel.getList());
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+		return dataMsg;
+	}
+	
+	 /**
+     * 跳转到添加付款流水页面
+     * @return
+     */
+    @RequestMapping(value="/toAddPay")
+	public String toAddPay() {
+		return "/app/store/customerManage/customer_pay_add";
+	}
+    
+    /**
+     * 添加客户付款流水
+     * @return
+     */
+    @ResponseBody
+	@RequestMapping(value="/doAddPay")
+	public DataMsg doAddPay(@ModelAttribute CustomerPayHistory payHistory,HttpSession session,DataMsg dataMsg,String oauth) {
+		try {
+			payHistory.setCreateTime(new Date());
+			payHistory.setOperator(getSystemCurrentUser(session).getEmployeeId());
+			customerPayHistoryService.insertSelective(payHistory);
+			dataMsg.setMessageCode("0001");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setMessageCode("0002");
 		}
 		return dataMsg;
 	}

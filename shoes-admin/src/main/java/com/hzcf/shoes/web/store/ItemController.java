@@ -76,7 +76,7 @@ public class ItemController extends BaseController{
 	@RequestMapping("/toPageList")
 	public String toEmpList(String refreshTag,String messageCode,Model model) {
 		showMessageAlert(refreshTag,messageCode,model);
-		return "app/store/itemManagement/item_list";
+		return "app/store/itemManage/item_list";
 	}
 	
 	/**
@@ -136,7 +136,7 @@ public class ItemController extends BaseController{
      */
     @RequestMapping(value="/toAddItem")
 	public String toAddItem() {
-		return "/app/store/itemManagement/item_add";
+		return "/app/store/itemManage/item_add";
 	}
 	
     /**
@@ -177,7 +177,7 @@ public class ItemController extends BaseController{
 			logger.error(e.getMessage(),e);
 			return "common/exception";
 		}
-		return "app/store/itemManagement/item_edit";
+		return "app/store/itemManage/item_edit";
 	}
 	
 

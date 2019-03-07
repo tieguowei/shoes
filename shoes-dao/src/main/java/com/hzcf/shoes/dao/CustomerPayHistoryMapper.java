@@ -35,4 +35,8 @@ public interface CustomerPayHistoryMapper {
      * @param customerName
      * @return
      */
-	List<Map<String, Object>> getCustomerPaymentHistory(String customerName);}
+	List<Map<String, Object>> getCustomerPaymentHistory(String customerName);
+
+	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
+
+	Long findAllByPageCount(Map<String, Object> paramsCondition);}

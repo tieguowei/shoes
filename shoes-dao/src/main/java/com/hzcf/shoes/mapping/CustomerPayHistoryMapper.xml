@@ -252,4 +252,32 @@
 	WHERE
 		customer_name =#{customer_name}
   </select>
+  
+  
+   <!-- 客户付款列表分页 -->
+  <select id="findAllRetMapByPage" resultType="hashmap" parameterType="hashmap">
+  	SELECT
+			id,
+			DATE_FORMAT(pay_time, '%Y-%m-%d') pay_time,
+			customer_name,
+			bank,
+			pay_money,
+			create_time,
+			operator
+	FROM zly_customer_pay_history
+	WHERE 1=1
+	<if test="customerName != null">
+  		and customer_name =#{customerName}
+ 	</if>
+	limit #{startIndex},#{pageSize}
+  </select>
+  
+  <!-- 员工列表分页总数 -->
+  <select id="findAllByPageCount" resultType="long" parameterType="hashmap">
+  	SELECT COUNT(id) FROM zly_customer_pay_history
+	WHERE 1=1
+	<if test="customerName != null">
+  		and customer_name =#{customerName}
+ 	</if>
+  </select>
 </mapper>

@@ -121,7 +121,7 @@
 				<tr>
 					<td class="tdR" width="10%">客户姓名:</td>
 					<td width="35%">
-						<input id="propertyName" name="propertyName" class='easyui-textbox' style="width: 150px;height: 24px;"/>
+						<input id="customer_name" name="customerName" class='easyui-textbox' style="width: 150px;height: 24px;"/>
 					</td>
 					<td width="*%">
 						<a class="easyui-linkbutton" iconCls="icon-search" onclick="searchFun()">查询</a>
