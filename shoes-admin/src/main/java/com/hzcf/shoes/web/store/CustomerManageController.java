@@ -110,10 +110,10 @@ public class CustomerManageController extends BaseController{
       }
     /**
 	 * 
-	 * Description: 跳转到修改账单页面
+	 * Description: 跳转到账单抹零页面
 	 */
-	@RequestMapping(value="/updateCustomerBill/{id}")
-	public String updateCustomerBill(@PathVariable Integer id,Model model) {
+	@RequestMapping(value="/updateML/{id}")
+	public String updateML(@PathVariable Integer id,Model model) {
 		try {
 			Map<String,Object> record =  customerService.selectById(id);
 			model.addAttribute("record", record);
@@ -121,9 +121,25 @@ public class CustomerManageController extends BaseController{
 			logger.error(e.getMessage(),e);
 			return "common/exception";
 		}
-		return "app/store/customerManage/customer_bill_edit";
+		return "app/store/customerManage/customer_bill_edit_ml";
 	}
 	
+	 /**
+	 * 
+	 * Description: 跳转到修改已付款页面
+	 */
+	@RequestMapping(value="/updateYFK/{id}")
+	public String updateYFK(@PathVariable Integer id,Model model) {
+		try {
+			Map<String,Object> record =  customerService.selectById(id);
+			model.addAttribute("record", record);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			return "common/exception";
+		}
+		return "app/store/customerManage/customer_bill_edit_yfk";
+	}
+		
 	/**
 	 * 
 	 * Description: 修改账单信息

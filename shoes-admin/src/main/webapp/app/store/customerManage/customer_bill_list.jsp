@@ -70,7 +70,7 @@
                     width : 120
                 }
                 ,{
-                    field : 'snallChange',
+                    field : 'smallChange',
                     title : '抹零（元）',
                     align: 'center',
                     width : 120
@@ -104,8 +104,8 @@
 			});
 		});
 
-		 //修改账单
-        function updateBackRecord(){
+		 //账单抹零
+        function updateML(){
             var rows = datagrid.datagrid('getSelections');
             if(rows.length > 0){
                 if(rows.length > 1){
@@ -126,11 +126,57 @@
                       });
                       return;
                 }
-                parent.createTab('${app}/customer/updateCustomerBill/' + rows[0].id,'修改账单');
+                if(rows[0].smallChange != '0'){
+              	  $.messager.show({
+                        title:'信息提示',
+                        msg:'账单已 有抹零 不能再次抹零!',
+                        timeout:5000,
+                        showType:'slide'
+                    });
+                    return;
+              }
+                parent.createTab('${app}/customer/updateML/' + rows[0].id,'账单抹零');
             }else{
                 $.messager.show({
                     title:'信息提示',
-                    msg:'请选择要修改的账单!',
+                    msg:'请选择要抹零的账单!',
+                    timeout:5000,
+                    showType:'slide'
+                });
+            }
+        }
+		 
+		 //修改已付款
+        function updateYFK(){
+            var rows = datagrid.datagrid('getSelections');
+            if(rows.length > 0){
+                if(rows.length > 1){
+                    $.messager.show({
+                        title:'信息提示',
+                        msg:'该操作只能选择一条记录!',
+                        timeout:5000,
+                        showType:'slide'
+                    });
+                    return;
+                }
+                if(rows[0].billStatus == '0'){
+                	  $.messager.show({
+                          title:'信息提示',
+                          msg:'账单已结清 无法修改!',
+                          timeout:5000,
+                          showType:'slide'
+                      });
+                      return;
+                }
+            	$.messager.confirm("请确认", "您确定客户多打款了吗？", function(b){
+					if(b){
+               			 parent.createTab('${app}/customer/updateYFK/' + rows[0].id,'修改已付款');
+					}
+				});
+            }else{
+                $.messager.show({
+                    title:'信息提示',
+                    msg:'请选择要修改已付款的账单!',
                     timeout:5000,
                     showType:'slide'
                 });
@@ -146,7 +192,11 @@
 	<table border="0" class="searchForm datagrid-toolbar" width="100%">
 		<tr>
 			<td width="10%"  id="toolbars" class="tdL">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateBackRecord();">修改账单</a>
+			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateML();">账单抹零</a>
+                    <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
+			</td>
+			<td width="10%"  id="toolbars" class="tdL">
+			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateYFK();">修改已付款</a>
                     <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 			</td>
 			<td>

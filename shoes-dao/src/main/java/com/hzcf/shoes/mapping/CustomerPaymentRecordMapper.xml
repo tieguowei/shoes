@@ -410,7 +410,7 @@
       customary_dues customaryDues ,
       actual_payment actualPayment ,
       balance_due	balanceDue ,
-      small_change snallChange ,
+      small_change smallChange ,
       defective_goods	defectiveGoods,
       bill_status  billStatus,
       spred_return_money spredReturnMoney,

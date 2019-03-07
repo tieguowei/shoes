@@ -4,7 +4,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>修改账单修改页面</title>
+    <title>修改已付款页面</title>
     
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
@@ -31,47 +31,48 @@
 					closeMask();
 					var obj = eval("(" + data + ")");
  	                parent.refreshTab('${app}/customer/toCustomerBillList/'+customer_name ,'账单列表');
- 	               parent.closeTab("修改账单");
+ 	               parent.closeTab("修改已付款");
 				}
 			});
 		}
 		
 		//取消
 		function resetForm(){
-			parent.closeTab("修改账单");
+			parent.closeTab("修改已付款");
 		}
 		
 	
-	//抹零逻辑
+	//修改已付款逻辑
 	function changeMoney(){
-		var old_balance_due = $("#old_balance_due").val();//原欠款值
-		var  old_customary_dues = $("#old_customary_dues").val();//原应还值
+		 var old_actual_payment = $("#old_actual_payment").val();//已付款原值
+		 var actual_payment = $("#actual_payment").numberbox("getValue");//已付款
+		 var balance_due = $("#balance_due").numberbox("getValue");//欠款新值
+		 var old_balance_due = $("#old_balance_due").val();//欠款原值
+
 		 
-		 var small_change = $("#small_change").numberbox("getValue");//抹零金额
-		 var balance_due = $("#balance_due").numberbox("getValue");//欠款
-		 var customary_dues = $("#customary_dues").numberbox("getValue");//应还
-		//如果抹零金额 大于 欠款金额 给用户提示
-		if(parseFloat(small_change) > parseFloat(balance_due)){
-			$.messager.alert('提示信息', '抹零金额不能超过欠款金额！', 'info');
-			 var small_change = $("#small_change").numberbox("setValue",0);//抹零金额清零
+		 //修改后的还款金额不能小于原值
+		if(parseFloat(actual_payment) < parseFloat(old_actual_payment)){
+			$.messager.alert('提示信息', '修改后的还款金额不能小于原值！', 'info');
+			 $("#actual_payment").numberbox("setValue",old_actual_payment);//欠款额还原
 			return ;
 		}
-		//如果抹零金额 等于 欠款金额 账单状态改为 已结清
-		if(parseFloat(small_change) == parseFloat(balance_due)){
+		 //（新还款金额 - 原还款金额）> 欠款金额 给用户提示
+		 if(parseFloat(actual_payment - old_actual_payment) > parseFloat(old_balance_due)){
+			$.messager.alert('提示信息', '还款金额不能超过欠款金额！', 'info');
+			 $("#actual_payment").numberbox("setValue",old_actual_payment);//欠款额还原
+			return ;
+		}
+		//如果还款金额 等于 欠款金额 账单状态改为 已结清
+		if(parseFloat(actual_payment - old_actual_payment) == parseFloat(old_balance_due)){
 			$("#bill_status").val("0");
 		}else{
 			$("#bill_status").val("1");
 		}
-		
-		//欠款金额 - 抹零金额
-		var newBalanceDue =  old_balance_due-small_change;
-		//应还金额 - 抹零金额
-		var newCustomaryDue = old_customary_dues-small_change
+			
+		//欠款金额 =  原欠款额 -  (新还款额 - 原还款额)
+		 var newBalanceDue =  old_balance_due-(actual_payment-old_actual_payment);
 		 $("#balance_due").numberbox("setValue",newBalanceDue);
-		 $("#customary_dues").numberbox("setValue",newCustomaryDue);
 	}
-		
-	
 	</script>
   </head>
   
@@ -97,23 +98,21 @@
 				<td width="35%">
 					<input type="text" id="bill_end_time" name="billEndTime" value="${record.bill_end_time}" class="easyui-textbox" readonly="readonly" style="width: 175px;height: 24px;"/>
 				</td>
-				<td width="15%" class="tdR">抹零（元）:</td>
+				<td width="15%" class="tdR">已付款（元）:</td>
 				<td width="35%">
-					<input type="text" data-options="events:{blur:changeMoney}"  min="0"  precision="2"  id="small_change"  name="smallChange" value="${record.small_change}" class="easyui-numberbox"  style="width: 175px;height: 24px;"/>
+					<input type="hidden"   id="old_actual_payment" value="${record.actual_payment}"  />
+					<input type="text" data-options="events:{blur:changeMoney}"  min="0"  precision="2"  id="actual_payment"  name="actualPayment" value="${record.actual_payment}" class="easyui-numberbox"  style="width: 175px;height: 24px;"/>
 				</td>
 			</tr>
 			<tr>
-				<td width="15%" class="tdR">欠款额（元）:</td>
-				<td width="35%">
-				<!-- 原欠款额  修改抹零逻辑使用-->
-					<input type="hidden" id="old_balance_due"  value="${record.balance_due}"/>
-					<input type="text" id="balance_due"  precision="2" name="balanceDue"  value="${record.balance_due}" class="easyui-numberbox"  style="width: 175px;height: 24px;"/>
-				</td>
 				<td width="15%" class="tdR">应还金额（元）:</td>
 				<td width="35%">
-				<!-- 原应还金额 -->
-					<input type="hidden" id="old_customary_dues" value="${record.customary_dues}" />
 					<input type="text" id="customary_dues"  precision="2" name="customaryDues" value="${record.customary_dues}" class="easyui-numberbox" readonly="readonly" style="width: 175px;height: 24px;"/>
+				</td>
+				<td width="15%" class="tdR">欠款额（元）:</td>
+				<td width="35%">
+					<input type="hidden" id="old_balance_due" value="${record.balance_due}"/>
+					<input type="text" id="balance_due"  precision="2" name="balanceDue"  value="${record.balance_due}" class="easyui-numberbox"  style="width: 175px;height: 24px;"/>
 				</td>
 			</tr>
 			<tr>
