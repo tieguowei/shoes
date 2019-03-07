@@ -25,8 +25,14 @@
 			payAddForm.form('submit',{
 				url:'${app}/customer/doAddPay',
 				onSubmit:function(){
-					if(itemAddForm.form("validate")){
-						 //发货时间
+					if(payAddForm.form("validate")){
+						 //客户姓名
+						var customer_name =$("#customer_name").textbox('getValue');
+						if (customer_name == ""|| typeof (customer_name) == "undefined") {
+							$.messager.alert('提示信息', '客户姓名不能为空！', 'info');
+							return false;
+						}  
+						 //付款时间
 						var pay_time =$("#pay_time").datebox('getValue');
 						if (pay_time == ""|| typeof (pay_time) == "undefined") {
 							$.messager.alert('提示信息', '付款时间不能为空！', 'info');
@@ -54,7 +60,7 @@
 				success:function(data){
 					closeMask();
 					var obj = eval("(" + data + ")");
-					parent.refreshTab("${app}/customer/toCustomerPayList?messageCode=" + obj.messageCode,"添加付款流水");
+					parent.refreshTab("${app}/customer/toCustomerPayList?messageCode=" + obj.messageCode,"客户付款");
 					parent.closeTab("添加付款流水");
 				}
 			});
@@ -72,17 +78,21 @@
   	<form id="payAddForm" class="easyui-form" method="post" modelAttribute="pay">
 		<table class="tableForm" border="1" width="100%" >
 			<tr>
+			<td width="15%" class="tdR"><span style="color: red">*</span>客户姓名:</td>
+				<td width="35%">
+					<input type="text" id="customer_name" name="customerName" class="easyui-textbox"  style="width: 150px;height: 24px;"/>
+				</td>
 				<td width="15%" class="tdR"><span style="color: red">*</span>付款时间:</td>
                 <td>
                     <input id="pay_time" name="payTime"   maxlength="30"
                      class='easyui-datebox' style="width: 150px;height: 24px;" data-options="prompt:'请选择付款日期',editable:false"/>
                 </td>
-				<td width="15%" class="tdR"><span style="color: red">*</span>银行名称:</td>
+			</tr>
+			<tr>
+			<td width="15%" class="tdR"><span style="color: red">*</span>银行名称:</td>
 				<td width="35%">
 					<input type="text" id="bank" name="bank" class="easyui-textbox"  style="width: 150px;height: 24px;"/>
 				</td>
-			</tr>
-			<tr>
 			<td class="tdR"><span style="color: red">*</span>付款金额（元）:</td>
 				<td>
 				   <input type="text"  id="pay_money" precision="2" name="payMoney" class="easyui-numberbox"  min="0" style="width: 150px;height: 24px;"  />

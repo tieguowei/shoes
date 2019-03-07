@@ -1,5 +1,6 @@
 package com.hzcf.shoes.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class CustomerPayHistory {
@@ -10,6 +11,8 @@ public class CustomerPayHistory {
     private String customerName;
 
     private String bank;
+
+    private BigDecimal payMoney;
 
     private Date createTime;
 
@@ -45,6 +48,14 @@ public class CustomerPayHistory {
 
     public void setBank(String bank) {
         this.bank = bank == null ? null : bank.trim();
+    }
+
+    public BigDecimal getPayMoney() {
+        return payMoney;
+    }
+
+    public void setPayMoney(BigDecimal payMoney) {
+        this.payMoney = payMoney;
     }
 
     public Date getCreateTime() {
