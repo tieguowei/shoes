@@ -104,7 +104,7 @@
 			});
 		});
 
-		 //修改回款记录
+		 //修改账单
         function updateBackRecord(){
             var rows = datagrid.datagrid('getSelections');
             if(rows.length > 0){
@@ -116,6 +116,15 @@
                         showType:'slide'
                     });
                     return;
+                }
+                if(rows[0].billStatus == '0'){
+                	  $.messager.show({
+                          title:'信息提示',
+                          msg:'账单已结清 无法修改!',
+                          timeout:5000,
+                          showType:'slide'
+                      });
+                      return;
                 }
                 parent.createTab('${app}/customer/updateCustomerBill/' + rows[0].id,'修改账单');
             }else{

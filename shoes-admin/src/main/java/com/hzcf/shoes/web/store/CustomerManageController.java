@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +20,6 @@ import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
 import com.hzcf.shoes.model.CustomerPayHistory;
 import com.hzcf.shoes.model.CustomerPaymentRecord;
-import com.hzcf.shoes.model.Order;
 import com.hzcf.shoes.service.CustomerPayHistoryService;
 import com.hzcf.shoes.service.CustomerService;
 import com.hzcf.shoes.util.PageModel;
@@ -150,6 +150,7 @@ public class CustomerManageController extends BaseController{
 	 */
 	@RequestMapping("/toCustomerPayList")
 	public String toCustomerPayList(String refreshTag,String messageCode,Model model) {
+		showMessageAlert(refreshTag,messageCode,model);
 		return "/app/store/customerManage/customer_pay_list";
 	}
 	
@@ -183,6 +184,7 @@ public class CustomerManageController extends BaseController{
      */
     @RequestMapping(value="/toAddPay")
 	public String toAddPay() {
+    	
 		return "/app/store/customerManage/customer_pay_add";
 	}
     

@@ -55,4 +55,6 @@ public interface CustomerPaymentRecordMapper {
 	Long findAllByPageCount(Map<String, Object> paramsCondition);
 
 	Map<String, Object> selectById(Integer id);
+
+	List<CustomerPaymentRecord> getCustomerBillListByCustomerName(String customerName);
 }

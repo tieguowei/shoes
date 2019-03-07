@@ -103,7 +103,7 @@
 				success:function(data){
 					closeMask();
 					var obj = eval("(" + data + ")");
-					parent.refreshTab("${app}/item/toPageList?messageCode=" + obj.messageCode,"修改订单");
+					parent.refreshTab("${app}/item/toPageList?messageCode=" + obj.messageCode,"订单流水");
 					parent.closeTab("修改订单");
 				}
 			});
