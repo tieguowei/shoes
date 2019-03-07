@@ -1,5 +1,6 @@
 package com.hzcf.shoes.service;
 
+import com.hzcf.shoes.model.CustomerPaymentRecord;
 import com.hzcf.shoes.util.PageModel;
 
 import java.util.Map;
@@ -18,6 +19,11 @@ public interface CustomerService {
 	 * @return
 	 */
 	public PageModel getCustomerBillList(Map<String, Object> paramsCondition);
+
+
+	public Map<String, Object> selectById(Integer id);
+
+	public void updateById(CustomerPaymentRecord record);
 
 
 }

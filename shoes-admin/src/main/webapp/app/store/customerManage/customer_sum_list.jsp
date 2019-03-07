@@ -12,7 +12,7 @@
         var datagrid;
         $(function(){
             datagrid = $('#datagrid').datagrid({
-                url : '${app}/customerBill/getCustomerList',
+                url : '${app}/customer/getCustomerList',
 				title : '',
 				pagination : true,
 				pageSize : <%=Constants.PAGE_SIZE%>,
@@ -101,7 +101,7 @@
                     });
                     return;
                 }
-                parent.createTab('${app}/customerBill/toCustomerBillList/'+rows[0].customer_name ,'账单列表');
+                parent.createTab('${app}/customer/toCustomerBillList/'+rows[0].customer_name ,'账单列表');
             }else{
                 $.messager.show({
                     title:'信息提示',

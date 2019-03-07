@@ -12,7 +12,7 @@
         var datagrid;
         $(function(){
             datagrid = $('#datagrid').datagrid({
-                url : '${app}/customerBill/getCustomerBillList',
+                url : '${app}/customer/getCustomerBillList',
                 queryParams: { 'customerName': '${customerName}' },
 				title : '',
 				pagination : true,
@@ -80,8 +80,8 @@
                     align: 'center',
                     width : 120
                 },{
-                    field : 'defectiveGoods',
-                    title : '减次（元）',
+                    field : 'spredReturnMoney',
+                    title : '差价/退货（元）',
                     align: 'center',
                     width : 120
                 },{
@@ -89,7 +89,17 @@
                     title : '是否结清',
                     align: 'center',
                     width : 120
-                }
+                },{
+                    field : 'remark',
+                    title : '备注',
+                    align: 'center',
+                    width : 120,
+                    formatter: function(value,row,index){
+						if(null == value){
+							 return "";
+						}
+                   return "<span title='"+ value +"'>"+value+"</span>";
+                }}
 				]],
 			});
 		});
@@ -107,7 +117,7 @@
                     });
                     return;
                 }
-                parent.createTab('${app}/customerBill/updateCustomerBackRecorde/' + rows[0].id,'回款记录更新');
+                parent.createTab('${app}/customer/updateCustomerBill/' + rows[0].id,'修改账单');
             }else{
                 $.messager.show({
                     title:'信息提示',

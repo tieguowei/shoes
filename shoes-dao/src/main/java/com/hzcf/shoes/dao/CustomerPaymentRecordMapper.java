@@ -53,4 +53,6 @@ public interface CustomerPaymentRecordMapper {
 	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
 
 	Long findAllByPageCount(Map<String, Object> paramsCondition);
+
+	Map<String, Object> selectById(Integer id);
 }

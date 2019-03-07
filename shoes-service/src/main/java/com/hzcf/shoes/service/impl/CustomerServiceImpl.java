@@ -1,17 +1,15 @@
 package com.hzcf.shoes.service.impl;
 
-import com.hzcf.shoes.dao.CustomerPaymentRecordMapper;
-import com.hzcf.shoes.service.CustomerService;
-import com.hzcf.shoes.util.BigDecimalUtil;
-import com.hzcf.shoes.util.PageModel;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.hzcf.shoes.dao.CustomerPaymentRecordMapper;
+import com.hzcf.shoes.model.CustomerPaymentRecord;
+import com.hzcf.shoes.service.CustomerService;
+import com.hzcf.shoes.util.PageModel;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -49,4 +47,15 @@ public class CustomerServiceImpl implements CustomerService {
 	        pageModel.setTotalRecords(totalRecords);
 	        return pageModel;
 	}
+
+		@Override
+		public Map<String, Object> selectById(Integer id) {
+			return customerPaymentRecordMapper.selectById(id);
+		}
+
+
+		@Override
+		public void updateById(CustomerPaymentRecord record) {
+			customerPaymentRecordMapper.updateByPrimaryKeySelective(record);		
+		}
 }

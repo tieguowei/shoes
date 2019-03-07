@@ -1,21 +1,24 @@
 package com.hzcf.shoes.web.store;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
+import com.hzcf.shoes.model.CustomerPaymentRecord;
+import com.hzcf.shoes.model.Order;
 import com.hzcf.shoes.service.CustomerService;
 import com.hzcf.shoes.util.PageModel;
 import com.hzcf.shoes.util.StringUtil;
@@ -23,12 +26,12 @@ import com.hzcf.shoes.util.StringUtil;
 
 /** 
 *
-* Description: 客户账单管理
+* Description: 客户管理
 *
 */
 @Controller
-@RequestMapping("/customerBill")
-public class CustomerBillController extends BaseController{
+@RequestMapping("/customer")
+public class CustomerManageController extends BaseController{
 
 	@Autowired
 	private CustomerService customerService;
@@ -41,7 +44,7 @@ public class CustomerBillController extends BaseController{
 	@RequestMapping("/toPageList")
 	public String toEmpList(String refreshTag,String messageCode,Model model) {
 		showMessageAlert(refreshTag,messageCode,model);
-		return "/app/store/customerBill/customer_sum_list";
+		return "/app/store/customerManage/customer_sum_list";
 	}
 	
 	/**
@@ -69,24 +72,19 @@ public class CustomerBillController extends BaseController{
 	}
 
     /**
-     * 跳转到 回款记录查询 页面
+     * 跳转到 账单列表 页面
      * @param customerName
      * @param model
      * @return
      */
 	 @RequestMapping(value="/toCustomerBillList/{customerName}")
 	    public String toUpdateFactory(@PathVariable String customerName ,Model model){
-		 try {
-			customerName = new String(customerName.getBytes("ISO-8859-1"), "utf8");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}   
 		 model.addAttribute("customerName", customerName);
-	        return "/app/store/customerBill/customer_bill_list";
+	        return "/app/store/customerManage/customer_bill_list";
 	    }
 
     /**
-     *  客户账单详情查询
+     * 账单列表详情查询
      * @return
      */
     @RequestMapping(value = "/getCustomerBillList")
@@ -106,5 +104,39 @@ public class CustomerBillController extends BaseController{
           }
           return dataMsg;
       }
-     
+    /**
+	 * 
+	 * Description: 跳转到修改账单页面
+	 */
+	@RequestMapping(value="/updateCustomerBill/{id}")
+	public String updateCustomerBill(@PathVariable Integer id,Model model) {
+		try {
+			Map<String,Object> record =  customerService.selectById(id);
+			model.addAttribute("record", record);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			return "common/exception";
+		}
+		return "app/store/customerManage/customer_bill_edit";
+	}
+	
+	/**
+	 * 
+	 * Description: 修改账单信息
+	 */
+	@ResponseBody
+	@RequestMapping("/updateBill")
+	public DataMsg updateBill(@ModelAttribute CustomerPaymentRecord record,HttpSession session,DataMsg dataMsg){
+		try {
+			record.setOperator(getSystemCurrentUser(session).getEmployeeId());
+			record.setUpdateTime(new Date());
+			customerService.updateById(record);
+			dataMsg.setMessageCode("0003");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setMessageCode("0004");
+		}
+		return dataMsg;
+	}
+    
 }

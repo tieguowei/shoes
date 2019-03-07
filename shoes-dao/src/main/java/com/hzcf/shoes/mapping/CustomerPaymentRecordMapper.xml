@@ -403,6 +403,7 @@
   <select id="getCustomerBackRecordList" parameterType="java.util.Map" resultType="hashMap">
     select
        id ,
+       customer_name customerName,
 		DATE_FORMAT(create_time,'%Y-%m-%d') createTime,
 		DATE_FORMAT(bill_start_time,'%Y-%m-%d') billStartTime,
 		DATE_FORMAT(bill_end_time,'%Y-%m-%d') billEndTime,
@@ -411,9 +412,11 @@
       balance_due	balanceDue ,
       small_change snallChange ,
       defective_goods	defectiveGoods,
-     bill_status  billStatus,
+      bill_status  billStatus,
+      spred_return_money spredReturnMoney,
      case when bill_status = 0 then '是'
-     else '否' end  as billStatusZH
+     else '否' end  as billStatusZH,
+     remark
    	 from zly_customer_payment_record 
      where customer_name = #{customerName}
     order by create_time desc
@@ -473,5 +476,25 @@
 	ORDER BY
 		create_time DESC
 	LIMIT 1
+  </select>
+  
+  <select id="selectById" parameterType="int" resultType="hashmap">
+  	SELECT
+		id,
+		customer_name customerName,
+		 DATE_FORMAT(bill_start_time,'%Y-%m-%d') bill_start_time,
+		 DATE_FORMAT(bill_end_time,'%Y-%m-%d') bill_end_time,
+		 DATE_FORMAT(create_time,'%Y-%m-%d') create_time,
+		customary_dues,
+		actual_payment,
+		balance_due,
+		small_change,
+		defective_goods,
+		spred_return_money,
+		bill_status,
+		remark
+	FROM
+		zly_customer_payment_record
+	where id = #{id}
   </select>
 </mapper>
