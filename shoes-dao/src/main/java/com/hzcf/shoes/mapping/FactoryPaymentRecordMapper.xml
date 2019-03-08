@@ -3,7 +3,7 @@
 <mapper namespace="com.hzcf.shoes.dao.FactoryPaymentRecordMapper" >
   <resultMap id="BaseResultMap" type="com.hzcf.shoes.model.FactoryPaymentRecord" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="factory_name" property="factoryName" jdbcType="VARCHAR" />
     <result column="bill_start_time" property="billStartTime" jdbcType="DATE" />
     <result column="bill_end_time" property="billEndTime" jdbcType="DATE" />
     <result column="customary_dues" property="customaryDues" jdbcType="DECIMAL" />
@@ -12,8 +12,10 @@
     <result column="cut_payment" property="cutPayment" jdbcType="DECIMAL" />
     <result column="defective_goods" property="defectiveGoods" jdbcType="DECIMAL" />
     <result column="season" property="season" jdbcType="CHAR" />
+    <result column="bill_status" property="billStatus" jdbcType="CHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="operator" property="operator" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,8 +76,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, name, bill_start_time, bill_end_time, customary_dues, actual_payment, balance_due, 
-    cut_payment, defective_goods, season, create_time, operator
+    id, factory_name, bill_start_time, bill_end_time, customary_dues, actual_payment, 
+    balance_due, cut_payment, defective_goods, season, bill_status, create_time, operator, 
+    remark
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hzcf.shoes.model.FactoryPaymentRecordExample" >
     select
@@ -108,16 +111,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.hzcf.shoes.model.FactoryPaymentRecord" >
-    insert into zly_factory_payment_record (id, name, bill_start_time, 
+    insert into zly_factory_payment_record (id, factory_name, bill_start_time, 
       bill_end_time, customary_dues, actual_payment, 
       balance_due, cut_payment, defective_goods, 
-      season, create_time, operator
-      )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{billStartTime,jdbcType=DATE}, 
+      season, bill_status, create_time, 
+      operator, remark)
+    values (#{id,jdbcType=INTEGER}, #{factoryName,jdbcType=VARCHAR}, #{billStartTime,jdbcType=DATE}, 
       #{billEndTime,jdbcType=DATE}, #{customaryDues,jdbcType=DECIMAL}, #{actualPayment,jdbcType=DECIMAL}, 
       #{balanceDue,jdbcType=DECIMAL}, #{cutPayment,jdbcType=DECIMAL}, #{defectiveGoods,jdbcType=DECIMAL}, 
-      #{season,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER}
-      )
+      #{season,jdbcType=CHAR}, #{billStatus,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{operator,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.hzcf.shoes.model.FactoryPaymentRecord" >
     insert into zly_factory_payment_record
@@ -125,8 +128,8 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="name != null" >
-        name,
+      <if test="factoryName != null" >
+        factory_name,
       </if>
       <if test="billStartTime != null" >
         bill_start_time,
@@ -152,19 +155,25 @@
       <if test="season != null" >
         season,
       </if>
+      <if test="billStatus != null" >
+        bill_status,
+      </if>
       <if test="createTime != null" >
         create_time,
       </if>
       <if test="operator != null" >
         operator,
       </if>
+      <if test="remark != null" >
+        remark,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="name != null" >
-        #{name,jdbcType=VARCHAR},
+      <if test="factoryName != null" >
+        #{factoryName,jdbcType=VARCHAR},
       </if>
       <if test="billStartTime != null" >
         #{billStartTime,jdbcType=DATE},
@@ -190,11 +199,17 @@
       <if test="season != null" >
         #{season,jdbcType=CHAR},
       </if>
+      <if test="billStatus != null" >
+        #{billStatus,jdbcType=CHAR},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="operator != null" >
         #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -210,8 +225,8 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.name != null" >
-        name = #{record.name,jdbcType=VARCHAR},
+      <if test="record.factoryName != null" >
+        factory_name = #{record.factoryName,jdbcType=VARCHAR},
       </if>
       <if test="record.billStartTime != null" >
         bill_start_time = #{record.billStartTime,jdbcType=DATE},
@@ -237,11 +252,17 @@
       <if test="record.season != null" >
         season = #{record.season,jdbcType=CHAR},
       </if>
+      <if test="record.billStatus != null" >
+        bill_status = #{record.billStatus,jdbcType=CHAR},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.operator != null" >
         operator = #{record.operator,jdbcType=INTEGER},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -251,7 +272,7 @@
   <update id="updateByExample" parameterType="map" >
     update zly_factory_payment_record
     set id = #{record.id,jdbcType=INTEGER},
-      name = #{record.name,jdbcType=VARCHAR},
+      factory_name = #{record.factoryName,jdbcType=VARCHAR},
       bill_start_time = #{record.billStartTime,jdbcType=DATE},
       bill_end_time = #{record.billEndTime,jdbcType=DATE},
       customary_dues = #{record.customaryDues,jdbcType=DECIMAL},
@@ -260,8 +281,10 @@
       cut_payment = #{record.cutPayment,jdbcType=DECIMAL},
       defective_goods = #{record.defectiveGoods,jdbcType=DECIMAL},
       season = #{record.season,jdbcType=CHAR},
+      bill_status = #{record.billStatus,jdbcType=CHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      operator = #{record.operator,jdbcType=INTEGER}
+      operator = #{record.operator,jdbcType=INTEGER},
+      remark = #{record.remark,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -269,8 +292,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.hzcf.shoes.model.FactoryPaymentRecord" >
     update zly_factory_payment_record
     <set >
-      <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
+      <if test="factoryName != null" >
+        factory_name = #{factoryName,jdbcType=VARCHAR},
       </if>
       <if test="billStartTime != null" >
         bill_start_time = #{billStartTime,jdbcType=DATE},
@@ -296,18 +319,24 @@
       <if test="season != null" >
         season = #{season,jdbcType=CHAR},
       </if>
+      <if test="billStatus != null" >
+        bill_status = #{billStatus,jdbcType=CHAR},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="operator != null" >
         operator = #{operator,jdbcType=INTEGER},
       </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.hzcf.shoes.model.FactoryPaymentRecord" >
     update zly_factory_payment_record
-    set name = #{name,jdbcType=VARCHAR},
+    set factory_name = #{factoryName,jdbcType=VARCHAR},
       bill_start_time = #{billStartTime,jdbcType=DATE},
       bill_end_time = #{billEndTime,jdbcType=DATE},
       customary_dues = #{customaryDues,jdbcType=DECIMAL},
@@ -316,8 +345,10 @@
       cut_payment = #{cutPayment,jdbcType=DECIMAL},
       defective_goods = #{defectiveGoods,jdbcType=DECIMAL},
       season = #{season,jdbcType=CHAR},
+      bill_status = #{billStatus,jdbcType=CHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      operator = #{operator,jdbcType=INTEGER}
+      operator = #{operator,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

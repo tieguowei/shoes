@@ -3,6 +3,8 @@ package com.hzcf.shoes.dao;
 import com.hzcf.shoes.model.FactoryPaymentRecord;
 import com.hzcf.shoes.model.FactoryPaymentRecordExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface FactoryPaymentRecordMapper {
@@ -27,4 +29,8 @@ public interface FactoryPaymentRecordMapper {
     int updateByPrimaryKeySelective(FactoryPaymentRecord record);
 
     int updateByPrimaryKey(FactoryPaymentRecord record);
+
+	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
+
+	Long findAllByPageCount(Map<String, Object> paramsCondition);
 }

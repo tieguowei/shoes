@@ -6,7 +6,7 @@ import java.util.Date;
 public class FactoryPaymentRecord {
     private Integer id;
 
-    private String name;
+    private String factoryName;
 
     private Date billStartTime;
 
@@ -24,9 +24,13 @@ public class FactoryPaymentRecord {
 
     private String season;
 
+    private String billStatus;
+
     private Date createTime;
 
     private Integer operator;
+
+    private String remark;
 
     public Integer getId() {
         return id;
@@ -36,12 +40,12 @@ public class FactoryPaymentRecord {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFactoryName() {
+        return factoryName;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setFactoryName(String factoryName) {
+        this.factoryName = factoryName == null ? null : factoryName.trim();
     }
 
     public Date getBillStartTime() {
@@ -108,6 +112,14 @@ public class FactoryPaymentRecord {
         this.season = season == null ? null : season.trim();
     }
 
+    public String getBillStatus() {
+        return billStatus;
+    }
+
+    public void setBillStatus(String billStatus) {
+        this.billStatus = billStatus == null ? null : billStatus.trim();
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -122,5 +134,13 @@ public class FactoryPaymentRecord {
 
     public void setOperator(Integer operator) {
         this.operator = operator;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 }

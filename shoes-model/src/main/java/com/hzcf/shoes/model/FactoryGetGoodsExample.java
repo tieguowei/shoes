@@ -166,73 +166,73 @@ public class FactoryGetGoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andNameIsNull() {
-            addCriterion("name is null");
+        public Criteria andFactoryNameIsNull() {
+            addCriterion("factory_name is null");
             return (Criteria) this;
         }
 
-        public Criteria andNameIsNotNull() {
-            addCriterion("name is not null");
+        public Criteria andFactoryNameIsNotNull() {
+            addCriterion("factory_name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andNameEqualTo(String value) {
-            addCriterion("name =", value, "name");
+        public Criteria andFactoryNameEqualTo(String value) {
+            addCriterion("factory_name =", value, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotEqualTo(String value) {
-            addCriterion("name <>", value, "name");
+        public Criteria andFactoryNameNotEqualTo(String value) {
+            addCriterion("factory_name <>", value, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameGreaterThan(String value) {
-            addCriterion("name >", value, "name");
+        public Criteria andFactoryNameGreaterThan(String value) {
+            addCriterion("factory_name >", value, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameGreaterThanOrEqualTo(String value) {
-            addCriterion("name >=", value, "name");
+        public Criteria andFactoryNameGreaterThanOrEqualTo(String value) {
+            addCriterion("factory_name >=", value, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameLessThan(String value) {
-            addCriterion("name <", value, "name");
+        public Criteria andFactoryNameLessThan(String value) {
+            addCriterion("factory_name <", value, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameLessThanOrEqualTo(String value) {
-            addCriterion("name <=", value, "name");
+        public Criteria andFactoryNameLessThanOrEqualTo(String value) {
+            addCriterion("factory_name <=", value, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameLike(String value) {
-            addCriterion("name like", value, "name");
+        public Criteria andFactoryNameLike(String value) {
+            addCriterion("factory_name like", value, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotLike(String value) {
-            addCriterion("name not like", value, "name");
+        public Criteria andFactoryNameNotLike(String value) {
+            addCriterion("factory_name not like", value, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameIn(List<String> values) {
-            addCriterion("name in", values, "name");
+        public Criteria andFactoryNameIn(List<String> values) {
+            addCriterion("factory_name in", values, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotIn(List<String> values) {
-            addCriterion("name not in", values, "name");
+        public Criteria andFactoryNameNotIn(List<String> values) {
+            addCriterion("factory_name not in", values, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameBetween(String value1, String value2) {
-            addCriterion("name between", value1, value2, "name");
+        public Criteria andFactoryNameBetween(String value1, String value2) {
+            addCriterion("factory_name between", value1, value2, "factoryName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotBetween(String value1, String value2) {
-            addCriterion("name not between", value1, value2, "name");
+        public Criteria andFactoryNameNotBetween(String value1, String value2) {
+            addCriterion("factory_name not between", value1, value2, "factoryName");
             return (Criteria) this;
         }
 

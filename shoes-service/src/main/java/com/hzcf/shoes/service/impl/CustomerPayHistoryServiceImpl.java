@@ -113,7 +113,7 @@ public class CustomerPayHistoryServiceImpl implements CustomerPayHistoryService{
 				account.setBalance(payMoney);
 				account.setCreateTime(new Date());
 				account.setCustomerName(payHistory.getCustomerName());
-				account.setRemark("客户打款 超出总欠款。此款将在下笔账单自动扣除！！ 余额"+payMoney);
+				account.setRemark("客户打款超出总欠款。请在账单列表 手动处理！");
 				customerAccountMapper.insertSelective(account);
 			}
 		

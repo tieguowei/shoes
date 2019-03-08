@@ -6,7 +6,7 @@ import java.util.Date;
 public class FactoryGetGoods {
     private Integer id;
 
-    private String name;
+    private String factoryName;
 
     private Date time;
 
@@ -30,12 +30,12 @@ public class FactoryGetGoods {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFactoryName() {
+        return factoryName;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setFactoryName(String factoryName) {
+        this.factoryName = factoryName == null ? null : factoryName.trim();
     }
 
     public Date getTime() {

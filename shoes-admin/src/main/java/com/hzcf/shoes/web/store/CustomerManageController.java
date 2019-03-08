@@ -57,7 +57,7 @@ public class CustomerManageController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getCustomerList")
-	public DataMsg getFactoryList(HttpServletRequest request,DataMsg dataMsg) {
+	public DataMsg getCustomerList(HttpServletRequest request,DataMsg dataMsg) {
 		try {
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
