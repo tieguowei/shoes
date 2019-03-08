@@ -33,7 +33,7 @@ import com.hzcf.shoes.util.StringUtil;
 */
 @Controller
 @RequestMapping("/customer")
-public class CustomerManageController extends BaseController{
+public class CustomerController extends BaseController{
 
 	@Autowired
 	private CustomerService customerService;
@@ -46,7 +46,7 @@ public class CustomerManageController extends BaseController{
 	 * Description: 跳转到客户分组列表页面
 	 */
 	@RequestMapping("/toPageList")
-	public String toEmpList(String refreshTag,String messageCode,Model model) {
+	public String toPageList(String refreshTag,String messageCode,Model model) {
 		showMessageAlert(refreshTag,messageCode,model);
 		return "/app/store/customerManage/customer_sum_list";
 	}

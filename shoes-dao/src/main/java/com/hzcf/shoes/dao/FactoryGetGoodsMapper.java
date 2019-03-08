@@ -3,6 +3,8 @@ package com.hzcf.shoes.dao;
 import com.hzcf.shoes.model.FactoryGetGoods;
 import com.hzcf.shoes.model.FactoryGetGoodsExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface FactoryGetGoodsMapper {
@@ -27,4 +29,10 @@ public interface FactoryGetGoodsMapper {
     int updateByPrimaryKeySelective(FactoryGetGoods record);
 
     int updateByPrimaryKey(FactoryGetGoods record);
+
+	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
+
+	Long findAllByPageCount(Map<String, Object> paramsCondition);
+
+	Map<String, Object> selectById(Integer id);
 }

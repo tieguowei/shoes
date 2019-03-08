@@ -351,4 +351,33 @@
       remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+ <!-- 客户汇总列表分页 -->
+  <select id="findAllRetMapByPage" resultType="hashmap" parameterType="hashmap">
+	  SELECT
+	    	id,
+			customer_name,
+			sum(customary_dues) customary_dues,
+			sum(actual_payment) actual_payment,
+			sum(balance_due) balance_due,
+			sum(small_change) small_change,
+			sum(defective_goods) defective_goods,
+ 			sum(spred_return_money) spred_return_money
+	FROM
+		zly_factory_payment_record
+		group by customer_name 
+		<if test="customerName != null">
+			having customer_name = #{customerName} 
+		</if> 
+		limit #{startIndex},#{pageSize}
+  </select>
+  
+  <!-- 鞋厂汇总列表分页总数 -->
+  <select id="findAllByPageCount" resultType="long" parameterType="hashmap">
+  select COUNT(DISTINCT factory_name) from zly_factory_payment_record
+	<if test="customerName != null">
+		where  customer_name = #{customerName} 
+	</if> 
+  </select>
+  
 </mapper>
