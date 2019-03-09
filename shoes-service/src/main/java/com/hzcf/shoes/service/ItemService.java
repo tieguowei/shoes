@@ -106,6 +106,13 @@ public interface ItemService {
 	 */
 	public List<Map<String, Object>> getFactoryItemList(Map<String, Object> paramsCondition);
 
+	/**
+	 * 查询鞋厂汇总记录
+	 * @param paramsCondition
+	 * @return
+	 */
+	public Map<String, Object> getFactoryTotalMoneyByParam(Map<String, Object> paramsCondition);
+
 
 	
 }

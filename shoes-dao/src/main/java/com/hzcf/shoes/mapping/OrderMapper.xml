@@ -625,8 +625,13 @@
      <if test="factoryIsDefectiveGoods != null">
   		 SET factory_is_defective_goods = #{factoryIsDefectiveGoods}
      </if>
-     WHERE
-		customer_name =#{customerName}
+     WHERE 1 =1
+     <if test="customerName != null ">
+     	and  customer_name =#{customerName}
+     </if>
+		<if test="factoryName != null ">
+     	and factory_name =#{factoryName}
+     </if>
 	 <![CDATA[
 			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
 			]]>
@@ -808,7 +813,7 @@
   </select>
   
   <!-- 查询鞋厂发货记录 -->
-  <select id="getFactoryItemList" parameterType="hashmap" resultType="hashmap">
+  <select id="getFactoryItemList" parameterType="hashmap" resultType="java.util.LinkedHashMap">
    SELECT
 		IFNULL(DATE_FORMAT(pay_time,'%Y-%m-%d'),'') pay_time,
 		IFNULL(factory_name,'') factory_name,
@@ -839,11 +844,11 @@
   <!-- 查询鞋厂汇总数据  用于生成excel-->
   <select id="getFactoryTotalMoneyByParam" parameterType="hashmap" resultType="hashmap">
   SELECT
-			IFNULL((sum(number_packages * shoe_dual * sale_price * #{rate})),0) totalGoodsMoney,
+  			IFNULL(ROUND(sum(number_packages * shoe_dual * sale_price * #{rate}),2),0) totalGoodsMoney,
 		  	IFNULL((sum(number_packages * shoe_dual)),0) totalNum,
 			IFNULL((sum(number_packages * shoe_dual * #{jianci} )),0) jianci,
-			<!-- 计算本次欠款 总金额-减次 （然后在程序中减去本账单取货总金额即可 ）-->
-			IFNULL((sum(number_packages * shoe_dual * sale_price- (number_packages * shoe_dual * #{jianci}))),0) blanceDue
+			<!-- 计算本次欠款 总金额*rate-减次 （然后在程序中减去本账单取货总金额即可 ）-->
+			 IFNULL(ROUND(sum(number_packages * shoe_dual * sale_price * #{rate}) - sum(number_packages * shoe_dual * #{jianci}),2),0) blanceDue
 	FROM
 		zly_order 
 	WHERE

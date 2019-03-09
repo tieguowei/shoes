@@ -104,4 +104,10 @@ public interface OrderMapper {
 	 * @return
 	 */
 	List<Map<String, Object>> getFactoryItemList(Map<String, Object> paramsCondition);
+	/**
+	 * 查询鞋厂汇总
+	 * @param paramsCondition
+	 * @return
+	 */
+	Map<String, Object> getFactoryTotalMoneyByParam(Map<String, Object> paramsCondition);
 }

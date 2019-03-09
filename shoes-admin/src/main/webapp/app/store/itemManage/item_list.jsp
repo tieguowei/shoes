@@ -215,6 +215,51 @@
 					});
 		}
 		
+		function doFactoryExport(){
+			//客户姓名
+			var factoryName = $("#factory_name").textbox("getValue")
+			if (factoryName == ""|| typeof (factoryName) == "undefined") {
+				$.messager.alert('提示信息', '请在左上方搜索框输入鞋厂名称！', 'info');
+				return false;
+			}  
+			 //发货时间
+			var minCreateTime =$("#minCreateTime").datebox('getValue');
+			var maxCreateTime =$("#maxCreateTime").datebox('getValue');
+			 if (minCreateTime == "" || maxCreateTime == "") {
+				$.messager.alert('提示信息', '请输入发货起止时间！', 'info');
+				return false;
+			} 
+			var season = $("#season").combobox('getValue');
+		   if (season == null || season == ""){ 
+			   $.messager.alert('提示信息', '请选择冬季或者其他季节！', 'info');
+				return false;
+            } 
+		   $.ajax({
+  				url : "${app}/item/checkFactoryItemIsOver",
+				type : "post",
+				dataType : "json",
+				data:{
+					"factoryName" : factoryName,
+					"minCreateTime" : minCreateTime,
+					"maxCreateTime":maxCreateTime,
+					"season":season
+				},
+				success : function(data){
+					if(data){
+						$.messager.confirm("请确认", "您确定要导出【"+factoryName+"】在此时间段的账单吗？", function(b){
+							if(b){
+								 $("#searchForm").attr("action", "${app}/item/doFactoryExport");
+								$("#searchForm").attr("method", "POST");
+								$("#searchForm").submit(); 
+							}
+						});
+					}else{
+						$.messager.alert('提示信息', '客户【'+factoryName+" 】在此时间段内订单已处理完毕！", 'info');
+					}
+				},		
+				});
+		}
+		
 	</script>
 </head>
 

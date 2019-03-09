@@ -159,4 +159,10 @@ public class ItemServiceImpl implements ItemService{
 		return orderMapper.getFactoryItemList(paramsCondition);
 	}
 
+
+	@Override
+	public Map<String, Object> getFactoryTotalMoneyByParam(Map<String, Object> paramsCondition) {
+		return orderMapper.getFactoryTotalMoneyByParam(paramsCondition);
+	}
+
 }

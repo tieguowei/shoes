@@ -321,12 +321,9 @@
   </select>
   <select id="getPickListByFactory" parameterType="hashmap" resultType="java.util.LinkedHashMap">
    SELECT
-		id,
-		factory_name,
 		DATE_FORMAT(time, '%Y-%m-%d') time,
 		money,
-		remark,
-		status
+		remark
 	FROM
 		zly_factory_get_goods
 	where factory_name = #{factoryName} 
@@ -360,13 +357,14 @@
       <![CDATA[
  		AND DATE_FORMAT(time ,'%Y-%m-%d') <= #{maxCreateTime}
  	]]>
+ 	</if>
   </select>
   <!-- 修改取货状态 -->
   <update id="updatePickStatus" parameterType="hashmap">
 	UPDATE zly_factory_get_goods
 	SET `status` =#{status}
 	WHERE
-		where factory_name = #{factoryName} 
+		 factory_name = #{factoryName} 
   <if test="minCreateTime != null">
       <![CDATA[
  		AND DATE_FORMAT(time ,'%Y-%m-%d') >= #{minCreateTime}
@@ -376,6 +374,6 @@
       <![CDATA[
  		AND DATE_FORMAT(time ,'%Y-%m-%d') <= #{maxCreateTime}
  	]]>
-  
+  </if>
   </update>
 </mapper>

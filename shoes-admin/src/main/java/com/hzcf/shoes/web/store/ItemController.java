@@ -12,7 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -768,7 +767,7 @@ public class ItemController extends BaseController{
 			//如果客户筛选的是冬季
 			BigDecimal rate = new BigDecimal("0");
 			String seasonzh;
-			if("0" == season){
+			if("0".equals(season) ){
 				paramsCondition.put("jianci", WinterJC);
 				paramsCondition.put("rate", WinterRate);
 				rate = WinterRate;
@@ -798,7 +797,7 @@ public class ItemController extends BaseController{
 			int dataSize =4+ itemList.size() + pickList.size();
 			
 			//查询鞋厂此时间段的订单汇总
-			Map<String,Object> totalMap = itemService.getTotalMoneyByParam(paramsCondition);
+			Map<String,Object> totalMap = itemService.getFactoryTotalMoneyByParam(paramsCondition);
 			//查询取货记录汇总
 			Map pickSum = factoryPickService.getPickSum(paramsCondition);
 			setFactoryTotalData(pickSum,totalMap, rate,sheet, listTitleStyle, cellStyle,secondStyle,dataSize);
@@ -816,7 +815,7 @@ public class ItemController extends BaseController{
 				/**
 				 * 7.鞋厂账单入库
 				 */
-				insertFactoryBill(seasonzh,pickSum,session,factoryName, itemList, totalMap);
+				insertFactoryBill(season,pickSum,session,factoryName, itemList, totalMap);
 				String fileName = format.format(new Date()) + "【" + factoryName + "】账单" + ".xlsx";
 				String headStr = "attachment; filename=\"" + new String(fileName.getBytes("utf-8"), "ISO8859-1")
 						+ "\"";
@@ -848,7 +847,7 @@ public class ItemController extends BaseController{
 
 	}
 
-	private void insertFactoryBill(String seasonzh,Map pickSum, HttpSession session, String factoryName, List<Map<String, Object>> itemList,
+	private void insertFactoryBill(String season,Map pickSum, HttpSession session, String factoryName, List<Map<String, Object>> itemList,
 			Map<String, Object> totalMap) throws Exception {
 		FactoryPaymentRecord record = new FactoryPaymentRecord();
 		record.setCreateTime(new Date());
@@ -860,19 +859,20 @@ public class ItemController extends BaseController{
 	  	 * 取货记录不为空算法：应还金额 =总计金额 - 取货
 	  	 * 为空 应还金额 = 总计金额 
 	  	 */
+	  	String blanceDue =String.valueOf(totalMap.get("blanceDue"));
 	  	BigDecimal yhje = new BigDecimal(0);
-	  	String totalGoodsMoney = String.valueOf(totalMap.get("totalGoodsMoney"));
 	  	if(null != pickSum){
-	  		yhje = new BigDecimal(totalGoodsMoney).subtract(new BigDecimal(String.valueOf(pickSum)));
+	  		yhje = new BigDecimal(blanceDue).subtract(new BigDecimal(String.valueOf(pickSum.get("money"))));
 	  	}else{
-	  		yhje =  new BigDecimal(totalGoodsMoney);
+	  		yhje =  new BigDecimal(blanceDue);
 	  	}
+	  	
 		record.setCustomaryDues(yhje);//本次账单应还金额
 		record.setFactoryName(factoryName);//鞋厂名称
-		record.setCutPayment(new BigDecimal(String.valueOf(pickSum)));//商家扣款
+		record.setCutPayment(new BigDecimal(String.valueOf(pickSum.get("money"))));//商家扣款
 		String  jianci = String.valueOf(totalMap.get("jianci"));
 		record.setDefectiveGoods(new BigDecimal(jianci));//减次
-		record.setSeason(seasonzh);
+		record.setSeason(season);
 		factoryBillService.insertFactoryBill(record);
 	}
 
@@ -888,7 +888,7 @@ public class ItemController extends BaseController{
 		  	LinkedHashMap<Object,Object> nextLikedHashMap = new LinkedHashMap<Object,Object>();
 			nextLikedHashMap.put("货单时间", "货单时间");
 			nextLikedHashMap.put("总件", "总件"); 
-			nextLikedHashMap.put("总计金额(已乘)"+rate, "总计金额(已乘)"+rate); 
+			nextLikedHashMap.put("总计金额(已乘"+rate+")", "总计金额(已乘"+rate+")"); 
 			nextLikedHashMap.put("减次（元）", "减次（元）");
 			if(null != pickSum){
 				nextLikedHashMap.put("取货总额（元）", "取货总额（元）");
@@ -901,22 +901,23 @@ public class ItemController extends BaseController{
 		  	String totalNum = String.valueOf(totalMap.get("totalNum"));
 		  	dataMap.put("tn",totalNum);//本次账单总件
 		  	String totalGoodsMoney = String.valueOf(totalMap.get("totalGoodsMoney"));
-		  	dataMap.put("tm",totalGoodsMoney);//本次账单总计金额（已经减次）
-			if(null != pickSum){
-				dataMap.put("pick", pickSum);
-			}
+		  	dataMap.put("tm",totalGoodsMoney);//本次账单总计金额（已乘利率）
 		  	dataMap.put("jc",totalMap.get("jianci"));//本次账单减次
+			if(null != pickSum){
+				dataMap.put("pick", pickSum.get("money"));
+			}
 		  	
 		  	/**
 		  	 * 本次账单 应还金额(欠款额)
 		  	 * 取货记录不为空算法：应还金额 =总计金额 - 取货
 		  	 * 为空 应还金额 = 总计金额 
 		  	 */
+		  	String blanceDue =String.valueOf(totalMap.get("blanceDue"));
 		  	BigDecimal yhje = new BigDecimal(0);
 		  	if(null != pickSum){
-		  		yhje = new BigDecimal(totalGoodsMoney).subtract(new BigDecimal(String.valueOf(pickSum)));
+		  		yhje = new BigDecimal(blanceDue).subtract(new BigDecimal(String.valueOf(pickSum.get("money"))));
 		  	}else{
-		  		yhje =  new BigDecimal(totalGoodsMoney);
+		  		yhje =  new BigDecimal(blanceDue);
 		  	}
 		  	dataMap.put("yhje",yhje);//本次账单应还金额
 		  	dataList.add(1,dataMap);
@@ -964,7 +965,7 @@ public class ItemController extends BaseController{
 		row.setHeightInPoints(50);
 		HSSFCell cell = row.createCell(0);
 		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,7));//首行合并多少格
-		cell.setCellValue("鞋厂名称："+factoryName+"("+seasonzh+"+)    账单日期："+format.format(new Date()));
+		cell.setCellValue("季节："+seasonzh+"  鞋厂名称："+factoryName+"    账单日期："+format.format(new Date()));
 		cell.setCellStyle(firstStyle);
 		
 	}
