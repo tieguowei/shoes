@@ -61,7 +61,7 @@
 		
 		//取消
 		function resetForm(){
-			parent.closeTab("添加订单");
+			parent.closeTab("添加取货记录");
 		}
 		 
 	</script>

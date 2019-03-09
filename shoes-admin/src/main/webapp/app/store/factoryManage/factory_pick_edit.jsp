@@ -69,7 +69,7 @@
  <body style="background: white;">
   	<form id="pickAddForm" class="easyui-form" method="post" modelAttribute="employee">
 		<table class="tableForm" border="1" width="100%" >
-							<input type="text" id="id" name="id" value="${goods.id}"/>
+							<input type="hidden" id="id" name="id" value="${goods.id}"/>
 			<tr>
 			<td width="15%" class="tdR"><span style="color: red">*</span>鞋厂名称:</td>
 				<td width="35%">
