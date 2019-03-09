@@ -309,15 +309,73 @@
   
   <select id="selectById" parameterType="int" resultType="hashmap">
   SELECT
-	id,
-	factory_name,
-	DATE_FORMAT(time, '%Y-%m-%d') time,
-	money,
-	remark,
-	status
-FROM
-	zly_factory_get_goods
-where id = #{id}
-  
+		id,
+		factory_name,
+		DATE_FORMAT(time, '%Y-%m-%d') time,
+		money,
+		remark,
+		status
+	FROM
+		zly_factory_get_goods
+	where id = #{id}
   </select>
+  <select id="getPickListByFactory" parameterType="hashmap" resultType="java.util.LinkedHashMap">
+   SELECT
+		id,
+		factory_name,
+		DATE_FORMAT(time, '%Y-%m-%d') time,
+		money,
+		remark,
+		status
+	FROM
+		zly_factory_get_goods
+	where factory_name = #{factoryName} 
+   and status = '1'
+   <if test="minCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(time ,'%Y-%m-%d') >= #{minCreateTime}
+ 		]]>
+    </if>
+    <if test="maxCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(time ,'%Y-%m-%d') <= #{maxCreateTime}
+ 	]]>
+    </if>
+  </select>
+  
+  <!-- 取回记录汇总 -->
+  <select id="getPickSum" parameterType="hashmap" resultType="hashmap">
+  SELECT
+		sum(money) money
+	FROM
+		zly_factory_get_goods
+	where factory_name = #{factoryName} 
+   and status = '1'
+   <if test="minCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(time ,'%Y-%m-%d') >= #{minCreateTime}
+ 		]]>
+    </if>
+    <if test="maxCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(time ,'%Y-%m-%d') <= #{maxCreateTime}
+ 	]]>
+  </select>
+  <!-- 修改取货状态 -->
+  <update id="updatePickStatus" parameterType="hashmap">
+	UPDATE zly_factory_get_goods
+	SET `status` =#{status}
+	WHERE
+		where factory_name = #{factoryName} 
+  <if test="minCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(time ,'%Y-%m-%d') >= #{minCreateTime}
+ 		]]>
+    </if>
+    <if test="maxCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(time ,'%Y-%m-%d') <= #{maxCreateTime}
+ 	]]>
+  
+  </update>
 </mapper>

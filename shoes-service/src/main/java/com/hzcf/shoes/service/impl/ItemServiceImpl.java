@@ -1,10 +1,6 @@
 
 package com.hzcf.shoes.service.impl;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,6 +145,18 @@ public class ItemServiceImpl implements ItemService{
 		}
 		reqMap.put("customerName", String.valueOf(paramsCondition.get("customerName")));
 	   return reqMap;
+	}
+
+
+	@Override
+	public List<Map<String, Object>> checkFactoryItemIsOver(Map<String, Object> paramsCondition) {
+		return orderMapper.checkFactoryItemIsOver(paramsCondition);
+	}
+
+
+	@Override
+	public List<Map<String, Object>> getFactoryItemList(Map<String, Object> paramsCondition) {
+		return orderMapper.getFactoryItemList(paramsCondition);
 	}
 
 }

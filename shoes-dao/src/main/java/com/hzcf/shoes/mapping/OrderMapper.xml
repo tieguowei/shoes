@@ -786,4 +786,75 @@
 	]]>
 	and return_status = #{before}
   </update>
+  
+  <!-- 校验鞋厂是否能导出 -->
+  <select id="checkFactoryItemIsOver" parameterType="hashmap" resultType="hashmap">
+   SELECT
+		id
+    from zly_order 
+    where factory_name = #{factoryName}
+    and season  = #{season}
+ 	<if test="minCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+ 		]]>
+    </if>
+    <if test="maxCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <= #{maxCreateTime}
+ 	]]>
+    </if>
+		AND factory_is_defective_goods = 1
+  </select>
+  
+  <!-- 查询鞋厂发货记录 -->
+  <select id="getFactoryItemList" parameterType="hashmap" resultType="hashmap">
+   SELECT
+		IFNULL(DATE_FORMAT(pay_time,'%Y-%m-%d'),'') pay_time,
+		IFNULL(factory_name,'') factory_name,
+		IFNULL(item_no,'') item_no,
+		IFNULL(number_packages,0) number_packages,
+		IFNULL(shoe_dual,0) shoe_dual,
+		IFNULL(sale_price,0) sale_price,
+		IFNULL((number_packages * shoe_dual * sale_price),0)totalMoney,
+		IFNULL(remark,'') remark
+    from zly_order 
+    where factory_is_defective_goods = 1
+  <if test="factoryName != null">
+  	 and factory_name = #{factoryName}
+ 	</if>
+ 	<if test="minCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+ 		]]>
+    </if>
+    <if test="maxCreateTime != null">
+      <![CDATA[
+ 		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <= #{maxCreateTime}
+ 	]]>
+    </if>
+    order by  pay_time asc
+  </select>
+  
+  <!-- 查询鞋厂汇总数据  用于生成excel-->
+  <select id="getFactoryTotalMoneyByParam" parameterType="hashmap" resultType="hashmap">
+  SELECT
+			IFNULL((sum(number_packages * shoe_dual * sale_price * #{rate})),0) totalGoodsMoney,
+		  	IFNULL((sum(number_packages * shoe_dual)),0) totalNum,
+			IFNULL((sum(number_packages * shoe_dual * #{jianci} )),0) jianci,
+			<!-- 计算本次欠款 总金额-减次 （然后在程序中减去本账单取货总金额即可 ）-->
+			IFNULL((sum(number_packages * shoe_dual * sale_price- (number_packages * shoe_dual * #{jianci}))),0) blanceDue
+	FROM
+		zly_order 
+	WHERE
+		factory_name = #{factoryName}
+		  <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}
+			]]>
+		  <![CDATA[
+			AND DATE_FORMAT(pay_time ,'%Y-%m-%d') <=#{maxCreateTime}
+			]]>
+	and factory_is_defective_goods = 1
+	and season = #{season}
+  </select>
 </mapper>

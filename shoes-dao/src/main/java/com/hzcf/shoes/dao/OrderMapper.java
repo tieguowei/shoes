@@ -90,4 +90,18 @@ public interface OrderMapper {
 	 * @param paramsCondition
 	 */
 	void updateReturnStatus(Map<String, Object> paramsCondition);
+
+	/**
+	 * 校验鞋厂是否能导出
+	 * @param paramsCondition
+	 * @return
+	 */
+	List<Map<String, Object>> checkFactoryItemIsOver(Map<String, Object> paramsCondition);
+
+	/**
+	 * 查询鞋厂发货记录
+	 * @param paramsCondition
+	 * @return
+	 */
+	List<Map<String, Object>> getFactoryItemList(Map<String, Object> paramsCondition);
 }

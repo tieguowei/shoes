@@ -35,4 +35,10 @@ public interface FactoryGetGoodsMapper {
 	Long findAllByPageCount(Map<String, Object> paramsCondition);
 
 	Map<String, Object> selectById(Integer id);
+
+	List<Map<String, Object>> getPickListByFactory(Map<String, Object> paramsCondition);
+
+	Map getPickSum(Map<String, Object> paramsCondition);
+
+	void updatePickStatus(Map<String, Object> paramsCondition);
 }

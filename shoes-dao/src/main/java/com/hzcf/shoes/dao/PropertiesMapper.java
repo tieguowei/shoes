@@ -1,5 +1,6 @@
 package com.hzcf.shoes.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public interface PropertiesMapper{
 	Long findAllByPageCount(Map<String, Object> paramsCondition);
 	
     //根据属性配置表中的属性名称查询相应的属性值
-	String selectVersion(String propertyName);
+	BigDecimal selectVersion(String propertyName);
 
     List<Map<String,Object>> getDeptDeptNameList(@Param("list") List<Integer> deptIdList);
 }

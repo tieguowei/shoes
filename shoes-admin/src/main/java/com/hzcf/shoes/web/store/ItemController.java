@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,9 +42,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
 import com.hzcf.shoes.model.CustomerPaymentRecord;
+import com.hzcf.shoes.model.FactoryPaymentRecord;
 import com.hzcf.shoes.model.Order;
 import com.hzcf.shoes.service.CustomerBillService;
 import com.hzcf.shoes.service.CustomerPayHistoryService;
+import com.hzcf.shoes.service.FactoryBillService;
+import com.hzcf.shoes.service.FactoryPickService;
 import com.hzcf.shoes.service.ItemService;
 import com.hzcf.shoes.util.PageModel;
 import com.hzcf.shoes.util.StringUtil;
@@ -64,6 +68,10 @@ public class ItemController extends BaseController{
 	private CustomerBillService customerBillService;
 	@Autowired
 	private CustomerPayHistoryService customerPayHistoryService;
+	@Autowired
+	private FactoryPickService factoryPickService;
+	@Autowired
+	private FactoryBillService factoryBillService;
 	
 	SimpleDateFormat format = new SimpleDateFormat("yyyy年M月d日");
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -301,6 +309,7 @@ public class ItemController extends BaseController{
 					updateItemStatus("0",session, updateItemStatus);
 					/**
 					 * 7.客户账单入库
+					 * sumMap ：差价和退货汇总
 					 */
 					insertCustomerBill(session, customerName, itemList, totalMap, sumMap);
 				}
@@ -355,11 +364,13 @@ public class ItemController extends BaseController{
 		customerbill.setCustomerName(customerName); //客户姓名
 		customerbill.setBillStartTime(dateFormat.parse(itemList.get(1).get("pay_time").toString()));//本次账单中订单开始时间
 		customerbill.setBillEndTime(dateFormat.parse(itemList.get(itemList.size()-1).get("pay_time").toString()));//本次账单中订单结束时间
-		String  object = String.valueOf(totalMap.get("blanceDue"));//此金额已经减次
-	  	BigDecimal qke = new BigDecimal(object).subtract(new BigDecimal(sumMap));
-		customerbill.setCustomaryDues(qke);//本次账单应还金额
+		String  blanceDue = String.valueOf(totalMap.get("blanceDue"));//此金额已经减次
+	  	BigDecimal qke = new BigDecimal(blanceDue).subtract(new BigDecimal(sumMap));
+		customerbill.setCustomaryDues(qke);//本次账单应还金额 已经减次的总金额- 差价和退货
 		customerbill.setSpredReturnMoney(new BigDecimal(sumMap));//本次账单（总差价+总退货价）
 		customerbill.setCreateTime(new Date());
+		String  jianci = String.valueOf(totalMap.get("jianci"));
+		customerbill.setDefectiveGoods(new BigDecimal(jianci));//减次
 		customerbill.setBillStatus("1");//默认未结清
 		customerbill.setBalanceDue(qke);//本次账单欠款
 		customerbill.setOperator(getSystemCurrentUser(session).getEmployeeId());
@@ -656,6 +667,10 @@ public class ItemController extends BaseController{
 		if (StringUtil.isNotBlank(customerName)) {
 			paramsCondition.put("customerName", customerName);
 		}
+		String factoryName = StringUtil.trim(request.getParameter("factoryName"));
+		if (StringUtil.isNotBlank(factoryName)) {
+			paramsCondition.put("factoryName", factoryName);
+		}
 		String minCreateTime = StringUtil.trim(request.getParameter("minCreateTime"));
 		if (StringUtil.isNotBlank(minCreateTime)) {
 			paramsCondition.put("minCreateTime", minCreateTime);
@@ -663,6 +678,10 @@ public class ItemController extends BaseController{
 		String maxCreateTime = StringUtil.trim(request.getParameter("maxCreateTime"));
 		if (StringUtil.isNotBlank(maxCreateTime)) {
 			paramsCondition.put("maxCreateTime", maxCreateTime);
+		}
+		String season = StringUtil.trim(request.getParameter("season"));
+		if (StringUtil.isNotBlank(season)) {
+			paramsCondition.put("season", season);
 		}
 	}
 	
@@ -689,4 +708,368 @@ public class ItemController extends BaseController{
 		secondStyle.setFont(secondFont);
 		return secondStyle;
 	}
+	
+	
+	/**
+	 * 
+	 * Description: 校验鞋厂是否能导出账单
+	 */
+	@ResponseBody
+	@RequestMapping(value="/checkFactoryItemIsOver")
+	public  boolean checkFactoryItemIsOver(HttpServletRequest request,DataMsg dataMsg) {
+		try {
+			Map<String, Object> paramsCondition = new HashMap<String, Object>();
+			customerParm(request, paramsCondition);
+			List<Map<String,Object>> itemList = itemService.checkFactoryItemIsOver(paramsCondition);
+			if(null != itemList && itemList.size()>0){
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 鞋厂账单导出
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping("/doFactoryExport")
+	public void doFactoryExport(HttpSession session,HttpServletRequest request, HttpServletResponse response) {
+			String factoryName = StringUtil.trim(request.getParameter("factoryName"));
+			String season = StringUtil.trim(request.getParameter("season"));
+
+			//组装请求参数
+			Map<String, Object> paramsCondition = new HashMap<String, Object>();
+			customerParm(request,paramsCondition);
+			List<Map<String, Object>> itemList = new ArrayList<Map<String, Object>>();
+
+		try {
+			HSSFWorkbook wb = new HSSFWorkbook();
+			HSSFSheet sheet = wb.createSheet("sheet1");
+	         //列表首行标题样式
+	        HSSFCellStyle listTitleStyle = setListTitleStyle(wb);
+	        //列表中字体样式
+	    	HSSFCellStyle cellStyle = wb.createCellStyle();
+		    cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);//水平居中  
+		    cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);//垂直居中 
+			//发货记录  还款记录 差价和退货 本次账单详情样式
+			HSSFCellStyle secondStyle = setStyleForItemAndPay(wb);
+			//查询动态参数
+			//冬季鞋利率
+			BigDecimal WinterRate = factoryPickService.getProperties("WinterRate");
+			//其他季节利率
+			BigDecimal SpringRate = factoryPickService.getProperties("SpringRate");
+			//冬季每双减次金额
+			BigDecimal WinterJC = factoryPickService.getProperties("WinterJC");
+			BigDecimal SpringJC = factoryPickService.getProperties("SpringJC");
+			//如果客户筛选的是冬季
+			BigDecimal rate = new BigDecimal("0");
+			String seasonzh;
+			if("0" == season){
+				paramsCondition.put("jianci", WinterJC);
+				paramsCondition.put("rate", WinterRate);
+				rate = WinterRate;
+				seasonzh = "冬季";
+			}else{
+				paramsCondition.put("jianci", SpringJC);
+				paramsCondition.put("rate", SpringRate);
+				rate = SpringRate;
+				seasonzh = "其他季节";
+			}
+			//设置表头
+	        setFactoryTitle(seasonzh,factoryName, wb,sheet);
+	       
+	        /**
+	         * 1.组装发货记录
+	         */
+			 itemList = setFactoryItemRecord(paramsCondition, sheet, listTitleStyle, cellStyle,secondStyle);
+			
+			/**
+			 * 2.组装鞋厂取货记录
+			 */
+			int size =2+itemList.size();
+			List<Map<String,Object> >pickList =setPickList(paramsCondition, sheet, listTitleStyle, cellStyle, secondStyle, size);
+			/**
+			 * 3.组装账单汇总数据
+			 */
+			int dataSize =4+ itemList.size() + pickList.size();
+			
+			//查询鞋厂此时间段的订单汇总
+			Map<String,Object> totalMap = itemService.getTotalMoneyByParam(paramsCondition);
+			//查询取货记录汇总
+			Map pickSum = factoryPickService.getPickSum(paramsCondition);
+			setFactoryTotalData(pickSum,totalMap, rate,sheet, listTitleStyle, cellStyle,secondStyle,dataSize);
+			if (wb != null) {
+				/**
+				 * 4.修改订单状态
+				 */
+				paramsCondition.put("factoryIsDefectiveGoods", "0");
+				itemService.updateItemStatus(paramsCondition);
+				/**
+				 * 5.修改取货记录状态
+				 */
+				paramsCondition.put("status", "0");
+				factoryPickService.updatePickStatus(paramsCondition);
+				/**
+				 * 7.鞋厂账单入库
+				 */
+				insertFactoryBill(seasonzh,pickSum,session,factoryName, itemList, totalMap);
+				String fileName = format.format(new Date()) + "【" + factoryName + "】账单" + ".xlsx";
+				String headStr = "attachment; filename=\"" + new String(fileName.getBytes("utf-8"), "ISO8859-1")
+						+ "\"";
+				response.setContentType("APPLICATION/OCTET-STREAM;charset=utf-8");
+				response.setHeader("Content-Disposition", headStr);
+				OutputStream out = response.getOutputStream();
+				wb.write(out);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			try {
+				/**
+				 * 异常情况 还原此账单中的订单标记状态
+				 */
+				/**
+				 * 4.修改订单状态
+				 */
+				paramsCondition.put("factoryIsDefectiveGoods", "1");
+				itemService.updateItemStatus(paramsCondition);
+				/**
+				 * 5.修改取货记录状态
+				 */
+				paramsCondition.put("status", "1");
+				factoryPickService.updatePickStatus(paramsCondition);
+			} catch (Exception e2) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+
+	}
+
+	private void insertFactoryBill(String seasonzh,Map pickSum, HttpSession session, String factoryName, List<Map<String, Object>> itemList,
+			Map<String, Object> totalMap) throws Exception {
+		FactoryPaymentRecord record = new FactoryPaymentRecord();
+		record.setCreateTime(new Date());
+		record.setOperator(getSystemCurrentUser(session).getEmployeeId());
+		record.setBillStartTime(dateFormat.parse(itemList.get(1).get("pay_time").toString()));//本次账单中订单开始时间
+		record.setBillEndTime(dateFormat.parse(itemList.get(itemList.size()-1).get("pay_time").toString()));//本次账单中订单结束时间
+		/**
+	  	 * 本次账单 应还金额(欠款额)
+	  	 * 取货记录不为空算法：应还金额 =总计金额 - 取货
+	  	 * 为空 应还金额 = 总计金额 
+	  	 */
+	  	BigDecimal yhje = new BigDecimal(0);
+	  	String totalGoodsMoney = String.valueOf(totalMap.get("totalGoodsMoney"));
+	  	if(null != pickSum){
+	  		yhje = new BigDecimal(totalGoodsMoney).subtract(new BigDecimal(String.valueOf(pickSum)));
+	  	}else{
+	  		yhje =  new BigDecimal(totalGoodsMoney);
+	  	}
+		record.setCustomaryDues(yhje);//本次账单应还金额
+		record.setFactoryName(factoryName);//鞋厂名称
+		record.setCutPayment(new BigDecimal(String.valueOf(pickSum)));//商家扣款
+		String  jianci = String.valueOf(totalMap.get("jianci"));
+		record.setDefectiveGoods(new BigDecimal(jianci));//减次
+		record.setSeason(seasonzh);
+		factoryBillService.insertFactoryBill(record);
+	}
+
+	private void setFactoryTotalData(Map<String, Object> pickSum,  Map<String, Object> totalMap, BigDecimal rate, HSSFSheet sheet, HSSFCellStyle listTitleStyle,
+			HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int dataSize) {
+		  	HSSFRow nextRow = sheet.createRow(dataSize);
+			nextRow.setHeightInPoints(30);
+			HSSFCell nextCell = nextRow.createCell(0);
+			nextCell.setCellValue("本次账单详情");
+			nextCell.setCellStyle(secondStyle);
+			sheet.addMergedRegion(new CellRangeAddress(dataSize, dataSize, 0, 7));
+		  List<Map<Object,Object>> dataList = new ArrayList<Map<Object,Object>>();
+		  	LinkedHashMap<Object,Object> nextLikedHashMap = new LinkedHashMap<Object,Object>();
+			nextLikedHashMap.put("货单时间", "货单时间");
+			nextLikedHashMap.put("总件", "总件"); 
+			nextLikedHashMap.put("总计金额(已乘)"+rate, "总计金额(已乘)"+rate); 
+			nextLikedHashMap.put("减次（元）", "减次（元）");
+			if(null != pickSum){
+				nextLikedHashMap.put("取货总额（元）", "取货总额（元）");
+
+			}
+			nextLikedHashMap.put("应还金额（元）", "应还金额（元）");
+			dataList.add(0,nextLikedHashMap);
+		  	LinkedHashMap<Object,Object> dataMap = new LinkedHashMap<Object,Object>();
+		  	dataMap.put(format.format(new Date()),format.format(new Date()));
+		  	String totalNum = String.valueOf(totalMap.get("totalNum"));
+		  	dataMap.put("tn",totalNum);//本次账单总件
+		  	String totalGoodsMoney = String.valueOf(totalMap.get("totalGoodsMoney"));
+		  	dataMap.put("tm",totalGoodsMoney);//本次账单总计金额（已经减次）
+			if(null != pickSum){
+				dataMap.put("pick", pickSum);
+			}
+		  	dataMap.put("jc",totalMap.get("jianci"));//本次账单减次
+		  	
+		  	/**
+		  	 * 本次账单 应还金额(欠款额)
+		  	 * 取货记录不为空算法：应还金额 =总计金额 - 取货
+		  	 * 为空 应还金额 = 总计金额 
+		  	 */
+		  	BigDecimal yhje = new BigDecimal(0);
+		  	if(null != pickSum){
+		  		yhje = new BigDecimal(totalGoodsMoney).subtract(new BigDecimal(String.valueOf(pickSum)));
+		  	}else{
+		  		yhje =  new BigDecimal(totalGoodsMoney);
+		  	}
+		  	dataMap.put("yhje",yhje);//本次账单应还金额
+		  	dataList.add(1,dataMap);
+		  	int nextStart = 1 + dataSize;
+		  	for (int i = 0; i < dataList.size(); i++) {
+				Row rows = sheet.createRow(nextStart);
+				//为首行设置样式
+				HSSFCellStyle str;
+				if(i == 0 ){
+					str = listTitleStyle;
+					rows.setHeightInPoints(20);
+				}else{
+					str = cellStyle;
+				}
+				Map<Object, Object> map2 = dataList.get(i);
+				List list = new ArrayList();
+				Iterator iter = map2.entrySet().iterator(); // 获得map的Iterator
+				while (iter.hasNext()) {
+					Entry entry = (Entry) iter.next();
+					list.add(entry.getValue());
+				}
+				for (int j = 0; j < list.size(); j++) {
+						Cell cells = rows.createCell(j);
+						String cellLiString = String.valueOf(list.get(j));
+						cells.setCellValue(new HSSFRichTextString(cellLiString));
+						cells.setCellStyle(str); 
+						sheet.setColumnWidth(j, 6000);// 设置excel每列宽度
+					
+				}
+				nextStart += 1;
+			}
+		
+	}
+
+	private void setFactoryTitle(String seasonzh,String factoryName, HSSFWorkbook wb, HSSFSheet sheet) {
+		HSSFCellStyle firstStyle = wb.createCellStyle();
+	    firstStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);//垂直居中  
+	    firstStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);//水平居中  
+	    HSSFFont font=wb.createFont();
+        font.setColor(HSSFColor.BLACK.index);//HSSFColor.VIOLET.index //字体颜色
+        font.setFontHeightInPoints((short)13);
+        firstStyle.setFont(font);
+        
+		HSSFRow row = sheet.createRow(0);
+		row.setHeightInPoints(50);
+		HSSFCell cell = row.createCell(0);
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,7));//首行合并多少格
+		cell.setCellValue("鞋厂名称："+factoryName+"("+seasonzh+"+)    账单日期："+format.format(new Date()));
+		cell.setCellStyle(firstStyle);
+		
+	}
+
+	private List<Map<String, Object>> setPickList(Map<String, Object> paramsCondition,  HSSFSheet sheet, HSSFCellStyle listTitleStyle,
+			HSSFCellStyle cellStyle, HSSFCellStyle secondStyle, int size) {
+		List<Map<String,Object>> pickList = new  ArrayList<Map<String,Object>>();
+		pickList =  factoryPickService.getPickListByFactory(paramsCondition);
+	    if(null != pickList && pickList.size()>0){
+		HSSFRow nextRow = sheet.createRow(size);
+		nextRow.setHeightInPoints(30);
+		HSSFCell nextCell = nextRow.createCell(0);
+		nextCell.setCellValue("鞋厂取货记录");
+		nextCell.setCellStyle(secondStyle);
+		sheet.addMergedRegion(new CellRangeAddress(size, size, 0, 7));
+		LinkedHashMap<String,Object> map = new LinkedHashMap<String,Object>();
+
+		map.put("取货时间", "取货时间");
+		map.put("金额元）", "金额（元）"); 
+		map.put("备注", "备注"); 
+		pickList.add(0,map);
+		int nextStart = 1+ size;
+		for (int i = 0; i < pickList.size(); i++) {
+			Row rows = sheet.createRow(nextStart);
+			//为首行设置样式
+			HSSFCellStyle str;
+			if(i == 0 ){
+				str = listTitleStyle;
+				rows.setHeightInPoints(20);
+			}else{
+				str = cellStyle;
+			}
+			Map<String, Object> map2 = pickList.get(i);
+			List list = new ArrayList();
+			Iterator iter = map2.entrySet().iterator(); // 获得map的Iterator
+			while (iter.hasNext()) {
+				Entry entry = (Entry) iter.next();
+				list.add(entry.getValue());
+			}
+			for (int j = 0; j < list.size(); j++) {
+					Cell cells = rows.createCell(j);
+					String cellLiString = String.valueOf(list.get(j));
+					cells.setCellValue(new HSSFRichTextString(cellLiString));
+					cells.setCellStyle(str); 
+					sheet.setColumnWidth(j, 5000);// 设置excel每列宽度
+				
+			}
+			nextStart += 1;
+		}
+	}
+	return pickList;
+	}
+
+	public List<Map<String, Object>> setFactoryItemRecord(Map<String, Object> paramsCondition, HSSFSheet sheet,
+			HSSFCellStyle listTitleStyle, HSSFCellStyle cellStyle, HSSFCellStyle secondStyle) {
+			List<Map<String,Object>> dataList = new ArrayList<Map<String,Object>>();
+			 dataList = itemService.getFactoryItemList(paramsCondition);
+			 if(null != dataList && dataList.size()>0){
+				 HSSFRow firstRow = sheet.createRow(1);
+				firstRow.setHeightInPoints(30);
+				HSSFCell firstCell = firstRow.createCell(0);
+				firstCell.setCellValue("发货记录");
+				firstCell.setCellStyle(secondStyle);
+				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,7));
+				
+				LinkedHashMap<String,Object> likedHashMap = new LinkedHashMap<String,Object>();
+				likedHashMap.put("发货时间", "发货时间");
+				likedHashMap.put("鞋厂", "鞋厂"); 
+				likedHashMap.put("货号", "货号"); 
+				likedHashMap.put("件数", "件数"); 
+				likedHashMap.put("双数", "双数"); 
+				likedHashMap.put("单价(元)", "单价(元)"); 
+				likedHashMap.put("总计(元)", "总计(元)"); 
+				likedHashMap.put("备注", "备注"); 
+				dataList.add(0,likedHashMap);
+				int start = 2;
+				for (int i = 0; i < dataList.size(); i++) {
+					Row rows = sheet.createRow(start);
+					//为首行设置样式
+					HSSFCellStyle str;
+					if(i == 0 ){
+						rows.setHeightInPoints(20);
+						str = listTitleStyle;
+					}else{
+						str = cellStyle;
+					}
+					Map<String, Object> map2 = dataList.get(i);//遍历每个对象
+				     List list = new ArrayList();
+					 Iterator iter = map2.entrySet().iterator(); // 获得map的Iterator
+					while (iter.hasNext()) {
+						Entry entry = (Entry) iter.next();
+						list.add(entry.getValue());
+					}
+				    
+					for (int j = 0; j < list.size(); j++) {
+						Cell cells = rows.createCell(j);
+						String cellLiString = String.valueOf(list.get(j));
+						cells.setCellValue(new HSSFRichTextString(cellLiString));
+						sheet.setColumnWidth(j, 3000);// 设置excel每列宽度
+						cells.setCellStyle(str); 
+					}
+					start += 1;
+				}
+			 }
+			return dataList;
+		}
+
 }

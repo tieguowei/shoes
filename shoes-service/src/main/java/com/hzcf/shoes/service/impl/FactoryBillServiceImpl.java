@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hzcf.shoes.dao.FactoryPaymentRecordMapper;
+import com.hzcf.shoes.model.FactoryPaymentRecord;
 import com.hzcf.shoes.service.FactoryBillService;
 import com.hzcf.shoes.util.PageModel;
 
@@ -44,6 +45,12 @@ public class FactoryBillServiceImpl implements FactoryBillService {
 	        pageModel.setList(list);
 	        pageModel.setTotalRecords(totalRecords);*/
 	        return pageModel;
+	}
+
+
+	@Override
+	public void insertFactoryBill(FactoryPaymentRecord record) {
+		factoryPaymentRecordMapper.insertSelective(record);		
 	}
 
 }

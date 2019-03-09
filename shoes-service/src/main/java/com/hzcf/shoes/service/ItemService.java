@@ -92,6 +92,20 @@ public interface ItemService {
 	 */
 	public void updatePriceAndReturnStatus(Map<String, Object> reqMap, Map<String, Object> paramsCondition);
 
+	/**
+	 * 校验鞋厂是否能导出账单
+	 * @param paramsCondition
+	 * @return
+	 */
+	public List<Map<String, Object>> checkFactoryItemIsOver(Map<String, Object> paramsCondition);
+
+	/**
+	 * 查询鞋厂发货记录
+	 * @param paramsCondition
+	 * @return
+	 */
+	public List<Map<String, Object>> getFactoryItemList(Map<String, Object> paramsCondition);
+
 
 	
 }

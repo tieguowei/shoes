@@ -2,6 +2,7 @@ package com.hzcf.shoes.service;
 
 import java.util.Map;
 
+import com.hzcf.shoes.model.FactoryPaymentRecord;
 import com.hzcf.shoes.util.PageModel;
 
 public interface FactoryBillService {
@@ -18,6 +19,12 @@ public interface FactoryBillService {
 	 * @return
 	 */
 	public PageModel getFactoryBillList(Map<String, Object> paramsCondition);
+
+	/**
+	 * 鞋厂账单入库
+	 * @param record
+	 */
+	public void insertFactoryBill(FactoryPaymentRecord record);
 
 
 
