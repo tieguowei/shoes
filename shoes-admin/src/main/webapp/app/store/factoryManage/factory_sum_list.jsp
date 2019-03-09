@@ -12,7 +12,7 @@
         var datagrid;
         $(function(){
             datagrid = $('#datagrid').datagrid({
-                url : '${app}/customer/getCustomerList',
+                url : '${app}/factory/getFactoryList',
 				title : '',
 				pagination : true,
 				pageSize : <%=Constants.PAGE_SIZE%>,
@@ -36,38 +36,23 @@
 					    return op.pageSize * (op.pageNumber - 1) + (index + 1);
 					}
 				},{
-					field : 'customer_name',
-					title : '客户姓名',
+					field : 'factory_name',
+					title : '鞋厂名称',
 					align: 'center',
-					width : 120
+					width : 150
 				},{
 					field : 'customary_dues',
 					title : '应还总额（元）',
 					align: 'center',
-					width : 120
+					width : 150
 				},{
-					field : 'actual_payment',
-					title : '实还总额（元）',
+					field : 'cut_payment',
+					title : '鞋厂取货（元）',
 					align: 'center',
-					width : 120
-				},{
-					field : 'balance_due',
-					title : '欠款总额（元）',
-					align: 'center',
-					width : 120
-				},{
-					field : 'small_change',
-					title : '抹零总额（元）',
-					align: 'center',
-					width : 120
+					width : 150
 				},{
 					field : 'defective_goods',
 					title : '减次总额（元）',
-					align: 'center',
-					width : 120
-				},{
-					field : 'spred_return_money',
-					title : '差价/退货总额（元）',
 					align: 'center',
 					width : 120
 				}
@@ -88,7 +73,7 @@
             clearForm(datagrid);
         }
 
-        //回款记录查询
+        //账单详情查询
         function backRecordSelect(){
             var rows = datagrid.datagrid('getSelections');
             if(rows.length > 0){
@@ -101,7 +86,7 @@
                     });
                     return;
                 }
-                parent.createTab('${app}/customer/toCustomerBillList/'+rows[0].customer_name ,'账单列表');
+                parent.createTab('${app}/factory/toFactoryBillList/'+rows[0].factory_name ,'鞋厂账单列表');
             }else{
                 $.messager.show({
                     title:'信息提示',
@@ -119,9 +104,9 @@
   		<form id="searchForm">
 	  		<table  border="0" class="searchForm datagrid-toolbar" width="100%">
 				<tr>
-					<td class="tdR" width="10%">客户姓名:</td>
+					<td class="tdR" width="10%">鞋厂名称:</td>
 					<td width="35%">
-						<input id="customer_name" name="customerName" class='easyui-textbox' style="width: 150px;height: 24px;"/>
+						<input id="factory_name" name="factoryName" class='easyui-textbox' style="width: 150px;height: 24px;"/>
 					</td>
 					<td width="*%">
 						<a class="easyui-linkbutton" iconCls="icon-search" onclick="searchFun()">查询</a>

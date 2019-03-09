@@ -98,8 +98,10 @@ public class CustomerController extends BaseController{
               Map<String, Object> paramsCondition = new HashMap<String, Object>();
               paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
               paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("rows")));
-              paramsCondition.put("customerName", request.getParameter("customerName"));
-             
+	  			String customerName = StringUtil.trim(request.getParameter("customerName"));// 姓名
+	          	if (StringUtil.isNotBlank(customerName)) {
+					paramsCondition.put("customerName", customerName);
+				}
               PageModel pageModel = this.customerService.getCustomerBillList(paramsCondition);
               dataMsg.setTotal(pageModel.getTotalRecords());
               dataMsg.setRows(pageModel.getList());

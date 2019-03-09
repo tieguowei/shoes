@@ -12,8 +12,8 @@
         var datagrid;
         $(function(){
             datagrid = $('#datagrid').datagrid({
-                url : '${app}/customer/getCustomerBillList',
-                queryParams: { 'customerName': '${customerName}' },
+                url : '${app}/factory/getFactoryBillList',
+                queryParams: { 'factoryName': '${factoryName}' },
 				title : '',
 				pagination : true,
 				pageSize : <%=Constants.PAGE_SIZE%>,
@@ -58,48 +58,22 @@
 					width : 120
 				}
 				,{
-                    field : 'actualPayment',
-                    title : '实还金额（元）',
+                    field : 'cut_payment',
+                    title : '商家取货（元）',
                     align: 'center',
                     width : 120
                 }
                 ,{
-                    field : 'balanceDue',
-                    title : '欠款（元）',
-                    align: 'center',
-                    width : 120
-                }
-                ,{
-                    field : 'smallChange',
-                    title : '抹零（元）',
-                    align: 'center',
-                    width : 120
-                },{
                     field : 'defectiveGoods',
                     title : '减次（元）',
                     align: 'center',
                     width : 120
                 },{
-                    field : 'spredReturnMoney',
-                    title : '差价/退货（元）',
+                    field : 'seasonZh',
+                    title : '所属季节',
                     align: 'center',
                     width : 120
-                },{
-                    field : 'billStatusZH',
-                    title : '是否结清',
-                    align: 'center',
-                    width : 120
-                },{
-                    field : 'remark',
-                    title : '备注',
-                    align: 'center',
-                    width : 120,
-                    formatter: function(value,row,index){
-						if(null == value){
-							 return "";
-						}
-                   return "<span title='"+ value +"'>"+value+"</span>";
-                }}
+                }
 				]],
 			});
 		});
@@ -191,16 +165,8 @@
 <div id="toolbar">
 	<table border="0" class="searchForm datagrid-toolbar" width="100%">
 		<tr>
-			<td width="10%"  id="toolbars" class="tdL">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateML();">账单抹零</a>
-                    <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
-			</td>
-			<td width="10%"  id="toolbars" class="tdL">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateYFK();">修改已付款</a>
-                    <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
-			</td>
 			<td>
-				<span style="color: red">客户：${customerName}</span>
+				<span style="color: red">鞋厂：${factoryName}</span>
 			</td>
 		</tr>
 	</table>

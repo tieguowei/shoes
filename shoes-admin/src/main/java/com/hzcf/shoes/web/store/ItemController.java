@@ -883,7 +883,7 @@ public class ItemController extends BaseController{
 			HSSFCell nextCell = nextRow.createCell(0);
 			nextCell.setCellValue("本次账单详情");
 			nextCell.setCellStyle(secondStyle);
-			sheet.addMergedRegion(new CellRangeAddress(dataSize, dataSize, 0, 7));
+			sheet.addMergedRegion(new CellRangeAddress(dataSize, dataSize, 0, 6));
 		  List<Map<Object,Object>> dataList = new ArrayList<Map<Object,Object>>();
 		  	LinkedHashMap<Object,Object> nextLikedHashMap = new LinkedHashMap<Object,Object>();
 			nextLikedHashMap.put("货单时间", "货单时间");
@@ -965,7 +965,7 @@ public class ItemController extends BaseController{
 		row.setHeightInPoints(50);
 		HSSFCell cell = row.createCell(0);
 		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,7));//首行合并多少格
-		cell.setCellValue("季节："+seasonzh+"  鞋厂名称："+factoryName+"    账单日期："+format.format(new Date()));
+		cell.setCellValue("鞋厂名称："+factoryName+"   "+ "["+seasonzh+"] 账单日期："+format.format(new Date()));
 		cell.setCellStyle(firstStyle);
 		
 	}
@@ -980,7 +980,7 @@ public class ItemController extends BaseController{
 		HSSFCell nextCell = nextRow.createCell(0);
 		nextCell.setCellValue("鞋厂取货记录");
 		nextCell.setCellStyle(secondStyle);
-		sheet.addMergedRegion(new CellRangeAddress(size, size, 0, 7));
+		sheet.addMergedRegion(new CellRangeAddress(size, size, 0, 6));
 		LinkedHashMap<String,Object> map = new LinkedHashMap<String,Object>();
 
 		map.put("取货时间", "取货时间");
@@ -1029,11 +1029,10 @@ public class ItemController extends BaseController{
 				HSSFCell firstCell = firstRow.createCell(0);
 				firstCell.setCellValue("发货记录");
 				firstCell.setCellStyle(secondStyle);
-				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,7));
+				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0,6));
 				
 				LinkedHashMap<String,Object> likedHashMap = new LinkedHashMap<String,Object>();
 				likedHashMap.put("发货时间", "发货时间");
-				likedHashMap.put("鞋厂", "鞋厂"); 
 				likedHashMap.put("货号", "货号"); 
 				likedHashMap.put("件数", "件数"); 
 				likedHashMap.put("双数", "双数"); 

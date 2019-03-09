@@ -352,22 +352,19 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
- <!-- 客户汇总列表分页 -->
+ <!-- 鞋厂汇总列表分页 -->
   <select id="findAllRetMapByPage" resultType="hashmap" parameterType="hashmap">
 	  SELECT
 	    	id,
-			customer_name,
+			factory_name,
 			sum(customary_dues) customary_dues,
-			sum(actual_payment) actual_payment,
-			sum(balance_due) balance_due,
-			sum(small_change) small_change,
-			sum(defective_goods) defective_goods,
- 			sum(spred_return_money) spred_return_money
+			sum(cut_payment) cut_payment,
+			sum(defective_goods) defective_goods
 	FROM
 		zly_factory_payment_record
-		group by customer_name 
-		<if test="customerName != null">
-			having customer_name = #{customerName} 
+		group by factory_name 
+		<if test="factoryName != null">
+			having factory_name = #{factoryName} 
 		</if> 
 		limit #{startIndex},#{pageSize}
   </select>
@@ -375,9 +372,40 @@
   <!-- 鞋厂汇总列表分页总数 -->
   <select id="findAllByPageCount" resultType="long" parameterType="hashmap">
   select COUNT(DISTINCT factory_name) from zly_factory_payment_record
-	<if test="customerName != null">
-		where  customer_name = #{customerName} 
+	<if test="factoryName != null">
+		where factory_name = #{factoryName} 
 	</if> 
   </select>
   
+  
+  
+<!-- 根据鞋厂名称查询账单列表 -->
+  <select id="getFactoryBillList" parameterType="java.util.Map" resultType="hashMap">
+    select
+       id ,
+       factory_name factoryName,
+		DATE_FORMAT(create_time,'%Y-%m-%d') createTime,
+		DATE_FORMAT(bill_start_time,'%Y-%m-%d') billStartTime,
+		DATE_FORMAT(bill_end_time,'%Y-%m-%d') billEndTime,
+      customary_dues customaryDues ,
+      cut_payment cut_payment ,
+      defective_goods	defectiveGoods,
+     case when season = 0 then '冬季'
+     else '其他季节' end  as seasonZh
+   	 from zly_factory_payment_record 
+     where
+          factory_name = #{factoryName}
+    order by create_time desc
+   	 limit #{startIndex},#{endIndex}
+  </select>
+
+<!-- 查询鞋厂账单列表count -->
+  <select id="getFactoryBillListCount" parameterType="java.util.Map" resultType="java.lang.Long">
+        select
+            count(0) totalRecord
+        from
+          zly_factory_payment_record
+        where
+          factory_name = #{factoryName}
+  </select>
 </mapper>

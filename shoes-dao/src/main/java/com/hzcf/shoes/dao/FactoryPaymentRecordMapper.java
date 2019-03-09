@@ -33,4 +33,8 @@ public interface FactoryPaymentRecordMapper {
 	List<Map<String, Object>> findAllRetMapByPage(Map<String, Object> paramsCondition);
 
 	Long findAllByPageCount(Map<String, Object> paramsCondition);
+
+	List<Map<String, Object>> getFactoryBillList(Map<String, Object> paramsCondition);
+
+	Long getFactoryBillListCount(Map<String, Object> paramsCondition);
 }

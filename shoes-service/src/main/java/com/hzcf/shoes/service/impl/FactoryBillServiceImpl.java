@@ -35,15 +35,14 @@ public class FactoryBillServiceImpl implements FactoryBillService {
 	@Override
 	public PageModel getFactoryBillList(Map<String, Object> paramsCondition) {
 		 PageModel pageModel = new PageModel();
-	      /*  pageModel.setPageNo((Integer) paramsCondition.get("pageNo"));
+	      pageModel.setPageNo((Integer) paramsCondition.get("pageNo"));
 	        pageModel.setPageSize((Integer) paramsCondition.get("pageSize"));
 	        paramsCondition.put("startIndex", pageModel.getStartIndex());
 	        paramsCondition.put("endIndex", pageModel.getEndIndex());
-	        paramsCondition.put("factoryName", paramsCondition.get("factoryName"));
-	        List<Map<String,Object>> list = factoryPaymentRecordMapper.getCustomerBackRecordList(paramsCondition);
-	        Long totalRecords = factoryPaymentRecordMapper.getCustomerBackRecordListTotal(paramsCondition);
+	        List<Map<String,Object>> list = factoryPaymentRecordMapper.getFactoryBillList(paramsCondition);
+	        Long totalRecords = factoryPaymentRecordMapper.getFactoryBillListCount(paramsCondition);
 	        pageModel.setList(list);
-	        pageModel.setTotalRecords(totalRecords);*/
+	        pageModel.setTotalRecords(totalRecords);
 	        return pageModel;
 	}
 

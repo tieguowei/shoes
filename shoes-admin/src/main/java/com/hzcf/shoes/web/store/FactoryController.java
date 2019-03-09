@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
-import com.hzcf.shoes.dao.FactoryGetGoodsMapper;
 import com.hzcf.shoes.model.FactoryGetGoods;
-import com.hzcf.shoes.model.Order;
 import com.hzcf.shoes.service.FactoryBillService;
 import com.hzcf.shoes.service.FactoryPickService;
 import com.hzcf.shoes.util.PageModel;
@@ -171,4 +169,40 @@ public class FactoryController extends BaseController{
 		}
 		return dataMsg;
 	}
+	
+	  /**
+     * 跳转到 账单列表 页面
+     * @param customerName
+     * @param model
+     * @return
+     */
+	 @RequestMapping(value="/toFactoryBillList/{factoryName}")
+	    public String toUpdateFactory(@PathVariable String factoryName ,Model model){
+		 model.addAttribute("factoryName", factoryName);
+	        return "/app/store/factoryManage/factory_bill_list";
+	    }
+
+    /**
+     * 账单列表详情查询
+     * @return
+     */
+    @RequestMapping(value = "/getFactoryBillList")
+    @ResponseBody
+	public DataMsg getFactoryBillList(HttpServletRequest request,DataMsg dataMsg){
+          try {
+              Map<String, Object> paramsCondition = new HashMap<String, Object>();
+              paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
+              paramsCondition.put("pageSize", Integer.valueOf(request.getParameter("rows")));
+              String factoryName = StringUtil.trim(request.getParameter("factoryName"));// 姓名
+	          	if (StringUtil.isNotBlank(factoryName)) {
+					paramsCondition.put("factoryName", factoryName);
+				}
+              PageModel pageModel = factoryBillService.getFactoryBillList(paramsCondition);
+              dataMsg.setTotal(pageModel.getTotalRecords());
+              dataMsg.setRows(pageModel.getList());
+          } catch (Exception e) {
+              logger.error(e.getMessage(),e);
+          }
+          return dataMsg;
+      }
 }
