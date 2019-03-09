@@ -63,6 +63,10 @@
 					title : '单价(元)',
 					width : 100
 				},{
+					field : 'totalMoney',
+					title : '合计(元)',
+					width : 100
+				},{
 					field : 'price_spread',
 					title : '差价(元)',
 					width : 110
@@ -73,10 +77,6 @@
 				},{
 					field : 'returns_number',
 					title : '退货双数',
-					width : 100
-				},{
-					field : 'totalMoney',
-					title : '合计(元)',
 					width : 100
 				},{
 					field : 'customer_is_defective_goods',
