@@ -463,6 +463,9 @@
  	<if test="season != null">
   		and season= #{season}
  	</if>
+ 	<if test="itemNo != null">
+  		and item_no= #{itemNo}
+ 	</if>
  	<if test="minCreateTime != null">
       <![CDATA[
  		AND DATE_FORMAT(pay_time ,'%Y-%m-%d') >= #{minCreateTime}

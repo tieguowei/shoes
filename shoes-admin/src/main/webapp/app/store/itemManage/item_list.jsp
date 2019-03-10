@@ -276,40 +276,25 @@
 				<td>
 					<input id="factory_name" name="factoryName" maxlength="30" class='easyui-textbox' style="width: 150px;height: 24px;"/>
 				</td>
-				
+				<td class="tdR">货号:</td>
+					<td>
+						<input id="item_no" name="itemNo" maxlength="30" class='easyui-textbox' style="width: 150px;height: 24px;"/>
+					</td>
 				 <td class="tdR">发货时间:</td>
 				   <td colspan="3">
 					<input id="minCreateTime" name="minCreateTime" editable='false' maxlength="30" class='easyui-datebox' style="width: 105px;height: 24px;" data-options="required:false" placeholder ="--起始时间--"/>
 					至
 					<input id="maxCreateTime" name="maxCreateTime" editable='false' maxlength="30" class='easyui-datebox' style="width: 105px;height: 24px;" data-options="required:false" placeholder ="--终止时间--"/>
 				</td>
-			
-			 <td class="tdR">季节:</td>
+			 
+			</tr>
+			<tr>
+			<td class="tdR">季节:</td>
 				<td>
 					<select id="season" name="season" class="easyui-combobox"  panelHeight="130px" editable="false" style="width: 130px;">
 						    <option value="">全部</option>
 							<option value="0">冬季</option>
 							<option value="1">其他季节</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-			  
-				<td class="tdR">客户是否减次:</td>
-				<td>
-					<select id="customer_is_defective_goods" name="customerIsDefectiveGoods" class="easyui-combobox"  panelHeight="130px" editable="false" style="width: 150px;">
-						    <option value="">全部</option>
-							<option value="0">是</option>
-							<option value="1">否</option>
-					</select>
-				</td>
-				
-				<td class="tdR">厂家是否减次:</td>
-				<td>
-					<select id="factory_is_defective_goods" name="factoryIsDefectiveGoods" class="easyui-combobox"  panelHeight="130px" editable="false" style="width: 150px;">
-						    <option value="">全部</option>
-							<option value="0">是</option>
-							<option value="1">否</option>
 					</select>
 				</td>
 				<td colspan="5" style="padding-left: 60px;">

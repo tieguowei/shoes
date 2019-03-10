@@ -105,19 +105,14 @@ public class ItemController extends BaseController{
 			if (StringUtil.isNotBlank(factoryName)) {
 				paramsCondition.put("factoryName", factoryName);
 			}
-			String factoryIsDefectiveGoods = StringUtil.trim(request.getParameter("factoryIsDefectiveGoods"));// 鞋厂是否减次
-			if (StringUtil.isNotBlank(factoryIsDefectiveGoods)) {
-				paramsCondition.put("factoryIsDefectiveGoods", factoryIsDefectiveGoods);
-			}
-			String customerIsDefectiveGoods = request.getParameter("customerIsDefectiveGoods");//客户是否减次
-			if (StringUtil.isNumeric(customerIsDefectiveGoods)) {
-				paramsCondition.put("customerIsDefectiveGoods", customerIsDefectiveGoods);
-			}
 			String season = request.getParameter("season");//季节
 			if (StringUtil.isNumeric(season)) {
 				paramsCondition.put("season", season);
 			}
-			
+			String itemNo = StringUtil.trim(request.getParameter("itemNo"));// 客户姓名
+			if (StringUtil.isNotBlank(itemNo)) {//货号
+				paramsCondition.put("itemNo", itemNo);
+			}
 			//发货开始时间
 			String minCreateTime = request.getParameter("minCreateTime");
 			if(StringUtil.isNotBlank(minCreateTime)){
