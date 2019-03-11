@@ -420,9 +420,9 @@ public class ItemController extends BaseController{
 		  	}else{
 		  		dataMap.put("qke",qke);
 		  	}
-		  	
+		  	String balanceDue =String.valueOf(data.get("balanceDue"));
 		  	if(null != time){
-		  		dataMap.put("hb",data.get("balanceDue"));//历史账单总欠款
+		  		dataMap.put("hb",balanceDue);//历史账单总欠款
 		  	}
            
 		  	 
@@ -435,8 +435,10 @@ public class ItemController extends BaseController{
 		  	 */
 		  	if(!"0.00".equals(sumMap) && "0.00".equals(String.valueOf(totalMap.get("totalGoodsMoney")))){
 		  		BigDecimal add =new BigDecimal(String.valueOf(data.get("balanceDue"))).subtract(new BigDecimal(sumMap));
-		  		if(null == time && "0".equals(totalNum) && "0.00".equals(sumMap)){//如果没有历史账单 本次欠款额又为0 时  累计欠款直接为0
-		  			dataMap.put("累计欠款",0);
+		  		if(null == time || "0.00".equals(balanceDue)){//如果没有历史账单或者历史账单总欠款为0.00   本次总件数时 又为0 累计欠款直接为0
+		  			if( "0".equals(totalNum)){
+		  				dataMap.put("累计欠款",0);
+		  			}
 		  		}else{
 		  			dataMap.put("累计欠款",add);
 		  		}

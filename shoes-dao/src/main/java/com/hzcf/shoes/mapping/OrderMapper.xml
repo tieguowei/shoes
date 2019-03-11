@@ -735,11 +735,11 @@
       </if>
       
       <if test="priceSpread != null and  priceSpread !=0">
-        spred_status = 1,
+        spred_status = #{spredStatus},
       </if>
       
       <if test="returnsNumber != null and returnsNumber !=0">
-        return_status = 1,
+        return_status = #{returnStatus},
       </if>
       
       <if test="season != null">

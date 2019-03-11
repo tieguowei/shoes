@@ -51,6 +51,18 @@ public class ItemServiceImpl implements ItemService{
 
 	@Override
 	public void updateById(Order order) {
+		Order oldOrder = orderMapper.selectByPrimaryKey(order.getId());
+		if((oldOrder.getPriceSpread().compareTo(order.getPriceSpread()) != 0 ) || (oldOrder.getDifferenceNumber().compareTo(order.getDifferenceNumber())!= 0)){
+			order.setSpredStatus("1");
+		}else{
+			order.setSpredStatus(oldOrder.getSpredStatus());
+			
+		}
+		if(oldOrder.getReturnsNumber() != order.getReturnsNumber()){
+			order.setReturnStatus("1");
+		}else{
+			order.setReturnStatus(oldOrder.getReturnStatus());
+		}
 		orderMapper.updateById(order);
 	}
 
