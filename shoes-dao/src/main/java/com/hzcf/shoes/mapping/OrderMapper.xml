@@ -558,9 +558,9 @@
   SELECT
 			IFNULL((sum(number_packages * shoe_dual * sale_price)),0) totalGoodsMoney,
 		  	IFNULL((sum(number_packages * shoe_dual)),0) totalNum,
-			IFNULL((sum(number_packages * shoe_dual * 2 )),0) jianci,
+			IFNULL((sum(number_packages * shoe_dual * #{CustomerJianci} )),0) jianci,
 			<!-- 计算本次欠款 总金额-减次 （然后在程序中减去本账单所有退货和差价即可 ）-->
-			IFNULL((sum(number_packages * shoe_dual * sale_price- (number_packages * shoe_dual * 2))),0) blanceDue
+			IFNULL((sum(number_packages * shoe_dual * sale_price- (number_packages * shoe_dual * #{CustomerJianci} ))),0) blanceDue
 	FROM
 		zly_order 
 	WHERE

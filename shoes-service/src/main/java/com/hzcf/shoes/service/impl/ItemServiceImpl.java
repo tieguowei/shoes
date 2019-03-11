@@ -1,6 +1,7 @@
 
 package com.hzcf.shoes.service.impl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.hzcf.shoes.dao.CustomerPaymentRecordMapper;
 import com.hzcf.shoes.dao.OrderMapper;
+import com.hzcf.shoes.dao.PropertiesMapper;
 import com.hzcf.shoes.model.Order;
 import com.hzcf.shoes.service.ItemService;
 import com.hzcf.shoes.util.PageModel;
@@ -21,6 +23,8 @@ public class ItemServiceImpl implements ItemService{
 	private OrderMapper orderMapper;
 	@Autowired
 	private CustomerPaymentRecordMapper  customerPaymentRecordMapper;
+	@Autowired
+	private PropertiesMapper propertiesMapper;
 
 	@Override
 	public PageModel findAllByPage(Map<String, Object> paramsCondition) {
@@ -77,6 +81,8 @@ public class ItemServiceImpl implements ItemService{
 	public Map<String, Object> getTotalMoneyByParam(Map<String, Object> paramsCondition) {
 		Map<String,Object> reqMap = new HashMap<String,Object>();
 		reqMap = getStartAndEndTime(reqMap,paramsCondition);
+		BigDecimal CustomerJianci = propertiesMapper.selectVersion("CustomerJianci");
+		reqMap.put("CustomerJianci", CustomerJianci);
 		return orderMapper.getTotalMoneyByParam(reqMap);
 	}
 
@@ -156,7 +162,7 @@ public class ItemServiceImpl implements ItemService{
 			reqMap.put("maxCreateTime",maxCreateTime);
 		}
 		reqMap.put("customerName", String.valueOf(paramsCondition.get("customerName")));
-	   return reqMap;
+	    return reqMap;
 	}
 
 
