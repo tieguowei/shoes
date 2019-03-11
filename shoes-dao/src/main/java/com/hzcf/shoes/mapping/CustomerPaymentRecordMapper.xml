@@ -484,7 +484,7 @@
 		customer_name customerName,
 		 DATE_FORMAT(bill_start_time,'%Y-%m-%d') bill_start_time,
 		 DATE_FORMAT(bill_end_time,'%Y-%m-%d') bill_end_time,
-		 DATE_FORMAT(create_time,'%Y-%m-%d') create_time,
+		 DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') create_time,
 		customary_dues,
 		actual_payment,
 		balance_due,
