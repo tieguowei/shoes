@@ -59,8 +59,13 @@
 					field : 'remark',
 					title : '备注',
 					align: 'center',
-					width : 120
-				}
+					width : 300,
+					 formatter: function(value,row,index){
+						if(null == value){
+							 return "";
+						}
+                   return "<span title='"+ value +"'>"+value+"</span>";
+					 }}
 				]],
 			});
             

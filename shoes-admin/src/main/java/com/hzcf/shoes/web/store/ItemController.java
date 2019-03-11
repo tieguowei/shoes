@@ -866,7 +866,11 @@ public class ItemController extends BaseController{
 	  	
 		record.setCustomaryDues(yhje);//本次账单应还金额
 		record.setFactoryName(factoryName);//鞋厂名称
-		record.setCutPayment(new BigDecimal(String.valueOf(pickSum.get("money"))));//商家扣款
+	 	if(null != pickSum){
+			record.setCutPayment(new BigDecimal(String.valueOf(pickSum.get("money"))));//商家扣款
+	 	}else{
+			record.setCutPayment(new BigDecimal(0));//商家扣款
+	 	}
 		String  jianci = String.valueOf(totalMap.get("jianci"));
 		record.setDefectiveGoods(new BigDecimal(jianci));//减次
 		record.setSeason(season);
