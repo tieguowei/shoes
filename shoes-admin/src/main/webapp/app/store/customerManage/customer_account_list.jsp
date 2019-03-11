@@ -80,6 +80,66 @@
             
 		}
 		
+		//修改备注
+		function toEditAccount(){
+			var rows = datagrid.datagrid('getSelections');
+			if(rows.length > 0){
+				if(rows.length > 1){
+					$.messager.show({
+						title:'信息提示',
+						msg:'该操作只能选择一条记录!',
+						timeout:5000,
+						showType:'slide'
+					});
+					return;
+				}
+				
+				//获取账户信息
+				$.ajax({
+					url : "${app}/customer/getAccountById",
+					type : "post",
+					dataType : "json",
+					data:{"id":rows[0].id},
+					success : function(data){
+							$("#id").val(data.id);
+							$("#remark").textbox("setValue",data.remark);
+							document.getElementById("updateRemark").style.display = "block";
+					        $('#updateRemark').dialog({
+					            title: '修改备注',
+					            width: 400,
+					            height: 150,
+					            closed: false,
+					            left:300,
+					            top: 95
+					        });
+					}
+				});
+			}else{
+				$.messager.show({
+					title:'信息提示',
+					msg:'请选择要修改的记录!',
+					timeout:5000,
+					showType:'slide'
+				});
+			}
+		}
+		function doEditRemark(){
+			var id = $("#id").val();
+			var remark =  $("#remark").textbox("getValue");
+			$.ajax({
+				url : "${app}/customer/doEditRemark",
+				type : "post",
+				dataType : "json",
+				data:{"id":id,"remark":remark},
+				success : function(data){
+					if(data){
+						location.href="${app}/customer/toCustomerAccountList";
+					}else{
+						$.messager.alert('提示信息', '修改失败！', 'info');
+					}
+			 }
+			});
+		}
 	</script>
 </head>
 
@@ -104,5 +164,22 @@
 <div region="center" border="false" style="overflow: hidden;">
 	<table id="datagrid"></table>
 </div>
+<div id="toolbar">
+	<table border="0" class="searchForm datagrid-toolbar" width="100%">
+		<tr>
+			<td width="10%"  id="toolbars" class="tdL">
+			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toEditAccount();">修改备注</a>
+		            <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
+			</td>
+		</tr>
+	</table>
+</div>
+
+<!-- 修改备注 -->
+ 		<div id="updateRemark"  style="display: none;overflow: hidden;" >
+ 			 	<input type="hidden" id="id" name="id"/>
+	 			<input id="remark" name="remark" class='easyui-textbox' data-options="multiline:true,validType:['length[0,100]']" style="width:380px;height:60px;margin-top: 50px;"/>
+  				<a style="margin-left: 120px;margin-top: 20px;" class="easyui-linkbutton" iconCls="icon-ok" onclick="doEditRemark()">提交</a>
+ 		</div>
 </body>
 </html>

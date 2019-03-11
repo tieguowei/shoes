@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
+import com.hzcf.shoes.model.CustomerAccount;
 import com.hzcf.shoes.model.CustomerPayHistory;
 import com.hzcf.shoes.model.CustomerPaymentRecord;
 import com.hzcf.shoes.service.CustomerAccountService;
@@ -262,5 +263,41 @@ public class CustomerController extends BaseController{
 		return dataMsg;
 	}
 	
-    
+	   /**
+		 * 
+		 * Description: 获取账户详情
+		 */
+		@ResponseBody
+		@RequestMapping(value="/getAccountById")
+		public CustomerAccount getAccountById(HttpServletRequest request) {
+			try {
+				int id = Integer.valueOf(request.getParameter("id"));
+				CustomerAccount account =  customerAccountService.selectById(id);
+				return account;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+	
+		/**
+		 * 
+		 * Description: 修改账户备注信息
+		 */
+		@ResponseBody
+		@RequestMapping("/doEditRemark")
+		public boolean doEditItem(HttpServletRequest request,DataMsg dataMsg){
+			try {
+				CustomerAccount account = new CustomerAccount();
+				int id = Integer.valueOf(request.getParameter("id"));
+				String remark = request.getParameter("remark");
+				account.setId(id);
+				account.setRemark(remark);
+				customerAccountService.doEditRemark(account);
+				return true;
+			} catch (Exception e) {
+				logger.error(e.getMessage(),e);
+			}
+			return false;
+		}
 }

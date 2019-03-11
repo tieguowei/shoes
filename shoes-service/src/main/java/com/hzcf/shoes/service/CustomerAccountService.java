@@ -1,10 +1,9 @@
 
 package com.hzcf.shoes.service;
 
-import java.util.List;
 import java.util.Map;
 
-import com.hzcf.shoes.model.CustomerPayHistory;
+import com.hzcf.shoes.model.CustomerAccount;
 import com.hzcf.shoes.util.PageModel;
 
 /** 
@@ -22,6 +21,10 @@ public interface CustomerAccountService {
 	 * @return
 	 */
 	public PageModel findAllByPage(Map<String, Object> paramsCondition);
+
+	public CustomerAccount selectById(Integer id);
+
+	public void doEditRemark(CustomerAccount account);
 
 	
 }

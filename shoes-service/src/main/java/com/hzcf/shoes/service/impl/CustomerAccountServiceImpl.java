@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hzcf.shoes.dao.CustomerAccountMapper;
-import com.hzcf.shoes.dao.CustomerPayHistoryMapper;
-import com.hzcf.shoes.dao.CustomerPaymentRecordMapper;
+import com.hzcf.shoes.model.CustomerAccount;
 import com.hzcf.shoes.service.CustomerAccountService;
 import com.hzcf.shoes.util.PageModel;
 
@@ -35,5 +34,15 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 		pageModel.setList(data);
 		pageModel.setTotalRecords(totalRecords);
 		return pageModel;
+	}
+
+	@Override
+	public CustomerAccount selectById(Integer id) {
+		return customerAccountMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public void doEditRemark(CustomerAccount account) {
+		customerAccountMapper.updateByPrimaryKeySelective(account);		
 	}
 }
