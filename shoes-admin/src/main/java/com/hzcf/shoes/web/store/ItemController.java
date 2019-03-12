@@ -270,7 +270,7 @@ public class ItemController extends BaseController{
 			List<Map<String,Object> >payList =setPayRecord(customerName, sheet, listTitleStyle, cellStyle, secondStyle, size);
 			
 			/**
-			 * 3.组装历史账单中有差价和退货的订单
+			 * 3.组装筛选条件中有差价和退货的订单
 			 */
 			int startSize = 4 + itemList.size() + payList.size();
 			List<Map<String,Object>> priceList  = setPriceSpread(paramsCondition, sheet, listTitleStyle, cellStyle, secondStyle,startSize);
@@ -281,7 +281,7 @@ public class ItemController extends BaseController{
 			int dataSize =6+ itemList.size() + priceList.size()+payList.size();
 			//查询客户此时间段的订单汇总
 			Map<String,Object> totalMap = itemService.getTotalMoneyByParam(paramsCondition);
-			//查询客户历史账单时间 + 本次账单(差价和退货)汇总
+			//查询筛选条件内(差价和退货)汇总
 			String sumMap = itemService.getBillPriceSum(paramsCondition);
 			setTotalData(sumMap,totalMap,customerName, sheet, listTitleStyle, cellStyle,secondStyle,dataSize);
 			
@@ -344,12 +344,11 @@ public class ItemController extends BaseController{
 	}
 
 	public void updatePriceAndReturnStatus(String before,String after,HttpSession session, Map<String, Object> paramsCondition) {
-		Map<String,Object> reqMap = new HashMap<String,Object>();
-		reqMap.put("before", before);
-		reqMap.put("after", after);
-		reqMap.put("updateTime", new Date());
-		reqMap.put("operator", getSystemCurrentUser(session).getEmployeeId());
-		itemService.updatePriceAndReturnStatus(reqMap,paramsCondition);
+		paramsCondition.put("before", before);
+		paramsCondition.put("after", after);
+		paramsCondition.put("updateTime", new Date());
+		paramsCondition.put("operator", getSystemCurrentUser(session).getEmployeeId());
+		itemService.updatePriceAndReturnStatus(paramsCondition);
 	}
 
 	public void insertCustomerBill(HttpSession session, String customerName, List<Map<String, Object>> itemList,
