@@ -23,6 +23,8 @@ public interface JxService {
 
 	public void jxDataExport(Map<String, Object> paramsCondition, HttpServletResponse response);
 
+	public void updateStatus(JxStudent student);
+
 
 
 }

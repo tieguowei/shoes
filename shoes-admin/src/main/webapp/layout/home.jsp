@@ -20,7 +20,7 @@
 	</head>
 	<body style="background: white;">
 		<div class="main">
-		亲爱的管理员您好，欢迎使用鞋业管理系统。<p>在使用中遇到任何问题，请联系开发人员。</p>
+		亲爱的管理员您好，欢迎使用管理系统。<p>在使用中遇到任何问题，请联系开发人员。</p>
 		<div class="sign">电话：18519716047</div>
 		</div>
 		

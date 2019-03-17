@@ -17,6 +17,8 @@ public class JxStudent {
 
     private String remark;
 
+    private String status;
+
     private Date createTime;
 
     public Integer getId() {
@@ -73,6 +75,14 @@ public class JxStudent {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
     }
 
     public Date getCreateTime() {

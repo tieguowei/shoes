@@ -75,6 +75,11 @@ public class JxController extends BaseController{
 			if (StringUtil.isNotBlank(jxName)) {
 				paramsCondition.put("jxName", jxName);
 			}
+			
+			String status = request.getParameter("status");//处理状态
+			if (StringUtil.isNumeric(status)) {
+				paramsCondition.put("status", status);
+			}
 			//开始时间
 			String minCreateTime = request.getParameter("minCreateTime");
 			if(StringUtil.isNotBlank(minCreateTime)){
@@ -112,6 +117,7 @@ public class JxController extends BaseController{
 	@RequestMapping(value="/doAddJx")
 	public DataMsg doAddItem(@ModelAttribute JxStudent student,DataMsg dataMsg,String oauth) {
 		try {
+			student.setStatus("1");//未处理
 			student.setCreateTime(new Date());
 			jxService.insertSelective(student);
 			dataMsg.setMessageCode("0001");
@@ -176,6 +182,10 @@ public class JxController extends BaseController{
 			if (StringUtil.isNotBlank(jxName)) {
 				paramsCondition.put("jxName", jxName);
 			}
+			String status = request.getParameter("status");//处理状态
+			if (StringUtil.isNumeric(status)) {
+				paramsCondition.put("status", status);
+			}
 			//开始时间
 			String minCreateTime = request.getParameter("minCreateTime");
 			if(StringUtil.isNotBlank(minCreateTime)){
@@ -191,5 +201,24 @@ public class JxController extends BaseController{
 			e.printStackTrace();
 		}
 	}
+	
+ 	/**
+	 * 
+	 * Description: 修改预约记录状态
+	 */
+	@ResponseBody
+	@RequestMapping("/updateStatus")
+	public DataMsg updateStatus(@ModelAttribute JxStudent student,DataMsg dataMsg){
+		try {
+			student.setStatus("0");
+			jxService.updateStatus(student);
+			dataMsg.setMessageCode("0003");
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			dataMsg.setMessageCode("0004");
+		}
+		return dataMsg;
+	}
+	
 	
 }

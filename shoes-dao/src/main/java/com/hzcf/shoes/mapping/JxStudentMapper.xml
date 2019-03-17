@@ -9,6 +9,7 @@
     <result column="study_time" property="studyTime" jdbcType="VARCHAR" />
     <result column="jx_name" property="jxName" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="CHAR" />
     <result column="create_time" property="createTime" jdbcType="DATE" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -70,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, account, password, class_type, study_time, jx_name, remark, create_time
+    id, account, password, class_type, study_time, jx_name, remark, status, create_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hzcf.shoes.model.JxStudentExample" >
     select
@@ -105,10 +106,12 @@
   <insert id="insert" parameterType="com.hzcf.shoes.model.JxStudent" >
     insert into jx_student (id, account, password, 
       class_type, study_time, jx_name, 
-      remark, create_time)
+      remark, status, create_time
+      )
     values (#{id,jdbcType=INTEGER}, #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{classType,jdbcType=VARCHAR}, #{studyTime,jdbcType=VARCHAR}, #{jxName,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE})
+      #{remark,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, #{createTime,jdbcType=DATE}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.hzcf.shoes.model.JxStudent" >
     insert into jx_student
@@ -133,6 +136,9 @@
       </if>
       <if test="remark != null" >
         remark,
+      </if>
+      <if test="status != null" >
+        status,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -159,6 +165,9 @@
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=DATE},
@@ -195,6 +204,9 @@
       <if test="record.remark != null" >
         remark = #{record.remark,jdbcType=VARCHAR},
       </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=CHAR},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=DATE},
       </if>
@@ -212,6 +224,7 @@
       study_time = #{record.studyTime,jdbcType=VARCHAR},
       jx_name = #{record.jxName,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=CHAR},
       create_time = #{record.createTime,jdbcType=DATE}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -238,6 +251,9 @@
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=DATE},
       </if>
@@ -252,6 +268,7 @@
       study_time = #{studyTime,jdbcType=VARCHAR},
       jx_name = #{jxName,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
+      status = #{status,jdbcType=CHAR},
       create_time = #{createTime,jdbcType=DATE}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -264,8 +281,11 @@
  		<if test="classType != null">
   	 	and class_type   LIKE CONCAT('%', #{classType},'%') 
  	</if>
- 		<if test="jxName != null">
+ 	<if test="jxName != null">
   	 	and jx_name   LIKE CONCAT('%', #{jxName},'%')    
+ 	</if>
+ 	<if test="status != null">
+  	 	and status   =  #{status}   
  	</if>
  	<if test="minCreateTime != null">
       <![CDATA[
@@ -289,6 +309,9 @@
 			study_time,
 			jx_name,
 			remark,
+			status,
+			case when status = 0 then '已处理'
+     		 else '未处理' end as statuszh,
 			DATE_FORMAT(create_time,'%Y-%m-%d') create_time
 	from jx_student
 	  WHERE 1=1

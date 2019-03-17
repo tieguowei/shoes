@@ -77,5 +77,10 @@ public class JxServiceImpl implements JxService {
 		ex.export(response);
 	}
 
+	@Override
+	public void updateStatus(JxStudent student) {
+		jxStudentMapper.updateByPrimaryKeySelective(student);		
+	}
+
 
 }

@@ -7,9 +7,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="renderer" content="webkit" />
-    <title>鞋业管理系统</title>
+    <title>管理系统</title>
     <meta name="keywords" content="">
-    <meta name="description" content="鞋业管理系统">
+    <meta name="description" content="管理系统">
     <link rel="icon" href="${app}/images/favicon.ico">
     <link rel="stylesheet" href="${app}/css/common/base.css">
     <link rel="stylesheet" href="${app}/css/login.css">
@@ -69,7 +69,7 @@
     <div class="logoBox">
         <img src="${app}/images/shoes.png" alt="">
         <div style="display: inline-block">
-            <h3>鞋业管理系统</h3>
+            <h3>管理系统</h3>
             <p>一站式管理平台</p>
         </div>
     </div>

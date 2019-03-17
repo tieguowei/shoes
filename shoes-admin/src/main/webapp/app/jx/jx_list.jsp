@@ -26,15 +26,6 @@
 					field:'id',
 					checkbox:true
 				},{
-					field:'rowNumbers',
-				    title: '序号',
-				    align: 'center',
-				    width: 50,
-				    formatter: function(val,rec,index){
-						var op = $('#datagrid').datagrid('options');
-					    return op.pageSize * (op.pageNumber - 1) + (index + 1);
-					}
-				},{
 					field : 'account',
 					title : '账号',
 					width : 100
@@ -53,11 +44,27 @@
 				},{
 					field : 'study_time',
 					title : '学车时间',
-					width : 200
+					width : 450,
+				 	formatter: function(value,row,index){
+						if(null == value){
+							 return "";
+						}
+                   		return "<span title='"+ value +"'>"+value+"</span>";
+					}
+				},{
+					field : 'statuszh',
+					title : '处理状态',
+					width : 100
 				},{
 					field : 'remark',
 					title : '备注',
-					width : 100
+					width : 120,
+					 formatter: function(value,row,index){
+							if(null == value){
+								 return "";
+							}
+	                   		return "<span title='"+ value +"'>"+value+"</span>";
+						 }
 				},{
 					field : 'create_time',
 					title : '创建时间',
@@ -83,6 +90,7 @@
     	
 		//清空
 		function clearFromFun(datagrid){
+            $('#status').combobox('clear');//清空选中项
 			clearForm(datagrid);
 		}
 		
@@ -117,6 +125,57 @@
 	            $("#searchForm").submit();
 		}
 		
+		//修改处理状态
+		function updateConfirm(){
+			
+			var rows = datagrid.datagrid('getSelections');
+			if(rows.length > 0){
+				if(rows.length > 1){
+					$.messager.show({
+						title:'信息提示',
+						msg:'该操作只能选择一条记录!',
+						timeout:5000,
+						showType:'slide'
+					});
+					return;
+				}
+				
+				if(rows[0].status == "0"){
+					$.messager.show({
+						title:'信息提示',
+						msg:'此记录已处理完毕!',
+						timeout:5000,
+						showType:'slide'
+					});
+				}else{
+			
+				$.messager.confirm("请确认", "您确定此条预约单已处理完毕？", function(b){
+					if(b){
+						openMask();
+						$.ajax({
+							async:false,
+							type:'post',
+							url:"${app}/jx/updateStatus?id=" + rows[0].id,
+							dataType:'json',
+							success:function(msg){
+								closeMask();
+								parent.createTab('${app}/jx/toJxList?messageCode=' + msg.messageCode,'约车记录');
+							}
+						});
+					}
+				});
+				
+				}
+			}else{
+				$.messager.show({
+					title:'信息提示',
+					msg:'请选择要修改的记录!',
+					timeout:5000,
+					showType:'slide'
+				});
+			}
+		}
+		
 	</script>
 </head>
 
@@ -146,6 +205,14 @@
 			 
 			</tr>
 			<tr>
+			<td class="tdR">处理状态:</td>
+				<td>
+					<select id="status" name="status" class="easyui-combobox"  panelHeight="130px" editable="false" style="width: 130px;">
+						    <option value="">全部</option>
+							<option value="0">已处理</option>
+							<option value="1">未处理</option>
+					</select>
+				</td>
 				<td colspan="5">
 						<a class="easyui-linkbutton" iconCls="icon-search" onclick="searchFun()">查询</a>
 						<a class="easyui-linkbutton" iconCls="icon-clear" onclick="clearFromFun(datagrid);">清空</a>
@@ -163,9 +230,13 @@
 			<td width="10%"  id="toolbars" class="tdL">
 			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toAddJx();">添加</a>
 		            <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
-			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="toEditJx();">修改</a>
+		             <sec:authorize ifAnyGranted='${ctrl.updateData}'>
+			  				<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="toEditJx();">修改</a>
+					 </sec:authorize> 
 					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 					<a class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true" onclick="dojxExport();"><span style="color: red">导出</span></a>
+					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
+					<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateConfirm();">修改状态</a>
 					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 			</td>
 		</tr>

@@ -2,7 +2,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title>鞋业管理系统</title>
+		<title>管理系统</title>
 		<%@ include file="/common/header.jsp"%>
 		<meta http-equiv="pragma" content="no-cache">
 		<meta http-equiv="cache-control" content="no-cache">
@@ -143,7 +143,7 @@
 		<div id="head" region="north"  style="width: 100%;height: 12%;">
 			<img style="padding-top: 4px" src="${app}/images/shoes.png" />
 			 <div style="display: inline-block">
-            <h2 style="margin-left: 10px;font-size:22px; font-weight: normal";>鞋业管理系统</h2>
+            <h2 style="margin-left: 10px;font-size:22px; font-weight: normal";>管理系统</h2>
             <p style="padding-left: 6px;font-size: 12px;">一站式管理平台</p>
         </div>
 			<ul id="contact">   
