@@ -94,80 +94,9 @@
 		
 		//取消
 		function resetForm(){
-			parent.closeTab("修改客户");
+			parent.closeTab("修改员工");
 			$('#searchPrincipal').dialog('close');
 		}
-		//查找客户编号
-		function openSearch(){
-			document.getElementById("searchPrincipal").style.display = "block";
-			$('#searchPrincipal').dialog({
-				title:'查找客户编号',
-				width: 540,    
-			    height: 250,    
-			    closed: false,    
-			    left: 600,
-			    top:200
-			});
-		}
-		
-		
-		//客户详细信息列表
-		function searchPrincipal(){
-			var name = $("#principalName").textbox("getValue");
-			var datagrid2
-			datagrid2 = $('#principalTable').datagrid({
-				url : '${app}/risk/findPrincipalName?name='+encodeURI(encodeURI(name)),
-				title : '',
-				pagination : false,
-				fit : true,
-				singleSelect : true,
-				border : false,
-				idField : 'id',
-				columns : [[
-				  {
-					field : 'name',
-					title : '姓名',
-					width : 120
-					
-				},{
-					field : 'workCode',
-					title : '客户编号',
-					width : 120
-				},{
-					field : 'jobTitle',
-					title : '职务',
-					width : 120
-				},{
-					field : 'depName',
-					title : '部门',
-					width : 120
-				},
-				{
-					field : 'status',
-					title : '状态',
-					width : 60,
-					formatter:function(value,rowData,rowIndex){
-						var retStr = "";
-						if(value == 1){
-							retStr = "在职";
-						}else{
-							retStr = "离职";
-						}
-						return retStr;
-					}
-				}]],
-				onClickRow: function (index, row) { 
-					var orgNo = row["workCode"]; 
-					var status = row["status"];
-					//客户编号
-					$("#employeeNo").textbox("setValue",orgNo);
-					//是否离职
-					$("#status").val(status);
-					$('#searchPrincipal').dialog('close');
-	            }  
-			});
-		}	
-		
 		
 
 		//选择权限
