@@ -87,10 +87,9 @@ public interface ItemService {
 
 	/**
 	 * 修改此账单中差价和退货的订单状态
-	 * @param paramsCondition
 	 * @param paramsCondition2 
 	 */
-	public void updatePriceAndReturnStatus(Map<String, Object> reqMap, Map<String, Object> paramsCondition);
+	public void updatePriceAndReturnStatus(Map<String, Object> reqMap);
 
 	/**
 	 * 校验鞋厂是否能导出账单

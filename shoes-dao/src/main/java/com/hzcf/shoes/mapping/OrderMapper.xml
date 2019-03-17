@@ -601,7 +601,7 @@
   	order by pay_time asc
   </select>
   
-  <!-- 查询客户历史账单时间内(差价和退货)汇总-->
+  <!-- 查询筛选时间内客户(差价和退货)汇总-->
   <select id="getBillPriceSum" parameterType="hashmap" resultType="String">
   SELECT
 	  IFNULL(sum(((price_spread*difference_number) + (returns_number*sale_price))) ,0) totalMoney

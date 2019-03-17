@@ -79,20 +79,16 @@ public class ItemServiceImpl implements ItemService{
 
 	@Override
 	public Map<String, Object> getTotalMoneyByParam(Map<String, Object> paramsCondition) {
-		Map<String,Object> reqMap = new HashMap<String,Object>();
-		reqMap = getStartAndEndTime(reqMap,paramsCondition);
 		BigDecimal CustomerJianci = propertiesMapper.selectVersion("CustomerJianci");
-		reqMap.put("CustomerJianci", CustomerJianci);
-		return orderMapper.getTotalMoneyByParam(reqMap);
+		paramsCondition.put("CustomerJianci", CustomerJianci);
+		return orderMapper.getTotalMoneyByParam(paramsCondition);
 	}
 
 
 
 	@Override
 	public List<Map<String, Object>> getBillPrice(Map<String,Object> paramsCondition ) throws Exception {
-		Map<String,Object> reqMap = new HashMap<String,Object>();
-		reqMap= getStartAndEndTime(reqMap,paramsCondition);
-		return  orderMapper.getOrderByStartAndEndTime(reqMap);
+		return  orderMapper.getOrderByStartAndEndTime(paramsCondition);
 	}
 
 
@@ -117,54 +113,11 @@ public class ItemServiceImpl implements ItemService{
 
 
 	@Override
-	public void updatePriceAndReturnStatus(Map<String, Object> reqMap, Map<String, Object> paramsCondition) {
-		//修改本账单退货和差价状态
-		reqMap = getStartAndEndTime(reqMap,paramsCondition);
-		orderMapper.updatePriceStatus(reqMap);
-		orderMapper.updateReturnStatus(reqMap);
+	public void updatePriceAndReturnStatus(Map<String, Object> paramsCondition) {
+		orderMapper.updatePriceStatus(paramsCondition);
+		orderMapper.updateReturnStatus(paramsCondition);
 	}
-	
-	/**
-	 * 查询客户 历史账单和本次账单的 起止时间
-	 * @param paramsCondition
-	 */
-	public Map<String,Object> getStartAndEndTime(Map<String, Object> reqMap,Map<String, Object> paramsCondition) {
-		Map<String,Object> smap = customerPaymentRecordMapper.getBillStartTime(String.valueOf(paramsCondition.get("customerName")));
-		Map<String,Object> emap = customerPaymentRecordMapper.getBillEndTime(String.valueOf(paramsCondition.get("customerName")));
-		/**
-		 * 比较历史账单和输入时间 的起止大小，确定查询 差价和退货订单范围
-			 * <0时，开始时间小于结束时间 
-			 * =0时，开始时间=结束时间 
-			 * >0 开始时间大于结束时间 
-		 */
-		String  minCreateTime = String.valueOf(paramsCondition.get("minCreateTime"));
-		String  maxCreateTime = String.valueOf( paramsCondition.get("maxCreateTime"));
-		
-		if(null != smap){
-			String  billStartTime =String.valueOf(smap.get("bill_start_time"));
-			if(billStartTime.compareTo(minCreateTime)<=0){
-				reqMap.put("minCreateTime",billStartTime);
-			}else{
-				reqMap.put("minCreateTime",minCreateTime);
-			}
-		}else{
-			reqMap.put("minCreateTime",minCreateTime);
-		}
-		
-		if(null != emap){
-			String  billEndTime =String.valueOf(emap.get("bill_end_time"));
-			if(billEndTime.compareTo(maxCreateTime) >= 0){
-				reqMap.put("maxCreateTime",billEndTime);
-			}else{
-				reqMap.put("maxCreateTime",maxCreateTime);
-			}
-		}else{
-			reqMap.put("maxCreateTime",maxCreateTime);
-		}
-		reqMap.put("customerName", String.valueOf(paramsCondition.get("customerName")));
-	    return reqMap;
-	}
-
+	 
 
 	@Override
 	public List<Map<String, Object>> checkFactoryItemIsOver(Map<String, Object> paramsCondition) {
