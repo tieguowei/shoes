@@ -1,12 +1,13 @@
 package com.hzcf.shoes.web.store;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,14 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hzcf.shoes.baseweb.BaseController;
 import com.hzcf.shoes.baseweb.DataMsg;
-import com.hzcf.shoes.model.CustomerAccount;
-import com.hzcf.shoes.model.CustomerPayHistory;
-import com.hzcf.shoes.model.CustomerPaymentRecord;
 import com.hzcf.shoes.model.JxStudent;
-import com.hzcf.shoes.model.Order;
-import com.hzcf.shoes.service.CustomerAccountService;
-import com.hzcf.shoes.service.CustomerPayHistoryService;
-import com.hzcf.shoes.service.CustomerService;
 import com.hzcf.shoes.service.JxService;
 import com.hzcf.shoes.util.PageModel;
 import com.hzcf.shoes.util.StringUtil;
@@ -49,6 +43,13 @@ public class JxController extends BaseController{
 	@RequestMapping("/toJxList")
 	public String toPageList(String refreshTag,String messageCode,Model model) {
 		showMessageAlert(refreshTag,messageCode,model);
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd"); 
+		Date date=new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date); 
+		calendar.add(Calendar.DAY_OF_MONTH, 6);
+		date = calendar.getTime();
+		model.addAttribute("date", sdf.format(date));
 		return "/app/jx/jx_list";
 	}
 	

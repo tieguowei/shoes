@@ -230,14 +230,15 @@
 			<td width="10%"  id="toolbars" class="tdL">
 			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toAddJx();">添加</a>
 		            <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
-		             <sec:authorize ifAnyGranted='${ctrl.updateData}'>
+		            <sec:authorize ifAnyGranted='${ctrl.updateData}'>
 			  				<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="toEditJx();">修改</a>
-					 </sec:authorize> 
+					</sec:authorize> 
 					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 					<a class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true" onclick="dojxExport();"><span style="color: red">导出</span></a>
 					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 					<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateConfirm();">修改状态</a>
 					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
+					<span style="color: red">龙泉驾校今日可约：</span>${date}
 			</td>
 		</tr>
 	</table>
