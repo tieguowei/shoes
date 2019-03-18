@@ -213,11 +213,12 @@
 							<option value="1">未处理</option>
 					</select>
 				</td>
+				<sec:authorize ifAnyGranted="ROLE_ADMIN">
 				<td class="tdR">业务员姓名:</td>
 				<td>
 					<input id="operator" name="operator" maxlength="30" class='easyui-textbox' style="width: 150px;height: 24px;"/>
 				</td>
-				
+				</sec:authorize>
 				<td colspan="5">
 						<a class="easyui-linkbutton" iconCls="icon-search" onclick="searchFun()">查询</a>
 						<a class="easyui-linkbutton" iconCls="icon-clear" onclick="clearFromFun(datagrid);">清空</a>
