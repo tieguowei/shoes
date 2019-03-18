@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,7 +60,7 @@ public class JxController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getJxList")
-	public DataMsg getCustomerList(HttpServletRequest request,DataMsg dataMsg) {
+	public DataMsg getCustomerList(HttpServletRequest request,HttpSession session,DataMsg dataMsg) {
 		try {
 			Map<String, Object> paramsCondition = new HashMap<String, Object>();
 			paramsCondition.put("pageNo", Integer.valueOf(request.getParameter("page")));
@@ -91,6 +92,15 @@ public class JxController extends BaseController{
 			if(StringUtil.isNotBlank(maxCreateTime)){
 				paramsCondition.put("maxCreateTime", maxCreateTime.trim());
 			}
+			String operator = request.getParameter("operator");
+			if(StringUtil.isNotBlank(operator)){
+				paramsCondition.put("operator", operator.trim());
+			}
+			//数据权限
+			 String name = getSystemCurrentUser(session).getName();
+			 if(!"管理员".equals(name) && !"驾校管理员".equals(name)){
+					paramsCondition.put("operator", getSystemCurrentUser(session).getName());
+			 }
 			PageModel pageModel = jxService.findAllByPage(paramsCondition);
 			dataMsg.setTotal(pageModel.getTotalRecords());
 			dataMsg.setRows(pageModel.getList());
@@ -116,9 +126,10 @@ public class JxController extends BaseController{
      */
     @ResponseBody
 	@RequestMapping(value="/doAddJx")
-	public DataMsg doAddItem(@ModelAttribute JxStudent student,DataMsg dataMsg,String oauth) {
+	public DataMsg doAddItem(@ModelAttribute JxStudent student,HttpSession session, DataMsg dataMsg,String oauth) {
 		try {
 			student.setStatus("1");//未处理
+			student.setOperator(getSystemCurrentUser(session).getName());
 			student.setCreateTime(new Date());
 			jxService.insertSelective(student);
 			dataMsg.setMessageCode("0001");
@@ -151,8 +162,10 @@ public class JxController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping("/doEditJx")
-	public DataMsg doEditJx(@ModelAttribute JxStudent student,DataMsg dataMsg){
+	public DataMsg doEditJx(@ModelAttribute JxStudent student,HttpSession session,DataMsg dataMsg){
 		try {
+			student.setOperator(getSystemCurrentUser(session).getName());
+			student.setUpdateTime(new Date());
 			jxService.updateById(student);
 			dataMsg.setMessageCode("0003");
 		} catch (Exception e) {

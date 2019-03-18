@@ -32,7 +32,7 @@
 				},{
 					field : 'password',
 					title : '密码',
-					width : 100
+					width : 115
 				},{
 					field : 'class_type',
 					title : '所学班型',
@@ -213,6 +213,11 @@
 							<option value="1">未处理</option>
 					</select>
 				</td>
+				<td class="tdR">业务员姓名:</td>
+				<td>
+					<input id="operator" name="operator" maxlength="30" class='easyui-textbox' style="width: 150px;height: 24px;"/>
+				</td>
+				
 				<td colspan="5">
 						<a class="easyui-linkbutton" iconCls="icon-search" onclick="searchFun()">查询</a>
 						<a class="easyui-linkbutton" iconCls="icon-clear" onclick="clearFromFun(datagrid);">清空</a>
@@ -230,13 +235,18 @@
 			<td width="10%"  id="toolbars" class="tdL">
 			  		<a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="toAddJx();">添加</a>
 		            <img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
-		            <sec:authorize ifAnyGranted='${ctrl.updateData}'>
+					<sec:authorize ifNotGranted="ROLE_JX">
 			  				<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="toEditJx();">修改</a>
 					</sec:authorize> 
 					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
-					<a class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true" onclick="dojxExport();"><span style="color: red">导出</span></a>
+					<sec:authorize ifAnyGranted="ROLE_ADMIN,ROLE_JX">
+						<a class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true" onclick="dojxExport();"><span style="color: red">导出</span></a>
+					</sec:authorize>
 					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
-					<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateConfirm();">修改状态</a>
+					
+					<sec:authorize ifAnyGranted="ROLE_ADMIN,ROLE_JX">
+						<a class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="updateConfirm();">修改状态</a>
+					 </sec:authorize>
 					<img src="${app}/images/separator.jpg" style="vertical-align: middle; *margin-top: -4px">
 					<span style="color: red">龙泉驾校今日可约：</span>${date}
 			</td>
