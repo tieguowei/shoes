@@ -316,6 +316,7 @@
 	from jx_student
 	  WHERE 1=1
 	<include refid="dynamicPageWhere"/>
+	order by create_time desc
 	<if test="startIndex != null">
 		limit #{startIndex},#{pageSize}
 	</if>
